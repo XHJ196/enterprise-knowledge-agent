@@ -1,0 +1,224 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "企业知识库平台 · 总体架构（设计方案）",
+    "output": "diagrams/architecture.html",
+    "locale": "zh-CN",
+    "quality_profile": "showcase"
+  },
+  "components": [
+    {
+      "id": "web",
+      "type": "frontend",
+      "label": "前端",
+      "sublabel": "管理页 · 员工问答",
+      "pos": [
+        40,
+        250
+      ],
+      "size": [
+        170,
+        110
+      ]
+    },
+    {
+      "id": "spring",
+      "type": "backend",
+      "label": "Spring Boot",
+      "sublabel": "身份 · 权限 · 文档 · 会话",
+      "tag": "唯一业务入口",
+      "pos": [
+        410,
+        250
+      ],
+      "size": [
+        240,
+        140
+      ]
+    },
+    {
+      "id": "fast",
+      "type": "backend",
+      "label": "FastAPI",
+      "sublabel": "解析 · 向量化 · 检索 · 生成",
+      "tag": "仅内部调用",
+      "pos": [
+        970,
+        250
+      ],
+      "size": [
+        230,
+        140
+      ]
+    },
+    {
+      "id": "files",
+      "type": "database",
+      "label": "文件存储",
+      "sublabel": "本地目录 · Spring 独占读写",
+      "pos": [
+        410,
+        40
+      ],
+      "size": [
+        240,
+        80
+      ]
+    },
+    {
+      "id": "models",
+      "type": "external",
+      "label": "LLM / Embedding API",
+      "sublabel": "外部生成模型与向量模型",
+      "pos": [
+        970,
+        40
+      ],
+      "size": [
+        230,
+        80
+      ]
+    },
+    {
+      "id": "postgres",
+      "type": "database",
+      "label": "PostgreSQL + pgvector",
+      "sublabel": "core 业务数据 · ai 切片向量",
+      "tag": "同实例 · 分角色",
+      "pos": [
+        410,
+        590
+      ],
+      "size": [
+        240,
+        100
+      ]
+    },
+    {
+      "id": "agent",
+      "type": "backend",
+      "label": "Agent（后续）",
+      "sublabel": "工具调用边界 · 第一版不启用",
+      "pos": [
+        970,
+        590
+      ],
+      "size": [
+        230,
+        100
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "security-group",
+      "label": "Spring Boot 进程 :8080",
+      "wraps": [
+        "spring"
+      ],
+      "pad": 22
+    },
+    {
+      "kind": "security-group",
+      "label": "FastAPI 进程 :8000",
+      "wraps": [
+        "fast"
+      ],
+      "pad": 22
+    }
+  ],
+  "connections": [
+    {
+      "id": "web-api",
+      "from": "web",
+      "to": "spring",
+      "label": "HTTP REST / multipart",
+      "variant": "emphasis"
+    },
+    {
+      "id": "api-web",
+      "from": "spring",
+      "to": "web",
+      "label": "HTTP SSE / 文件流",
+      "variant": "emphasis"
+    },
+    {
+      "id": "spring-fast",
+      "from": "spring",
+      "to": "fast",
+      "label": "HTTP JSON · 任务 / 问答",
+      "variant": "emphasis"
+    },
+    {
+      "id": "fast-spring",
+      "from": "fast",
+      "to": "spring",
+      "label": "HTTP 回调 / 取文件 / SSE",
+      "variant": "emphasis"
+    },
+    {
+      "id": "spring-sql",
+      "from": "spring",
+      "to": "postgres",
+      "label": "JDBC / SQL"
+    },
+    {
+      "id": "fast-sql",
+      "from": "fast",
+      "to": "postgres",
+      "label": "psycopg / SQL"
+    },
+    {
+      "id": "spring-files",
+      "from": "spring",
+      "to": "files",
+      "label": "文件系统 API"
+    },
+    {
+      "id": "fast-models",
+      "from": "fast",
+      "to": "models",
+      "label": "HTTPS JSON / 流式"
+    },
+    {
+      "id": "future-agent",
+      "from": "fast",
+      "to": "agent",
+      "label": "后续 Python 接口",
+      "variant": "dashed"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Spring Boot 模块",
+      "items": [
+        "Authentication · User Management",
+        "Knowledge Base · Document Management",
+        "AI Chat · Job Coordinator · File Storage Adapter",
+        "模块之间为同进程 Java 调用；core 仅由 Spring 写入"
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "FastAPI 模块",
+      "items": [
+        "Document Processing · Retrieval",
+        "Answer Generation · Model Gateway",
+        "Agent 仅预留：第一版问答不经过工具执行",
+        "模块之间为 Python 调用；不得自行授予访问权限"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "跨服务与数据边界",
+      "items": [
+        "前端只调用 Spring；文件不公开为静态目录",
+        "任务与截止时间存 PostgreSQL，向量就绪后由 Spring 条件发布",
+        "Fast 仅凭签名作用域检索当前已发布的单一知识库",
+        "本地 loopback 使用 HTTP；外部模型使用 HTTPS"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "finalize",
+  "status": "pass",
+  "type": "sequence",
+  "quality": "showcase",
+  "specification": {
+    "path": "D:\\Codex workplace\\enterprise-knowledge-agent\\docs\\diagrams\\sources\\flow-b-chat.candidate.json",
+    "sha256": "fcebbaedfdc9627a4acb1b364001fc3ff16db1ff8b6e369caaca018102be3525",
+    "bytes": 8464
+  },
+  "artifact": {
+    "path": "D:\\Codex workplace\\enterprise-knowledge-agent\\docs\\diagrams\\flow-b-chat.html",
+    "sha256": "37d29b6a220e894274d155624ff3a2ba4a6ad21c0c166433284c41e30c28f970",
+    "bytes": 834947
+  },
+  "gates": {
+    "validate": "pass",
+    "deliver": "pass",
+    "check": "pass",
+    "browser-check": "pass"
+  },
+  "diagnostics": [],
+  "diagnosticSummary": {
+    "total": 0,
+    "shown": 0,
+    "truncated": false
+  },
+  "evidence": {
+    "receipt": "D:\\Codex workplace\\enterprise-knowledge-agent\\docs\\diagrams\\review-flow-b-2\\flow-b-chat.finalize.json",
+    "summaryReceipt": "D:\\Codex workplace\\enterprise-knowledge-agent\\docs\\diagrams\\review-flow-b-2\\flow-b-chat.finalize-summary.json",
+    "browserCheckReceipt": "D:\\Codex workplace\\enterprise-knowledge-agent\\docs\\diagrams\\review-flow-b-2\\flow-b-chat.browser-check.json"
+  },
+  "visualReview": "not-requested",
+  "durationMs": 3156,
+  "browserCheck": {
+    "requested": true,
+    "ran": true
+  }
+}
