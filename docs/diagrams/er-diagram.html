@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="generator" content="archify 3.2.0">
   <meta name="archify-reader-contract" content="declared-wide-v1">
-  <title>流程 B · 单知识库问答、引用与取消（设计时序）</title>
+  <title>企业知识平台 · 数据库 ER 图</title>
   <script>
     // Resolve the theme before first paint so light-preference users don't
     // see a dark flash. The toolbar script below re-applies with UI state.
@@ -5193,7 +5193,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
            data-preset-badge-blueprint="蓝图 / 修订 01"
            data-preset-badge-editorial="编辑风格 / 现场笔记">
         <div class="pulse-dot"></div>
-        <h1>流程 B · 单知识库问答、引用与取消（设计时序）</h1>
+        <h1>企业知识平台 · 数据库 ER 图</h1>
       </div>
     </div>
 
@@ -5202,9 +5202,9 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
     <!-- Main Diagram -->
     <div class="diagram-container" data-detail-level="read"
          data-preset-badge-editorial-plate="ARCHIFY / 图版 04">
-      <svg viewBox="0 0 920 2798" data-sequence-column-fit="spread" data-reader-fit="width-first" role="img" lang="zh-CN" aria-labelledby="archify-diagram-title archify-diagram-description" data-animation="trace" data-preset="classic" data-quality-profile="showcase" data-motion-choreography="sequence">
-        <title id="archify-diagram-title">流程 B · 单知识库问答、引用与取消（设计时序）</title>
-        <desc id="archify-diagram-description">由 Archify 生成的时序图。</desc>
+      <svg viewBox="0 0 1794 1757" role="img" lang="zh-CN" aria-labelledby="archify-diagram-title archify-diagram-description" data-animation="trace" data-preset="classic" data-quality-profile="standard" data-erd-ui="cards" data-reader-fit="intrinsic-height" data-reader-min-text="7.5">
+        <title id="archify-diagram-title">企业知识平台 · 数据库 ER 图</title>
+        <desc id="archify-diagram-description">由 Archify 生成的实体关系图。</desc>
         <!-- Definitions -->
         <defs>
           <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
@@ -5222,391 +5222,1470 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
           <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
             <path d="M 40 0 L 0 0 0 40" class="c-grid" stroke-width="0.5"/>
           </pattern>
+          <!-- Cardinality symbols -->
+          <marker id="er-one-end" markerWidth="24" markerHeight="18" refX="22" refY="8" orient="auto" markerUnits="userSpaceOnUse" class="a-default" style="stroke: var(--text-muted)" stroke-width="1.75">
+            <path d="M 17 1 L 17 15"/>
+          </marker>
+          <marker id="er-one-optional-start" markerWidth="24" markerHeight="18" refX="0" refY="8" orient="auto" markerUnits="userSpaceOnUse" class="a-default" style="stroke: var(--text-muted)" stroke-width="1.75">
+            <path d="M 5 1 L 5 15"/>
+            <circle cx="18.5" cy="8" r="2.6" class="c-mask"/>
+            <circle cx="18.5" cy="8" r="2.6"/>
+          </marker>
+          <marker id="er-one-optional-end" markerWidth="24" markerHeight="18" refX="22" refY="8" orient="auto" markerUnits="userSpaceOnUse" class="a-default" style="stroke: var(--text-muted)" stroke-width="1.75">
+            <path d="M 17 1 L 17 15"/>
+            <circle cx="3.5" cy="8" r="2.6" class="c-mask"/>
+            <circle cx="3.5" cy="8" r="2.6"/>
+          </marker>
+          <marker id="er-many-optional-start" markerWidth="24" markerHeight="18" refX="0" refY="8" orient="auto" markerUnits="userSpaceOnUse" class="a-default" style="stroke: var(--text-muted)" stroke-width="1.75">
+            <path d="M 14 8 L 0 1 M 14 8 L 0 8 M 14 8 L 0 15"/>
+            <circle cx="18.5" cy="8" r="2.6" class="c-mask"/>
+            <circle cx="18.5" cy="8" r="2.6"/>
+          </marker>
         </defs>
+        <style>
+          svg[data-erd-ui="cards"] .er-hue-database { --er-hue: var(--database-stroke); --er-wash: var(--database-fill); }
+          svg[data-erd-ui="cards"] .er-hue-frontend { --er-hue: var(--frontend-stroke); --er-wash: var(--frontend-fill); }
+          svg[data-erd-ui="cards"] .er-hue-backend { --er-hue: var(--backend-stroke); --er-wash: var(--backend-fill); }
+          svg[data-erd-ui="cards"] .er-hue-cloud { --er-hue: var(--cloud-stroke); --er-wash: var(--cloud-fill); }
+          svg[data-erd-ui="cards"] .er-hue-messagebus { --er-hue: var(--messagebus-stroke); --er-wash: var(--messagebus-fill); }
+          svg[data-erd-ui="cards"] .er-hue-security { --er-hue: var(--security-stroke); --er-wash: var(--security-fill); }
+          svg[data-erd-ui="cards"] .er-band { fill: color-mix(in srgb, var(--er-hue) 4%, transparent); stroke: color-mix(in srgb, var(--er-hue) 20%, transparent); stroke-dasharray: none; }
+          svg[data-erd-ui="cards"] .er-band-pill { fill: var(--er-wash); stroke: color-mix(in srgb, var(--er-hue) 30%, transparent); stroke-width: .8; }
+          svg[data-erd-ui="cards"] .er-band-label { fill: var(--er-hue); letter-spacing: .08em; text-transform: uppercase; }
+          svg[data-erd-ui="cards"] .er-table { fill: var(--mask); stroke: color-mix(in srgb, var(--er-hue) 34%, var(--lane-stroke)); }
+          svg[data-erd-ui="cards"] .er-table-header { fill: var(--er-wash); stroke: none; }
+          svg[data-erd-ui="cards"] .er-table-cap { stroke: var(--er-hue); pointer-events: none; }
+          svg[data-erd-ui="cards"] .er-header-rule { stroke: color-mix(in srgb, var(--er-hue) 30%, var(--lane-stroke)); }
+          svg[data-erd-ui="cards"] [class*="er-hue-"] .semantic-sigil { color: var(--er-hue); }
+          svg[data-erd-ui="cards"] .er-row-rule { stroke-opacity: 0; }
+          svg[data-erd-ui="cards"] .er-zebra { fill: color-mix(in srgb, var(--er-hue) 6%, transparent); }
+          svg[data-erd-ui="cards"] .er-name-pk { font-weight: 700; }
+          svg[data-erd-ui="cards"] .er-type { fill: var(--text-muted); opacity: .86; }
+          svg[data-erd-ui="cards"] .er-key-badge { fill: var(--database-fill); stroke: none; }
+          svg[data-erd-ui="cards"] .er-key-badge[data-er-badge="fk"] { fill: var(--messagebus-fill); }
+          svg[data-erd-ui="cards"] .er-key-badge[data-er-badge="uk"] { fill: none; stroke: var(--lane-stroke); }
+          svg[data-erd-ui="cards"] .er-key-badge + text { text-anchor: middle; }
+          svg[data-erd-ui="cards"] [data-legend] text.t-primary { fill: var(--text); }
+          svg[data-erd-ui="cards"] [data-legend] > text.t-primary { fill: var(--text-muted); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; }
+          svg[data-erd-ui="cards"] .er-legend-hit { fill: transparent; transition: fill .15s; }
+          svg[data-erd-ui="cards"] .er-legend-hit:focus { outline: none; }
+          svg[data-erd-ui="cards"] .er-legend-hit:focus-visible { stroke: var(--database-stroke); stroke-width: 1.5; }
+          svg[data-erd-ui="cards"] [data-legend-semantic-kind]:is(:hover, :focus-within) .er-legend-hit { fill: var(--database-fill); }
+          svg[data-erd-ui="cards"] [data-legend-semantic-kind]:is(:hover, :focus-within) .er-legend-glyph { stroke: var(--database-stroke) !important; }
+          svg[data-erd-ui="cards"] .er-legend-route { stroke: var(--text-muted); stroke-opacity: .55; }
+          svg[data-erd-ui="cards"] .er-legend-edge { stroke: var(--lane-stroke); stroke-linecap: round; }
+          svg[data-erd-ui="cards"] .er-legend-divider { stroke: var(--lane-stroke); }
+          svg[data-erd-ui="cards"] [data-er-row], svg[data-erd-ui="cards"] [data-er-ends] { transition: opacity .15s; }
+          svg[data-erd-ui="cards"]:has([data-legend-semantic-kind="pk"]:is(:hover, :focus-within)) [data-er-row]:not(:has([data-er-badge="pk"])) { opacity: .22; }
+          svg[data-erd-ui="cards"]:has([data-legend-semantic-kind="pk"]:is(:hover, :focus-within)) [data-er-row] [data-er-badge="pk"] { stroke: var(--database-stroke); stroke-width: 1.25; }
+          svg[data-erd-ui="cards"]:has([data-legend-semantic-kind="fk"]:is(:hover, :focus-within)) [data-er-row]:not(:has([data-er-badge="fk"])) { opacity: .22; }
+          svg[data-erd-ui="cards"]:has([data-legend-semantic-kind="fk"]:is(:hover, :focus-within)) [data-er-row] [data-er-badge="fk"] { stroke: var(--messagebus-stroke); stroke-width: 1.25; }
+          svg[data-erd-ui="cards"]:has([data-legend-semantic-kind="uk"]:is(:hover, :focus-within)) [data-er-row]:not(:has([data-er-badge="uk"])) { opacity: .22; }
+          svg[data-erd-ui="cards"]:has([data-legend-semantic-kind="uk"]:is(:hover, :focus-within)) [data-er-row] [data-er-badge="uk"] { stroke: var(--text-muted); stroke-width: 1.25; }
+          svg[data-erd-ui="cards"]:has([data-legend-semantic-kind="one"]:is(:hover, :focus-within)) [data-er-ends]:not([data-er-ends~="one"]) { opacity: .12; }
+          svg[data-erd-ui="cards"]:has([data-legend-semantic-kind="one"]:is(:hover, :focus-within)) marker[id^="er-one"] { stroke: var(--database-stroke) !important; stroke-width: 2.25; }
+          svg[data-erd-ui="cards"]:has([data-legend-semantic-kind="many"]:is(:hover, :focus-within)) [data-er-ends]:not([data-er-ends~="many"]) { opacity: .12; }
+          svg[data-erd-ui="cards"]:has([data-legend-semantic-kind="many"]:is(:hover, :focus-within)) marker[id^="er-many"] { stroke: var(--database-stroke) !important; stroke-width: 2.25; }
+          svg[data-erd-ui="cards"]:has([data-legend-semantic-kind="optional"]:is(:hover, :focus-within)) [data-er-ends]:not([data-er-ends~="optional"]) { opacity: .12; }
+          svg[data-erd-ui="cards"]:has([data-legend-semantic-kind="optional"]:is(:hover, :focus-within)) marker[id*="-optional"] { stroke: var(--database-stroke) !important; stroke-width: 2.25; }
+          @media (prefers-reduced-motion: reduce) { svg[data-erd-ui="cards"] * { transition: none !important; } }
+        </style>
 
         <!-- Background Grid -->
         <rect width="100%" height="100%" fill="url(#grid)" />
 
-        <!-- Time Segments -->
-        <rect data-graph-role="structural-frame" data-composition-frame-kind="segment" data-composition-frame-id="0" x="48" y="155" width="824" height="285" rx="10" class="c-lane" stroke-width="1"/>
-
-        <rect data-graph-role="structural-frame" data-composition-frame-kind="segment" data-composition-frame-id="1" x="48" y="500" width="824" height="450" rx="10" class="c-lane" stroke-width="1"/>
-
-        <rect data-graph-role="structural-frame" data-composition-frame-kind="segment" data-composition-frame-id="2" x="48" y="1010" width="824" height="680" rx="10" class="c-lane" stroke-width="1"/>
-
-        <rect data-graph-role="structural-frame" data-composition-frame-kind="segment" data-composition-frame-id="3" x="48" y="1750" width="824" height="475" rx="10" class="c-lane" stroke-width="1"/>
-
-        <rect data-graph-role="structural-frame" data-composition-frame-kind="segment" data-composition-frame-id="4" x="48" y="2285" width="824" height="415" rx="10" class="c-lane" stroke-width="1"/>
-
-        <!-- Lifelines -->
-        <path d="M 116.5 142 L 116.5 2702" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
-        <path d="M 258.3 142 L 258.3 2702" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
-        <path d="M 400.1 142 L 400.1 2702" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
-        <path d="M 541.9000000000001 142 L 541.9000000000001 2702" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
-        <path d="M 683.7 142 L 683.7 2702" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
-        <path d="M 825.5 142 L 825.5 2702" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
-
-        <!-- Activations -->
-
-
-        <!-- Messages -->
-        <g data-edge-from="web" data-edge-to="spring" data-edge-label="01 POST 提交问题" data-edge-key="0" data-edge-id="b-question">
-          <path data-composition-edge-from="web" data-composition-edge-to="spring" data-composition-edge-id="b-question" data-composition-points="123.5,175;251.3,175" d="M 123.5 175 L 251.3 175" class="a-emphasis" data-animate="edge" style="--step:0" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
-        <g data-detail="context">
-          <rect x="128.60000000000002" y="155" width="117.6" height="18" rx="3" class="c-mask"/>
-          <text x="187.40000000000003" y="165" class="t-edge-emphasis" font-size="11" text-anchor="middle">01 POST 提交问题</text>
+        <!-- Domain bands (behind the routes so a channel is never washed out) -->
+        <g data-domain-band="账号与授权" class="er-hue-database">
+          <rect x="20" y="22" width="374" height="932" rx="12" class="c-lane er-band" stroke-width="1"/>
+          <rect x="28" y="15" width="76" height="15" rx="7.5" class="c-mask"/>
+          <rect x="28" y="15" width="76" height="15" rx="7.5" class="er-band-pill"/>
+          <text data-domain-label="" x="35" y="25.6" class="t-muted er-band-label" font-size="9" font-weight="700">账号与授权</text>
         </g>
-        <text data-detail="context" x="135.5" y="193" class="t-muted" font-size="7"><tspan x="135.5" dy="0">单一知识库会话；前端 1</tspan><tspan x="135.5" dy="11">秒内显示等待</tspan></text>
+        <g data-domain-band="文档与处理" class="er-hue-frontend">
+          <rect x="492" y="22" width="374" height="1685" rx="12" class="c-lane er-band" stroke-width="1"/>
+          <rect x="500" y="15" width="76" height="15" rx="7.5" class="c-mask"/>
+          <rect x="500" y="15" width="76" height="15" rx="7.5" class="er-band-pill"/>
+          <text data-domain-label="" x="507" y="25.6" class="t-muted er-band-label" font-size="9" font-weight="700">文档与处理</text>
+        </g>
+        <g data-domain-band="会话与生成" class="er-hue-backend">
+          <rect x="947" y="22" width="374" height="1198" rx="12" class="c-lane er-band" stroke-width="1"/>
+          <rect x="955" y="15" width="76" height="15" rx="7.5" class="c-mask"/>
+          <rect x="955" y="15" width="76" height="15" rx="7.5" class="er-band-pill"/>
+          <text data-domain-label="" x="962" y="25.6" class="t-muted er-band-label" font-size="9" font-weight="700">会话与生成</text>
+        </g>
+        <g data-domain-band="证据与向量" class="er-hue-cloud">
+          <rect x="1408" y="22" width="374" height="1141" rx="12" class="c-lane er-band" stroke-width="1"/>
+          <rect x="1416" y="15" width="76" height="15" rx="7.5" class="c-mask"/>
+          <rect x="1416" y="15" width="76" height="15" rx="7.5" class="er-band-pill"/>
+          <text data-domain-label="" x="1423" y="25.6" class="t-muted er-band-label" font-size="9" font-weight="700">证据与向量</text>
         </g>
 
-        <g data-edge-from="spring" data-edge-to="db" data-edge-label="02 SQL 鉴权与保存" data-edge-key="1" data-edge-id="b-auth">
-          <path data-composition-edge-from="spring" data-composition-edge-to="db" data-composition-edge-id="b-auth" data-composition-points="265.3,275;534.9000000000001,275" d="M 265.3 275 L 534.9000000000001 275" class="a-security" data-animate="edge" style="--step:1" stroke-width="1.4" marker-end="url(#arrowhead-security)"/>
-        <g data-detail="context">
-          <rect x="338" y="255" width="124.19999999999999" height="18" rx="3" class="c-mask"/>
-          <text x="400.1" y="265" class="t-edge-security" font-size="11" text-anchor="middle">02 SQL 鉴权与保存</text>
-        </g>
-        <text data-detail="context" x="277.3" y="293" class="t-muted" font-size="7"><tspan x="277.3" dy="0">校验 owner、KB</tspan><tspan x="277.3" dy="11">授权、长度、单生成；保存问</tspan><tspan x="277.3" dy="11">题/run，取最近 10 轮</tspan></text>
-        </g>
+        <!-- Bundled relationship trunks (under the branches: a bus runs close
+             to the shared side, so a cardinality glyph that reaches further out
+             has to stay readable over it, and the ring's mask has to be able to
+             punch through) -->
+        <path data-er-trunk="" data-composition-points="398,105.5;398,559.5" d="M 398 105.5 L 398 559.5" class="a-default" stroke-width="1.5"/>
 
-        <g data-edge-from="spring" data-edge-to="fast" data-edge-label="03 HTTP 生成请求" data-edge-key="2" data-edge-id="b-scope">
-          <path data-composition-edge-from="spring" data-composition-edge-to="fast" data-composition-edge-id="b-scope" data-composition-points="265.3,375;393.1,375" d="M 265.3 375 L 393.1 375" class="a-emphasis" data-animate="edge" style="--step:2" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
-        <g data-detail="context">
-          <rect x="270.40000000000003" y="355" width="117.6" height="18" rx="3" class="c-mask"/>
-          <text x="329.20000000000005" y="365" class="t-edge-emphasis" font-size="11" text-anchor="middle">03 HTTP 生成请求</text>
-        </g>
-        <text data-detail="context" x="277.3" y="393" class="t-muted" font-size="7"><tspan x="277.3" dy="0">runId + 签名 scope +</tspan><tspan x="277.3" dy="11">上下文 + deadline；返回</tspan><tspan x="277.3" dy="11">SSE 流</tspan></text>
-        </g>
+        <!-- Relationship paths (before entities for correct z-order) -->
+        <path data-edge-from="knowledge_bases" data-edge-to="users" data-edge-label="创建人" data-edge-key="0" data-edge-id="r1" data-er-ends="many one optional" data-composition-points="195,432;195,219" d="M 195 432 L 195 219" class="a-default" data-animate="edge" style="--step:0" stroke-width="1.5" marker-start="url(#er-many-optional-start)" marker-end="url(#er-one-end)"/>
+        <path data-edge-from="kb_members" data-edge-to="knowledge_bases" data-edge-label="知识库授权" data-edge-key="1" data-edge-id="r2" data-er-ends="many one optional" data-composition-points="195,824;195,687" d="M 195 824 L 195 687" class="a-default" data-animate="edge" style="--step:1" stroke-width="1.5" marker-start="url(#er-many-optional-start)" marker-end="url(#er-one-end)"/>
+        <path data-edge-from="kb_members" data-edge-to="users" data-edge-label="成员与授权人" data-edge-key="2" data-edge-id="r3" data-er-ends="many one optional" data-composition-points="219,824;219,700;19,700;19,243;219,243;219,219" d="M 219 824 L 219 708 Q 219 700 211 700 L 27 700 Q 19 700 19 692 L 19 251 Q 19 243 27 243 L 211 243 Q 219 243 219 235 L 219 219" class="a-default" data-animate="edge" style="--step:2" stroke-width="1.5" marker-start="url(#er-many-optional-start)" marker-end="url(#er-one-end)"/>
+        <path data-edge-from="documents" data-edge-to="knowledge_bases" data-edge-label="包含" data-edge-key="3" data-edge-id="r4" data-er-ends="many one optional" data-composition-points="504,208;398,208;398,559.5;382,559.5" d="M 504 208 L 398 208 M 398 559.5 L 382 559.5" class="a-default" data-animate="edge" style="--step:3" stroke-width="1.5" marker-start="url(#er-many-optional-start)" marker-end="url(#er-one-end)"/>
+        <path data-edge-from="documents" data-edge-to="users" data-edge-label="上传人" data-edge-key="4" data-edge-id="r5" data-er-ends="many one optional" data-composition-points="504,184;398,184;398,105.5;382,105.5" d="M 504 184 L 398 184 M 398 105.5 L 382 105.5" class="a-default" data-animate="edge" style="--step:4" stroke-width="1.5" marker-start="url(#er-many-optional-start)" marker-end="url(#er-one-end)"/>
+        <path data-edge-from="document_versions" data-edge-to="documents" data-edge-label="内部文件版本" data-edge-key="5" data-edge-id="r6" data-er-ends="many one optional" data-composition-points="691,432;691,352" d="M 691 432 L 691 352" class="a-default" data-animate="edge" style="--step:5" stroke-width="1.5" marker-start="url(#er-many-optional-start)" marker-end="url(#er-one-end)"/>
+        <path data-edge-from="document_versions" data-edge-to="users" data-edge-label="版本上传人" data-edge-key="6" data-edge-id="r7" data-er-ends="many one optional" data-composition-points="504,569;443,569;443,129.5;382,129.5" d="M 504 569 L 451 569 Q 443 569 443 561 L 443 137.5 Q 443 129.5 435 129.5 L 382 129.5" class="a-default" data-animate="edge" style="--step:6" stroke-width="1.5" marker-start="url(#er-many-optional-start)" marker-end="url(#er-one-end)"/>
+        <path data-edge-from="processing_jobs" data-edge-to="document_versions" data-edge-label="每版本一个任务" data-edge-key="7" data-edge-id="r8" data-er-ends="one optional" data-composition-points="679,824;679,706" d="M 679 824 L 679 706" class="a-default" data-animate="edge" style="--step:7" stroke-width="1.5" marker-start="url(#er-one-optional-start)" marker-end="url(#er-one-end)"/>
+        <path data-edge-from="processing_jobs" data-edge-to="users" data-edge-label="任务创建人" data-edge-key="8" data-edge-id="r9" data-er-ends="many one optional" data-composition-points="504,894.5;443,894.5;443,153.5;382,153.5" d="M 504 894.5 L 451 894.5 Q 443 894.5 443 886.5 L 443 161.5 Q 443 153.5 435 153.5 L 382 153.5" class="a-default" data-animate="edge" style="--step:8" stroke-width="1.5" marker-start="url(#er-many-optional-start)" marker-end="url(#er-one-end)"/>
+        <path data-edge-from="processing_attempts" data-edge-to="processing_jobs" data-edge-label="手动重试新增尝试" data-edge-key="9" data-edge-id="r10" data-er-ends="many one optional" data-composition-points="667,1292;667,965" d="M 667 1292 L 667 965" class="a-default" data-animate="edge" style="--step:9" stroke-width="1.5" marker-start="url(#er-many-optional-start)" marker-end="url(#er-one-end)"/>
+        <path data-edge-from="processing_attempts" data-edge-to="users" data-edge-label="尝试发起人" data-edge-key="10" data-edge-id="r11" data-er-ends="many one optional" data-composition-points="504,1495.5;443,1495.5;443,177.5;382,177.5" d="M 504 1495.5 L 451 1495.5 Q 443 1495.5 443 1487.5 L 443 185.5 Q 443 177.5 435 177.5 L 382 177.5" class="a-default" data-animate="edge" style="--step:10" stroke-width="1.5" marker-start="url(#er-many-optional-start)" marker-end="url(#er-one-end)"/>
+        <path data-edge-from="conversations" data-edge-to="users" data-edge-label="个人会话" data-edge-key="11" data-edge-id="r12" data-er-ends="many one optional" data-composition-points="959,127;867,127;867,27;406,27;406,81.5;382,81.5" d="M 959 127 L 875 127 Q 867 127 867 119 L 867 35 Q 867 27 859 27 L 414 27 Q 406 27 406 35 L 406 73.5 Q 406 81.5 398 81.5 L 382 81.5" class="a-default" data-animate="edge" style="--step:11" stroke-width="1.5" marker-start="url(#er-many-optional-start)" marker-end="url(#er-one-end)"/>
+        <path data-edge-from="conversations" data-edge-to="knowledge_bases" data-edge-label="固定单知识库" data-edge-key="12" data-edge-id="r13" data-er-ends="many one optional" data-composition-points="959,151;857,151;857,429;406,429;406,535.5;382,535.5" d="M 959 151 L 865 151 Q 857 151 857 159 L 857 421 Q 857 429 849 429 L 414 429 Q 406 429 406 437 L 406 527.5 Q 406 535.5 398 535.5 L 382 535.5" class="a-default" data-animate="edge" style="--step:12" stroke-width="1.5" marker-start="url(#er-many-optional-start)" marker-end="url(#er-one-end)"/>
+        <path data-edge-from="messages" data-edge-to="conversations" data-edge-label="消息顺序" data-edge-key="13" data-edge-id="r14" data-er-ends="many one optional" data-composition-points="1122,432;1122,238" d="M 1122 432 L 1122 238" class="a-default" data-animate="edge" style="--step:12" stroke-width="1.5" marker-start="url(#er-many-optional-start)" marker-end="url(#er-one-end)"/>
+        <path data-edge-from="generation_runs" data-edge-to="conversations" data-edge-label="生成执行" data-edge-key="14" data-edge-id="r16" data-er-ends="many one optional" data-composition-points="1309,1018;1333,1018;1333,139;1309,139" d="M 1309 1018 L 1325 1018 Q 1333 1018 1333 1010 L 1333 147 Q 1333 139 1325 139 L 1309 139" class="a-default" data-animate="edge" style="--step:12" stroke-width="1.5" marker-start="url(#er-many-optional-start)" marker-end="url(#er-one-end)"/>
+        <path data-edge-from="generation_runs" data-edge-to="messages" data-edge-label="问题与回答" data-edge-key="15" data-edge-id="r17" data-er-ends="many one optional" data-composition-points="1158,824;1158,730.5;1146,730.5;1146,649" d="M 1158 824 L 1158 736.5 Q 1158 730.5 1152 730.5 L 1152 730.5 Q 1146 730.5 1146 724.5 L 1146 649" class="a-default" data-animate="edge" style="--step:12" stroke-width="1.5" marker-start="url(#er-many-optional-start)" marker-end="url(#er-one-end)"/>
+        <path data-edge-from="citations" data-edge-to="generation_runs" data-edge-label="引用编号" data-edge-key="16" data-edge-id="r18" data-er-ends="many one optional" data-composition-points="1420,146;1364.5,146;1364.5,1018;1309,1018" d="M 1420 146 L 1372.5 146 Q 1364.5 146 1364.5 154 L 1364.5 1010 Q 1364.5 1018 1356.5 1018 L 1309 1018" class="a-default" data-animate="edge" style="--step:12" stroke-width="1.5" marker-start="url(#er-many-optional-start)" marker-end="url(#er-one-end)"/>
+        <path data-edge-from="citations" data-edge-to="processing_attempts" data-edge-label="绑定来源尝试" data-edge-key="17" data-edge-id="r19" data-er-ends="many one optional" data-composition-points="1420,170;1396,170;1396,19;11,19;11,1289;878,1289;878,1483.5;854,1483.5" d="M 1420 170 L 1404 170 Q 1396 170 1396 162 L 1396 27 Q 1396 19 1388 19 L 19 19 Q 11 19 11 27 L 11 1281 Q 11 1289 19 1289 L 870 1289 Q 878 1289 878 1297 L 878 1475.5 Q 878 1483.5 870 1483.5 L 854 1483.5" class="a-default" data-animate="edge" style="--step:12" stroke-width="1.5" marker-start="url(#er-many-optional-start)" marker-end="url(#er-one-end)"/>
+        <path data-edge-from="document_chunks" data-edge-to="processing_attempts" data-edge-label="待发布或已发布切片" data-edge-key="18" data-edge-id="r20" data-er-ends="many one optional" data-composition-points="1420,588;1396,588;1396,821;1773,821;1773,1507.5;854,1507.5" d="M 1420 588 L 1404 588 Q 1396 588 1396 596 L 1396 813 Q 1396 821 1404 821 L 1765 821 Q 1773 821 1773 829 L 1773 1499.5 Q 1773 1507.5 1765 1507.5 L 854 1507.5" class="a-default" data-animate="edge" style="--step:12" stroke-width="1.5" marker-start="url(#er-many-optional-start)" marker-end="url(#er-one-end)"/>
+        <path data-edge-from="documents" data-edge-to="processing_attempts" data-edge-label="当前发布指针" data-edge-key="19" data-edge-id="r21" data-er-ends="one optional" data-composition-points="854,196;878,196;878,1495.5;854,1495.5" d="M 854 196 L 870 196 Q 878 196 878 204 L 878 1487.5 Q 878 1495.5 870 1495.5 L 854 1495.5" class="a-default" data-animate="edge" style="--step:12" stroke-width="1.5" marker-start="url(#er-one-optional-start)" marker-end="url(#er-one-optional-end)"/>
+        <path data-edge-from="messages" data-edge-to="generation_runs" data-edge-label="当前 run（联合FK）" data-edge-key="20" data-edge-id="current_run" data-er-ends="one optional" data-composition-points="1122,649;1122,742.5;1110,742.5;1110,824" d="M 1122 649 L 1122 736.5 Q 1122 742.5 1116 742.5 L 1116 742.5 Q 1110 742.5 1110 748.5 L 1110 824" class="a-default" data-animate="edge" style="--step:12" stroke-width="1.5" marker-start="url(#er-one-optional-start)" marker-end="url(#er-one-optional-end)"/>
+        <path data-edge-from="citations" data-edge-to="document_chunks" data-edge-label="历史逻辑来源（无FK）" data-edge-key="21" data-edge-id="historical_chunk" data-er-ends="many one optional" data-composition-points="1595,276;1595,432" d="M 1595 276 L 1595 432" class="a-dashed" data-animate="edge" style="--step:12" stroke-width="1.5" marker-start="url(#er-many-optional-start)" marker-end="url(#er-one-optional-end)"/>
+        <path data-edge-from="retrievable_chunks" data-edge-to="document_chunks" data-edge-label="派生（非FK）" data-edge-key="22" data-edge-id="view_chunks" data-er-ends="one optional" data-composition-points="1595,824;1595,744" d="M 1595 824 L 1595 744" class="a-dashed" data-animate="edge" style="--step:12" stroke-width="1.5" marker-start="url(#er-one-optional-start)" marker-end="url(#er-one-end)"/>
+        <path data-edge-from="retrievable_chunks" data-edge-to="documents" data-edge-label="当前发布指针（非FK）" data-edge-key="23" data-edge-id="view_doc" data-er-ends="many one optional" data-composition-points="1420,977.5;1322,977.5;1322,251;878,251;878,196;854,196" d="M 1420 977.5 L 1330 977.5 Q 1322 977.5 1322 969.5 L 1322 259 Q 1322 251 1314 251 L 886 251 Q 878 251 878 243 L 878 204 Q 878 196 870 196 L 854 196" class="a-dashed" data-animate="edge" style="--step:12" stroke-width="1.5" marker-start="url(#er-many-optional-start)" marker-end="url(#er-one-end)"/>
+        <path data-edge-from="retrievable_chunks" data-edge-to="knowledge_bases" data-edge-label="ACTIVE（非FK）" data-edge-key="24" data-edge-id="view_kb" data-er-ends="many one optional" data-composition-points="1420,1001.5;1322,1001.5;1322,719;406,719;406,583.5;382,583.5" d="M 1420 1001.5 L 1330 1001.5 Q 1322 1001.5 1322 993.5 L 1322 727 Q 1322 719 1314 719 L 414 719 Q 406 719 406 711 L 406 591.5 Q 406 583.5 398 583.5 L 382 583.5" class="a-dashed" data-animate="edge" style="--step:12" stroke-width="1.5" marker-start="url(#er-many-optional-start)" marker-end="url(#er-one-end)"/>
 
-        <g data-edge-from="fast" data-edge-to="models" data-edge-label="04 HTTPS 查询向量" data-edge-key="3" data-edge-id="b-query-embed">
-          <path data-composition-edge-from="fast" data-composition-edge-to="models" data-composition-edge-id="b-query-embed" data-composition-points="407.1,520;676.7,520" d="M 407.1 520 L 676.7 520" class="a-default" data-animate="edge" style="--step:3" stroke-width="1.4" marker-end="url(#arrowhead)"/>
-        <g data-detail="context">
-          <rect x="479.80000000000007" y="500" width="124.19999999999999" height="18" rx="3" class="c-mask"/>
-          <text x="541.9000000000001" y="510" class="t-muted" font-size="11" text-anchor="middle">04 HTTPS 查询向量</text>
-        </g>
-        <text data-detail="context" x="419.1" y="538" class="t-muted" font-size="7"><tspan x="419.1" dy="0">上下文只用于理解问题；查询</tspan><tspan x="419.1" dy="11">与文档用同一 Embedding</tspan><tspan x="419.1" dy="11">模型</tspan></text>
-        </g>
-
-        <g data-edge-from="models" data-edge-to="fast" data-edge-label="查询向量" data-edge-key="4" data-edge-id="b-query-vec">
-          <path data-composition-edge-from="models" data-composition-edge-to="fast" data-composition-edge-id="b-query-vec" data-composition-points="676.7,620;407.1,620" d="M 676.7 620 L 407.1 620" class="a-default" data-animate="edge" style="--step:4" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
-        <g data-detail="context">
-          <rect x="509.5000000000001" y="600" width="64.8" height="18" rx="3" class="c-mask"/>
-          <text x="541.9000000000001" y="610" class="t-muted" font-size="11" text-anchor="middle">查询向量</text>
-        </g>
-        </g>
-
-        <g data-edge-from="fast" data-edge-to="db" data-edge-label="05 SQL 受限检索" data-edge-key="5" data-edge-id="b-retrieve">
-          <path data-composition-edge-from="fast" data-composition-edge-to="db" data-composition-edge-id="b-retrieve" data-composition-points="407.1,685;534.9000000000001,685" d="M 407.1 685 L 534.9000000000001 685" class="a-security" data-animate="edge" style="--step:5" stroke-width="1.4" marker-end="url(#arrowhead-security)"/>
-        <g data-detail="context">
-          <rect x="415.50000000000006" y="665" width="111" height="18" rx="3" class="c-mask"/>
-          <text x="471.00000000000006" y="675" class="t-edge-security" font-size="11" text-anchor="middle">05 SQL 受限检索</text>
-        </g>
-        <text data-detail="context" x="419.1" y="703" class="t-muted" font-size="7"><tspan x="419.1" dy="0">WHERE kbId +</tspan><tspan x="419.1" dy="11">当前已发布版本/attempt +</tspan><tspan x="419.1" dy="11">modelId，再按向量距离排序</tspan></text>
-        </g>
-
-        <g data-edge-from="db" data-edge-to="fast" data-edge-label="片段 / 页码 / 版本" data-edge-key="6" data-edge-id="b-evidence">
-          <path data-composition-edge-from="db" data-composition-edge-to="fast" data-composition-edge-id="b-evidence" data-composition-points="534.9000000000001,785;407.1,785" d="M 534.9000000000001 785 L 407.1 785" class="a-default" data-animate="edge" style="--step:6" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
-        <g data-detail="context">
-          <rect x="405.6" y="765" width="130.8" height="18" rx="3" class="c-mask"/>
-          <text x="471" y="775" class="t-muted" font-size="11" text-anchor="middle">片段 / 页码 / 版本</text>
-        </g>
-        <text data-detail="context" x="419.1" y="803" class="t-muted" font-size="7"><tspan x="419.1" dy="0">构造 evidenceId</tspan><tspan x="419.1" dy="11">清单；无依据、部分依据与冲</tspan><tspan x="419.1" dy="11">突遵循 PRD</tspan></text>
-        </g>
-
-        <g data-edge-from="fast" data-edge-to="models" data-edge-label="06 HTTPS 流式生成" data-edge-key="7" data-edge-id="b-llm">
-          <path data-composition-edge-from="fast" data-composition-edge-to="models" data-composition-edge-id="b-llm" data-composition-points="407.1,885;676.7,885" d="M 407.1 885 L 676.7 885" class="a-emphasis" data-animate="edge" style="--step:7" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
-        <g data-detail="context">
-          <rect x="479.80000000000007" y="865" width="124.19999999999999" height="18" rx="3" class="c-mask"/>
-          <text x="541.9000000000001" y="875" class="t-edge-emphasis" font-size="11" text-anchor="middle">06 HTTPS 流式生成</text>
-        </g>
-        <text data-detail="context" x="419.1" y="903" class="t-muted" font-size="7"><tspan x="419.1" dy="0">输入问题及证据；未知引用</tspan><tspan x="419.1" dy="11">ID 不得成为真实来源</tspan></text>
-        </g>
-
-        <g data-edge-from="models" data-edge-to="fast" data-edge-label="07 模型内容流" data-edge-key="8" data-edge-id="b-model-stream">
-          <path data-composition-edge-from="models" data-composition-edge-to="fast" data-composition-edge-id="b-model-stream" data-composition-points="676.7,1030;407.1,1030" d="M 676.7 1030 L 407.1 1030" class="a-default" data-animate="edge" style="--step:8" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
-        <g data-detail="context">
-          <rect x="493.0000000000001" y="1010" width="97.8" height="18" rx="3" class="c-mask"/>
-          <text x="541.9000000000001" y="1020" class="t-muted" font-size="11" text-anchor="middle">07 模型内容流</text>
-        </g>
-        </g>
-
-        <g data-edge-from="fast" data-edge-to="spring" data-edge-label="08 HTTP SSE 事件" data-edge-key="9" data-edge-id="b-internal-stream">
-          <path data-composition-edge-from="fast" data-composition-edge-to="spring" data-composition-edge-id="b-internal-stream" data-composition-points="393.1,1095;265.3,1095" d="M 393.1 1095 L 265.3 1095" class="a-emphasis" data-animate="edge" style="--step:9" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
-        <g data-detail="context">
-          <rect x="270.40000000000003" y="1075" width="117.6" height="18" rx="3" class="c-mask"/>
-          <text x="329.20000000000005" y="1085" class="t-edge-emphasis" font-size="11" text-anchor="middle">08 HTTP SSE 事件</text>
-        </g>
-        <text data-detail="context" x="277.3" y="1113" class="t-muted" font-size="7"><tspan x="277.3" dy="0">delta / citations /</tspan><tspan x="277.3" dy="11">done，携带 runId 与 seq</tspan></text>
-        </g>
-
-        <g data-edge-from="spring" data-edge-to="db" data-edge-label="09 校验并保存片段" data-edge-key="10" data-edge-id="b-check-persist">
-          <path data-composition-edge-from="spring" data-composition-edge-to="db" data-composition-edge-id="b-check-persist" data-composition-points="265.3,1195;534.9000000000001,1195" d="M 265.3 1195 L 534.9000000000001 1195" class="a-security" data-animate="edge" style="--step:10" stroke-width="1.4" marker-end="url(#arrowhead-security)"/>
-        <g data-detail="context">
-          <rect x="338" y="1175" width="124.19999999999999" height="18" rx="3" class="c-mask"/>
-          <text x="400.1" y="1185" class="t-edge-security" font-size="11" text-anchor="middle">09 校验并保存片段</text>
-        </g>
-        <text data-detail="context" x="277.3" y="1213" class="t-muted" font-size="7"><tspan x="277.3" dy="0">每批检查 run、当前授权及</tspan><tspan x="277.3" dy="11">来源；失效则不继续转发</tspan></text>
-        </g>
-
-        <g data-edge-from="spring" data-edge-to="web" data-edge-label="10 HTTP SSE 逐步展示" data-edge-key="11" data-edge-id="b-ui-stream">
-          <path data-composition-edge-from="spring" data-composition-edge-to="web" data-composition-edge-id="b-ui-stream" data-composition-points="251.3,1295;123.5,1295" d="M 251.3 1295 L 123.5 1295" class="a-emphasis" data-animate="edge" style="--step:11" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
-        <g data-detail="context">
-          <rect x="115.4" y="1275" width="144" height="18" rx="3" class="c-mask"/>
-          <text x="187.4" y="1285" class="t-edge-emphasis" font-size="11" text-anchor="middle">10 HTTP SSE 逐步展示</text>
-        </g>
-        </g>
-
-        <g data-edge-from="fast" data-edge-to="spring" data-edge-label="11 引用清单与 done" data-edge-key="12" data-edge-id="b-citations">
-          <path data-composition-edge-from="fast" data-composition-edge-to="spring" data-composition-edge-id="b-citations" data-composition-points="393.1,1360;265.3,1360" d="M 393.1 1360 L 265.3 1360" class="a-default" data-animate="edge" style="--step:12" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
-        <g data-detail="context">
-          <rect x="263.80000000000007" y="1340" width="130.8" height="18" rx="3" class="c-mask"/>
-          <text x="329.20000000000005" y="1350" class="t-muted" font-size="11" text-anchor="middle">11 引用清单与 done</text>
-        </g>
-        <text data-detail="context" x="277.3" y="1378" class="t-muted" font-size="7"><tspan x="277.3" dy="0">Fast 的 done 只代表计算</tspan><tspan x="277.3" dy="11">完成，不代表会话已保存</tspan></text>
-        </g>
-
-        <g data-edge-from="spring" data-edge-to="db" data-edge-label="12 SQL 核验与最终保存" data-edge-key="13" data-edge-id="b-final-save">
-          <path data-composition-edge-from="spring" data-composition-edge-to="db" data-composition-edge-id="b-final-save" data-composition-points="265.3,1460;534.9000000000001,1460" d="M 265.3 1460 L 534.9000000000001 1460" class="a-default" data-animate="edge" style="--step:12" stroke-width="1.4" marker-end="url(#arrowhead)"/>
-        <g data-detail="context">
-          <rect x="324.8" y="1440" width="150.6" height="18" rx="3" class="c-mask"/>
-          <text x="400.1" y="1450" class="t-muted" font-size="11" text-anchor="middle">12 SQL 核验与最终保存</text>
-        </g>
-        <text data-detail="context" x="277.3" y="1478" class="t-muted" font-size="7"><tspan x="277.3" dy="0">核对真实 chunk/页码/版本，</tspan><tspan x="277.3" dy="11">正文与引用一起完成</tspan></text>
-        </g>
-
-        <g data-edge-from="db" data-edge-to="spring" data-edge-label="事务提交成功" data-edge-key="14" data-edge-id="b-final-commit">
-          <path data-composition-edge-from="db" data-composition-edge-to="spring" data-composition-edge-id="b-final-commit" data-composition-points="534.9000000000001,1560;265.3,1560" d="M 534.9000000000001 1560 L 265.3 1560" class="a-default" data-animate="edge" style="--step:12" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
-        <g data-detail="context">
-          <rect x="354.5" y="1540" width="91.19999999999999" height="18" rx="3" class="c-mask"/>
-          <text x="400.1" y="1550" class="t-muted" font-size="11" text-anchor="middle">事务提交成功</text>
-        </g>
-        </g>
-
-        <g data-edge-from="spring" data-edge-to="web" data-edge-label="13 citations + done" data-edge-key="15" data-edge-id="b-done">
-          <path data-composition-edge-from="spring" data-composition-edge-to="web" data-composition-edge-id="b-done" data-composition-points="251.3,1625;123.5,1625" d="M 251.3 1625 L 123.5 1625" class="a-default" data-animate="edge" style="--step:12" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
-        <g data-detail="context">
-          <rect x="118.70000000000002" y="1605" width="137.39999999999998" height="18" rx="3" class="c-mask"/>
-          <text x="187.4" y="1615" class="t-muted" font-size="11" text-anchor="middle">13 citations + done</text>
-        </g>
-        <text data-detail="context" x="135.5" y="1643" class="t-muted" font-size="7"><tspan x="135.5" dy="0">持久化成功后才显示完整回答</tspan><tspan x="135.5" dy="11">和可点击引用</tspan></text>
-        </g>
-
-        <g data-edge-from="web" data-edge-to="spring" data-edge-label="14 GET 来源引用" data-edge-key="16" data-edge-id="b-click">
-          <path data-composition-edge-from="web" data-composition-edge-to="spring" data-composition-edge-id="b-click" data-composition-points="123.5,1770;251.3,1770" d="M 123.5 1770 L 251.3 1770" class="a-default" data-animate="edge" style="--step:12" stroke-width="1.4" marker-end="url(#arrowhead)"/>
-        <g data-detail="context">
-          <rect x="131.9" y="1750" width="111" height="18" rx="3" class="c-mask"/>
-          <text x="187.4" y="1760" class="t-muted" font-size="11" text-anchor="middle">14 GET 来源引用</text>
-        </g>
-        </g>
-
-        <g data-edge-from="spring" data-edge-to="db" data-edge-label="SQL 当前权限与版本" data-edge-key="17" data-edge-id="b-cite-auth">
-          <path data-composition-edge-from="spring" data-composition-edge-to="db" data-composition-edge-id="b-cite-auth" data-composition-points="265.3,1835;534.9000000000001,1835" d="M 265.3 1835 L 534.9000000000001 1835" class="a-security" data-animate="edge" style="--step:12" stroke-width="1.4" marker-end="url(#arrowhead-security)"/>
-        <g data-detail="context">
-          <rect x="334.70000000000005" y="1815" width="130.8" height="18" rx="3" class="c-mask"/>
-          <text x="400.1" y="1825" class="t-edge-security" font-size="11" text-anchor="middle">SQL 当前权限与版本</text>
-        </g>
-        </g>
-
-        <g data-edge-from="spring" data-edge-to="web" data-edge-label="文件名 / 原文片段 / 页码" data-edge-key="18" data-edge-id="b-cite-detail">
-          <path data-composition-edge-from="spring" data-composition-edge-to="web" data-composition-edge-id="b-cite-detail" data-composition-points="251.3,1900;123.5,1900" d="M 251.3 1900 L 123.5 1900" class="a-default" data-animate="edge" style="--step:12" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
-        <g data-detail="context">
-          <rect x="102.20000000000002" y="1880" width="170.39999999999998" height="18" rx="3" class="c-mask"/>
-          <text x="187.4" y="1890" class="t-muted" font-size="11" text-anchor="middle">文件名 / 原文片段 / 页码</text>
-        </g>
-        </g>
-
-        <g data-edge-from="web" data-edge-to="spring" data-edge-label="15 GET 原文件" data-edge-key="19" data-edge-id="b-download">
-          <path data-composition-edge-from="web" data-composition-edge-to="spring" data-composition-edge-id="b-download" data-composition-points="123.5,1965;251.3,1965" d="M 123.5 1965 L 251.3 1965" class="a-default" data-animate="edge" style="--step:12" stroke-width="1.4" marker-end="url(#arrowhead)"/>
-        <g data-detail="context">
-          <rect x="138.5" y="1945" width="97.8" height="18" rx="3" class="c-mask"/>
-          <text x="187.4" y="1955" class="t-muted" font-size="11" text-anchor="middle">15 GET 原文件</text>
-        </g>
-        </g>
-
-        <g data-edge-from="spring" data-edge-to="files" data-edge-label="鉴权后读取原文件" data-edge-key="20" data-edge-id="b-storage">
-          <path data-composition-edge-from="spring" data-composition-edge-to="files" data-composition-edge-id="b-storage" data-composition-points="265.3,2030;818.5,2030" d="M 265.3 2030 L 818.5 2030" class="a-default" data-animate="edge" style="--step:12" stroke-width="1.4" marker-end="url(#arrowhead)"/>
-        <g data-detail="context">
-          <rect x="483.09999999999997" y="2010" width="117.6" height="18" rx="3" class="c-mask"/>
-          <text x="541.9" y="2020" class="t-muted" font-size="11" text-anchor="middle">鉴权后读取原文件</text>
-        </g>
-        <text data-detail="context" x="277.3" y="2048" class="t-muted" font-size="7"><tspan x="277.3" dy="0">文件系统 API；不向浏览器</tspan><tspan x="277.3" dy="11">公开存储路径</tspan></text>
-        </g>
-
-        <g data-edge-from="files" data-edge-to="spring" data-edge-label="原文件字节" data-edge-key="21" data-edge-id="b-storage-bytes">
-          <path data-composition-edge-from="files" data-composition-edge-to="spring" data-composition-edge-id="b-storage-bytes" data-composition-points="818.5,2130;265.3,2130" d="M 818.5 2130 L 265.3 2130" class="a-default" data-animate="edge" style="--step:12" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
-        <g data-detail="context">
-          <rect x="502.9" y="2110" width="78" height="18" rx="3" class="c-mask"/>
-          <text x="541.9" y="2120" class="t-muted" font-size="11" text-anchor="middle">原文件字节</text>
-        </g>
-        </g>
-
-        <g data-edge-from="spring" data-edge-to="web" data-edge-label="HTTP 二进制下载" data-edge-key="22" data-edge-id="b-download-bytes">
-          <path data-composition-edge-from="spring" data-composition-edge-to="web" data-composition-edge-id="b-download-bytes" data-composition-points="251.3,2195;123.5,2195" d="M 251.3 2195 L 123.5 2195" class="a-default" data-animate="edge" style="--step:12" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
-        <g data-detail="context">
-          <rect x="131.9" y="2175" width="111" height="18" rx="3" class="c-mask"/>
-          <text x="187.4" y="2185" class="t-muted" font-size="11" text-anchor="middle">HTTP 二进制下载</text>
-        </g>
-        </g>
-
-        <g data-edge-from="web" data-edge-to="spring" data-edge-label="POST 停止生成" data-edge-key="23" data-edge-id="b-stop">
-          <path data-composition-edge-from="web" data-composition-edge-to="spring" data-composition-edge-id="b-stop" data-composition-points="123.5,2305;251.3,2305" d="M 123.5 2305 L 251.3 2305" class="a-security" data-animate="edge" style="--step:12" stroke-width="1.4" marker-end="url(#arrowhead-security)"/>
-        <g data-detail="context">
-          <rect x="138.5" y="2285" width="97.8" height="18" rx="3" class="c-mask"/>
-          <text x="187.4" y="2295" class="t-edge-security" font-size="11" text-anchor="middle">POST 停止生成</text>
-        </g>
-        <text data-detail="context" x="135.5" y="2323" class="t-muted" font-size="7"><tspan x="135.5" dy="0">也可由撤权、来源失效、30</tspan><tspan x="135.5" dy="11">秒无正文或 120 秒总长触发</tspan></text>
-        </g>
-
-        <g data-edge-from="spring" data-edge-to="db" data-edge-label="SQL 令旧 run 失效" data-edge-key="24" data-edge-id="b-run-fence">
-          <path data-composition-edge-from="spring" data-composition-edge-to="db" data-composition-edge-id="b-run-fence" data-composition-points="265.3,2405;534.9000000000001,2405" d="M 265.3 2405 L 534.9000000000001 2405" class="a-security" data-animate="edge" style="--step:12" stroke-width="1.4" marker-end="url(#arrowhead-security)"/>
-        <g data-detail="context">
-          <rect x="338" y="2385" width="124.19999999999999" height="18" rx="3" class="c-mask"/>
-          <text x="400.1" y="2395" class="t-edge-security" font-size="11" text-anchor="middle">SQL 令旧 run 失效</text>
-        </g>
-        <text data-detail="context" x="277.3" y="2423" class="t-muted" font-size="7"><tspan x="277.3" dy="0">主动停止记 STOPPED；异常记</tspan><tspan x="277.3" dy="11">INCOMPLETE；仅末轮可手动重</tspan><tspan x="277.3" dy="11">试</tspan></text>
-        </g>
-
-        <g data-edge-from="spring" data-edge-to="fast" data-edge-label="HTTP cancel / 关闭流" data-edge-key="25" data-edge-id="b-cancel">
-          <path data-composition-edge-from="spring" data-composition-edge-to="fast" data-composition-edge-id="b-cancel" data-composition-points="265.3,2505;393.1,2505" d="M 265.3 2505 L 393.1 2505" class="a-dashed" data-animate="edge" style="--step:12" stroke-width="1.4" marker-end="url(#arrowhead-dashed)"/>
-        <g data-detail="context">
-          <rect x="257.20000000000005" y="2485" width="144" height="18" rx="3" class="c-mask"/>
-          <text x="329.20000000000005" y="2495" class="t-edge-dashed" font-size="11" text-anchor="middle">HTTP cancel / 关闭流</text>
-        </g>
-        </g>
-
-        <g data-edge-from="fast" data-edge-to="models" data-edge-label="取消上游连接" data-edge-key="26" data-edge-id="b-upstream-cancel">
-          <path data-composition-edge-from="fast" data-composition-edge-to="models" data-composition-edge-id="b-upstream-cancel" data-composition-points="407.1,2570;676.7,2570" d="M 407.1 2570 L 676.7 2570" class="a-dashed" data-animate="edge" style="--step:12" stroke-width="1.4" marker-end="url(#arrowhead-dashed)"/>
-        <g data-detail="context">
-          <rect x="496.30000000000007" y="2550" width="91.19999999999999" height="18" rx="3" class="c-mask"/>
-          <text x="541.9000000000001" y="2560" class="t-edge-dashed" font-size="11" text-anchor="middle">取消上游连接</text>
-        </g>
-        <text data-detail="context" x="419.1" y="2588" class="t-muted" font-size="7"><tspan x="419.1" dy="0">尽力释放资源；Spring 不</tspan><tspan x="419.1" dy="11">依赖供应商确认来阻止旧结果</tspan></text>
-        </g>
-
-        <g data-edge-from="spring" data-edge-to="web" data-edge-label="已停止 / 未完成 / 无权" data-edge-key="27" data-edge-id="b-terminal">
-          <path data-composition-edge-from="spring" data-composition-edge-to="web" data-composition-edge-id="b-terminal" data-composition-points="251.3,2670;123.5,2670" d="M 251.3 2670 L 123.5 2670" class="a-default" data-animate="edge" style="--step:12" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
-        <g data-detail="context">
-          <rect x="108.80000000000001" y="2650" width="157.2" height="18" rx="3" class="c-mask"/>
-          <text x="187.4" y="2660" class="t-muted" font-size="11" text-anchor="middle">已停止 / 未完成 / 无权</text>
-        </g>
-        </g>
-
-        <!-- Segment Labels -->
-        <g data-graph-role="segment-label" data-segment-id="0">
-          <rect x="56" y="133" width="227.20000000000002" height="18" rx="3" class="c-mask"/>
-          <text x="62" y="146" class="t-muted" font-size="9" font-weight="600">B01—B03 Spring 保存问题，建立受限生成执行</text>
-        </g>
-        <g data-graph-role="segment-label" data-segment-id="1">
-          <rect x="56" y="478" width="242.8" height="18" rx="3" class="c-mask"/>
-          <text x="62" y="491" class="t-muted" font-size="9" font-weight="600">B04—B06 先限定知识库和发布版本，再检索与生成</text>
-        </g>
-        <g data-graph-role="segment-label" data-segment-id="2">
-          <rect x="56" y="988" width="237.6" height="18" rx="3" class="c-mask"/>
-          <text x="62" y="1001" class="t-muted" font-size="9" font-weight="600">B07—B08 两层流式传输，Spring 保存后确认完成</text>
-        </g>
-        <g data-graph-role="segment-label" data-segment-id="3">
-          <rect x="56" y="1728" width="211.6" height="18" rx="3" class="c-mask"/>
-          <text x="62" y="1741" class="t-muted" font-size="9" font-weight="600">B09 打开来源与下载时再次校验权限和版本</text>
-        </g>
-        <g data-graph-role="segment-label" data-segment-id="4">
-          <rect x="56" y="2263" width="253.20000000000002" height="18" rx="3" class="c-mask"/>
-          <text x="62" y="2276" class="t-muted" font-size="9" font-weight="600">替代分支：主动停止、撤权或超时，与正常完成互斥</text>
-        </g>
-
-        <!-- Participants -->
-        <g id="node-web" data-node-id="web" data-node-label="前端" tabindex="0" role="button" aria-label="聚焦前端，提问 · 回答 · 引用, 时序参与者" aria-pressed="false" data-node-kind="frontend" data-node-sublabel="提问 · 回答 · 引用" data-node-context="时序参与者">
-          <title>前端 · 提问 · 回答 · 引用 · 时序参与者</title>
-          <rect x="62" y="72" width="109" height="60" rx="6" class="c-mask"/>
-          <rect x="62" y="72" width="109" height="60" rx="6" class="c-frontend" data-animate="node" style="--step:0" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="frontend" class="semantic-sigil s-frontend" transform="translate(68 78) scale(0.6875)">
-            <rect x="2" y="3" width="12" height="10" rx="2"/>
-            <path d="M2 6.5h12"/>
-            <circle cx="4.1" cy="4.8" r=".7" class="sigil-fill"/>
-            <circle cx="6.3" cy="4.8" r=".7" class="sigil-fill"/>
-          </g>
-          <text data-node-label="" data-detail-anchor="" x="116.5" y="108" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">前端</text>
-          <text data-detail="context" x="116.5" y="122" class="t-muted" font-size="7" text-anchor="middle">提问 · 回答 · 引用</text>
-        </g>
-
-        <g id="node-spring" data-node-id="spring" data-node-label="Spring Boot" tabindex="0" role="button" aria-label="聚焦Spring Boot，鉴权 · 会话 · SSE, 时序参与者" aria-pressed="false" data-node-kind="backend" data-node-sublabel="鉴权 · 会话 · SSE" data-node-context="时序参与者">
-          <title>Spring Boot · 鉴权 · 会话 · SSE · 时序参与者</title>
-          <rect x="203.8" y="72" width="109" height="60" rx="6" class="c-mask"/>
-          <rect x="203.8" y="72" width="109" height="60" rx="6" class="c-backend" data-animate="node" style="--step:1" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(209.8 78) scale(0.6875)">
-            <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
-          </g>
-          <text data-node-label="" data-detail-anchor="" x="258.3" y="108" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Spring Boot</text>
-          <text data-detail="context" x="258.3" y="122" class="t-muted" font-size="7" text-anchor="middle">鉴权 · 会话 · SSE</text>
-        </g>
-
-        <g id="node-fast" data-node-id="fast" data-node-label="FastAPI" tabindex="0" role="button" aria-label="聚焦FastAPI，Retrieval / 生成, 时序参与者" aria-pressed="false" data-node-kind="backend" data-node-sublabel="Retrieval / 生成" data-node-context="时序参与者">
-          <title>FastAPI · Retrieval / 生成 · 时序参与者</title>
-          <rect x="345.6" y="72" width="109" height="60" rx="6" class="c-mask"/>
-          <rect x="345.6" y="72" width="109" height="60" rx="6" class="c-backend" data-animate="node" style="--step:2" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(351.6 78) scale(0.6875)">
-            <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
-          </g>
-          <text data-node-label="" data-detail-anchor="" x="400.1" y="108" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">FastAPI</text>
-          <text data-detail="context" x="400.1" y="122" class="t-muted" font-size="7" text-anchor="middle">Retrieval / 生成</text>
-        </g>
-
-        <g id="node-db" data-node-id="db" data-node-label="PostgreSQL" tabindex="0" role="button" aria-label="聚焦PostgreSQL，会话 / 向量 / 版本, 时序参与者" aria-pressed="false" data-node-kind="database" data-node-sublabel="会话 / 向量 / 版本" data-node-context="时序参与者">
-          <title>PostgreSQL · 会话 / 向量 / 版本 · 时序参与者</title>
-          <rect x="487.4000000000001" y="72" width="109" height="60" rx="6" class="c-mask"/>
-          <rect x="487.4000000000001" y="72" width="109" height="60" rx="6" class="c-database" data-animate="node" style="--step:3" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="database" class="semantic-sigil s-database" transform="translate(493.4000000000001 78) scale(0.6875)">
+        <!-- Entities -->
+        <g id="node-users" data-node-id="users" data-node-label="core.users" tabindex="0" role="button" aria-label="聚焦core.users，用户, 实体" aria-pressed="false" data-node-kind="database" data-node-sublabel="用户" data-node-tag="账号与授权" data-node-context="实体" class="er-hue-database">
+          <title>core.users · 用户 · 实体 · 账号与授权</title>
+          <rect x="32" y="40" width="350" height="179" rx="8" class="c-mask"/>
+          <rect x="32" y="40" width="350" height="179" rx="8" class="c-database er-table" data-animate="node" style="--step:1" stroke-width="1.2"/>
+          <path class="er-table-header" d="M 40 40 H 374 A 8 8 0 0 1 382 48 V 80 H 32 V 48 A 8 8 0 0 1 40 40 Z"/>
+          <path class="er-table-cap" d="M 44 41.4 H 370" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+          <g aria-hidden="true" data-semantic-sigil="database" class="semantic-sigil s-database" transform="translate(40 47) scale(0.875)">
             <ellipse cx="8" cy="4" rx="5" ry="2"/>
             <path d="M3 4v8c0 1.1 2.2 2 5 2s5-.9 5-2V4M3 8c0 1.1 2.2 2 5 2s5-.9 5-2"/>
           </g>
-          <text data-node-label="" data-detail-anchor="" x="541.9000000000001" y="108" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">PostgreSQL</text>
-          <text data-detail="context" x="541.9000000000001" y="122" class="t-muted" font-size="7" text-anchor="middle">会话 / 向量 / 版本</text>
-        </g>
+          <text data-node-label="" x="207" y="59" class="t-primary er-title" font-size="13" font-weight="700" text-anchor="middle">core.users</text>
+          <line x1="32" y1="80" x2="382" y2="80" class="c-grid er-header-rule" stroke-width="1"/>
+          <g data-detail="context" data-er-row="0">
+            <line x1="32" y1="80" x2="382" y2="80" class="c-grid er-row-rule" stroke-width="0.5"/>
 
-        <g id="node-models" data-node-id="models" data-node-label="模型 API" tabindex="0" role="button" aria-label="聚焦模型 API，Embedding / LLM, 时序参与者" aria-pressed="false" data-node-kind="external" data-node-sublabel="Embedding / LLM" data-node-context="时序参与者">
-          <title>模型 API · Embedding / LLM · 时序参与者</title>
-          <rect x="629.2" y="72" width="109" height="60" rx="6" class="c-mask"/>
-          <rect x="629.2" y="72" width="109" height="60" rx="6" class="c-external" data-animate="node" style="--step:4" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="external" class="semantic-sigil s-external" transform="translate(635.2 78) scale(0.6875)">
-            <rect x="2.5" y="5" width="8.5" height="8" rx="1.5"/>
-            <path d="M8 2.5h5.5V8M13.5 2.5 7.5 8.5"/>
+            <rect x="42" y="84" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="pk"/><text data-detail="context" x="53" y="94" class="t-database" font-size="9" font-weight="600">PK</text>
+            <text data-detail="context" x="74" y="94" class="t-primary er-name-pk" font-size="11">id</text>
+            <text data-detail="context" x="370" y="94" class="er-type" font-size="10.5" text-anchor="end">uuid</text>
           </g>
-          <text data-node-label="" data-detail-anchor="" x="683.7" y="108" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">模型 API</text>
-          <text data-detail="context" x="683.7" y="122" class="t-muted" font-size="7" text-anchor="middle">Embedding / LLM</text>
+          <g data-detail="context" data-er-row="1">
+            <line x1="32" y1="99" x2="382" y2="99" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="36" y="100" width="342" height="17" rx="4" class="er-zebra"/>
+
+            <text data-detail="context" x="74" y="113" class="t-primary" font-size="11">username</text>
+            <text data-detail="context" x="370" y="113" class="er-type" font-size="10.5" text-anchor="end">varchar(32)</text>
+          </g>
+          <g data-detail="context" data-er-row="2">
+            <line x1="32" y1="118" x2="382" y2="118" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+            <rect x="42" y="122" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="uk"/><text data-detail="context" x="53" y="132" class="t-muted" font-size="9" font-weight="600">UK</text>
+            <text data-detail="context" x="74" y="132" class="t-primary" font-size="11">username_key</text>
+            <text data-detail="context" x="370" y="132" class="er-type" font-size="10.5" text-anchor="end">text</text>
+          </g>
+          <g data-detail="context" data-er-row="3">
+            <line x1="32" y1="137" x2="382" y2="137" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="36" y="138" width="342" height="17" rx="4" class="er-zebra"/>
+
+            <text data-detail="context" x="74" y="151" class="t-primary" font-size="11">password_hash</text>
+            <text data-detail="context" x="370" y="151" class="er-type" font-size="10.5" text-anchor="end">text</text>
+          </g>
+          <g data-detail="context" data-er-row="4">
+            <line x1="32" y1="156" x2="382" y2="156" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+
+            <text data-detail="context" x="74" y="170" class="t-primary" font-size="11">role</text>
+            <text data-detail="context" x="370" y="170" class="er-type" font-size="10.5" text-anchor="end">varchar(16)</text>
+          </g>
+          <g data-detail="context" data-er-row="5">
+            <line x1="32" y1="175" x2="382" y2="175" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="36" y="176" width="342" height="17" rx="4" class="er-zebra"/>
+
+            <text data-detail="context" x="74" y="189" class="t-primary" font-size="11">created_at</text>
+            <text data-detail="context" x="370" y="189" class="er-type" font-size="10.5" text-anchor="end">timestamptz</text>
+          </g>
+          <g data-detail="context" data-er-row="6">
+            <line x1="32" y1="194" x2="382" y2="194" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+
+            <text data-detail="context" x="74" y="208" class="t-primary" font-size="11">updated_at</text>
+            <text data-detail="context" x="370" y="208" class="er-type" font-size="10.5" text-anchor="end">timestamptz</text>
+          </g>
         </g>
 
-        <g id="node-files" data-node-id="files" data-node-label="文件存储" tabindex="0" role="button" aria-label="聚焦文件存储，原文件下载, 时序参与者" aria-pressed="false" data-node-kind="database" data-node-sublabel="原文件下载" data-node-context="时序参与者">
-          <title>文件存储 · 原文件下载 · 时序参与者</title>
-          <rect x="771" y="72" width="109" height="60" rx="6" class="c-mask"/>
-          <rect x="771" y="72" width="109" height="60" rx="6" class="c-database" data-animate="node" style="--step:5" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="database" class="semantic-sigil s-database" transform="translate(777 78) scale(0.6875)">
+        <g id="node-knowledge_bases" data-node-id="knowledge_bases" data-node-label="core.knowledge_bases" tabindex="0" role="button" aria-label="聚焦core.knowledge_bases，知识库, 实体" aria-pressed="false" data-node-kind="database" data-node-sublabel="知识库" data-node-tag="账号与授权" data-node-context="实体" class="er-hue-database">
+          <title>core.knowledge_bases · 知识库 · 实体 · 账号与授权</title>
+          <rect x="32" y="432" width="350" height="255" rx="8" class="c-mask"/>
+          <rect x="32" y="432" width="350" height="255" rx="8" class="c-database er-table" data-animate="node" style="--step:0" stroke-width="1.2"/>
+          <path class="er-table-header" d="M 40 432 H 374 A 8 8 0 0 1 382 440 V 472 H 32 V 440 A 8 8 0 0 1 40 432 Z"/>
+          <path class="er-table-cap" d="M 44 433.4 H 370" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+          <g aria-hidden="true" data-semantic-sigil="database" class="semantic-sigil s-database" transform="translate(40 439) scale(0.875)">
             <ellipse cx="8" cy="4" rx="5" ry="2"/>
             <path d="M3 4v8c0 1.1 2.2 2 5 2s5-.9 5-2V4M3 8c0 1.1 2.2 2 5 2s5-.9 5-2"/>
           </g>
-          <text data-node-label="" data-detail-anchor="" x="825.5" y="108" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">文件存储</text>
-          <text data-detail="context" x="825.5" y="122" class="t-muted" font-size="7" text-anchor="middle">原文件下载</text>
+          <text data-node-label="" x="207" y="451" class="t-primary er-title" font-size="13" font-weight="700" text-anchor="middle">core.knowledge_bases</text>
+          <line x1="32" y1="472" x2="382" y2="472" class="c-grid er-header-rule" stroke-width="1"/>
+          <g data-detail="context" data-er-row="0">
+            <line x1="32" y1="472" x2="382" y2="472" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+            <rect x="42" y="476" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="pk"/><text data-detail="context" x="53" y="486" class="t-database" font-size="9" font-weight="600">PK</text>
+            <text data-detail="context" x="74" y="486" class="t-primary er-name-pk" font-size="11">id</text>
+            <text data-detail="context" x="370" y="486" class="er-type" font-size="10.5" text-anchor="end">uuid</text>
+          </g>
+          <g data-detail="context" data-er-row="1">
+            <line x1="32" y1="491" x2="382" y2="491" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="36" y="492" width="342" height="17" rx="4" class="er-zebra"/>
+
+            <text data-detail="context" x="74" y="505" class="t-primary" font-size="11">name</text>
+            <text data-detail="context" x="370" y="505" class="er-type" font-size="10.5" text-anchor="end">varchar(50)</text>
+          </g>
+          <g data-detail="context" data-er-row="2">
+            <line x1="32" y1="510" x2="382" y2="510" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+            <rect x="42" y="514" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="uk"/><text data-detail="context" x="53" y="524" class="t-muted" font-size="9" font-weight="600">UK</text>
+            <text data-detail="context" x="74" y="524" class="t-primary" font-size="11">name_key</text>
+            <text data-detail="context" x="370" y="524" class="er-type" font-size="10.5" text-anchor="end">text</text>
+          </g>
+          <g data-detail="context" data-er-row="3">
+            <line x1="32" y1="529" x2="382" y2="529" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="36" y="530" width="342" height="17" rx="4" class="er-zebra"/>
+
+            <text data-detail="context" x="74" y="543" class="t-primary" font-size="11">description</text>
+            <text data-detail="context" x="370" y="543" class="er-type" font-size="10.5" text-anchor="end">varchar(500)</text>
+          </g>
+          <g data-detail="context" data-er-row="4">
+            <line x1="32" y1="548" x2="382" y2="548" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+            <rect x="42" y="552" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="fk"/><text data-detail="context" x="53" y="562" class="t-messagebus" font-size="9" font-weight="600">FK</text>
+            <text data-detail="context" x="74" y="562" class="t-primary" font-size="11">created_by</text>
+            <text data-detail="context" x="370" y="562" class="er-type" font-size="10.5" text-anchor="end">uuid</text>
+          </g>
+          <g data-detail="context" data-er-row="5">
+            <line x1="32" y1="567" x2="382" y2="567" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="36" y="568" width="342" height="17" rx="4" class="er-zebra"/>
+
+            <text data-detail="context" x="74" y="581" class="t-primary" font-size="11">lifecycle</text>
+            <text data-detail="context" x="370" y="581" class="er-type" font-size="10.5" text-anchor="end">varchar(20)</text>
+          </g>
+          <g data-detail="context" data-er-row="6">
+            <line x1="32" y1="586" x2="382" y2="586" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+
+            <text data-detail="context" x="74" y="600" class="t-primary" font-size="11">delete_error_code</text>
+            <text data-detail="context" x="370" y="600" class="er-type" font-size="10.5" text-anchor="end">text</text>
+          </g>
+          <g data-detail="context" data-er-row="7">
+            <line x1="32" y1="605" x2="382" y2="605" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="36" y="606" width="342" height="17" rx="4" class="er-zebra"/>
+
+            <text data-detail="context" x="74" y="619" class="t-primary" font-size="11">delete_error_detail</text>
+            <text data-detail="context" x="370" y="619" class="er-type" font-size="10.5" text-anchor="end">text</text>
+          </g>
+          <g data-detail="context" data-er-row="8">
+            <line x1="32" y1="624" x2="382" y2="624" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+
+            <text data-detail="context" x="74" y="638" class="t-primary" font-size="11">created_at</text>
+            <text data-detail="context" x="370" y="638" class="er-type" font-size="10.5" text-anchor="end">timestamptz</text>
+          </g>
+          <g data-detail="context" data-er-row="9">
+            <line x1="32" y1="643" x2="382" y2="643" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="36" y="644" width="342" height="17" rx="4" class="er-zebra"/>
+
+            <text data-detail="context" x="74" y="657" class="t-primary" font-size="11">updated_at</text>
+            <text data-detail="context" x="370" y="657" class="er-type" font-size="10.5" text-anchor="end">timestamptz</text>
+          </g>
+          <g data-detail="context" data-er-row="10">
+            <line x1="32" y1="662" x2="382" y2="662" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+
+            <text data-detail="context" x="74" y="676" class="t-primary" font-size="11">deleted_at</text>
+            <text data-detail="context" x="370" y="676" class="er-type" font-size="10.5" text-anchor="end">timestamptz</text>
+          </g>
+        </g>
+
+        <g id="node-kb_members" data-node-id="kb_members" data-node-label="core.kb_members" tabindex="0" role="button" aria-label="聚焦core.kb_members，知识库成员授权, 实体" aria-pressed="false" data-node-kind="database" data-node-sublabel="知识库成员授权" data-node-tag="账号与授权" data-node-context="实体" class="er-hue-database">
+          <title>core.kb_members · 知识库成员授权 · 实体 · 账号与授权</title>
+          <rect x="32" y="824" width="350" height="122" rx="8" class="c-mask"/>
+          <rect x="32" y="824" width="350" height="122" rx="8" class="c-database er-table" data-animate="node" style="--step:1" stroke-width="1.2"/>
+          <path class="er-table-header" d="M 40 824 H 374 A 8 8 0 0 1 382 832 V 864 H 32 V 832 A 8 8 0 0 1 40 824 Z"/>
+          <path class="er-table-cap" d="M 44 825.4 H 370" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+          <g aria-hidden="true" data-semantic-sigil="database" class="semantic-sigil s-database" transform="translate(40 831) scale(0.875)">
+            <ellipse cx="8" cy="4" rx="5" ry="2"/>
+            <path d="M3 4v8c0 1.1 2.2 2 5 2s5-.9 5-2V4M3 8c0 1.1 2.2 2 5 2s5-.9 5-2"/>
+          </g>
+          <text data-node-label="" x="207" y="843" class="t-primary er-title" font-size="13" font-weight="700" text-anchor="middle">core.kb_members</text>
+          <line x1="32" y1="864" x2="382" y2="864" class="c-grid er-header-rule" stroke-width="1"/>
+          <g data-detail="context" data-er-row="0">
+            <line x1="32" y1="864" x2="382" y2="864" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+            <rect x="42" y="868" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="pk"/><text data-detail="context" x="53" y="878" class="t-database" font-size="9" font-weight="600">PK</text><rect x="67" y="868" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="fk"/><text data-detail="context" x="78" y="878" class="t-messagebus" font-size="9" font-weight="600">FK</text>
+            <text data-detail="context" x="94" y="878" class="t-primary er-name-pk" font-size="11">kb_id</text>
+            <text data-detail="context" x="370" y="878" class="er-type" font-size="10.5" text-anchor="end">uuid</text>
+          </g>
+          <g data-detail="context" data-er-row="1">
+            <line x1="32" y1="883" x2="382" y2="883" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="36" y="884" width="342" height="17" rx="4" class="er-zebra"/>
+            <rect x="42" y="887" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="pk"/><text data-detail="context" x="53" y="897" class="t-database" font-size="9" font-weight="600">PK</text><rect x="67" y="887" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="fk"/><text data-detail="context" x="78" y="897" class="t-messagebus" font-size="9" font-weight="600">FK</text>
+            <text data-detail="context" x="94" y="897" class="t-primary er-name-pk" font-size="11">user_id</text>
+            <text data-detail="context" x="370" y="897" class="er-type" font-size="10.5" text-anchor="end">uuid</text>
+          </g>
+          <g data-detail="context" data-er-row="2">
+            <line x1="32" y1="902" x2="382" y2="902" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+            <rect x="42" y="906" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="fk"/><text data-detail="context" x="53" y="916" class="t-messagebus" font-size="9" font-weight="600">FK</text>
+            <text data-detail="context" x="94" y="916" class="t-primary" font-size="11">granted_by</text>
+            <text data-detail="context" x="370" y="916" class="er-type" font-size="10.5" text-anchor="end">uuid</text>
+          </g>
+          <g data-detail="context" data-er-row="3">
+            <line x1="32" y1="921" x2="382" y2="921" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="36" y="922" width="342" height="17" rx="4" class="er-zebra"/>
+
+            <text data-detail="context" x="94" y="935" class="t-primary" font-size="11">granted_at</text>
+            <text data-detail="context" x="370" y="935" class="er-type" font-size="10.5" text-anchor="end">timestamptz</text>
+          </g>
+        </g>
+
+        <g id="node-documents" data-node-id="documents" data-node-label="core.documents" tabindex="0" role="button" aria-label="聚焦core.documents，文档当前业务状态, 实体" aria-pressed="false" data-node-kind="database" data-node-sublabel="文档当前业务状态" data-node-tag="文档与处理" data-node-context="实体" class="er-hue-frontend">
+          <title>core.documents · 文档当前业务状态 · 实体 · 文档与处理</title>
+          <rect x="504" y="40" width="350" height="312" rx="8" class="c-mask"/>
+          <rect x="504" y="40" width="350" height="312" rx="8" class="c-database er-table" data-animate="node" style="--step:3" stroke-width="1.2"/>
+          <path class="er-table-header" d="M 512 40 H 846 A 8 8 0 0 1 854 48 V 80 H 504 V 48 A 8 8 0 0 1 512 40 Z"/>
+          <path class="er-table-cap" d="M 516 41.4 H 842" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+          <g aria-hidden="true" data-semantic-sigil="database" class="semantic-sigil s-database" transform="translate(512 47) scale(0.875)">
+            <ellipse cx="8" cy="4" rx="5" ry="2"/>
+            <path d="M3 4v8c0 1.1 2.2 2 5 2s5-.9 5-2V4M3 8c0 1.1 2.2 2 5 2s5-.9 5-2"/>
+          </g>
+          <text data-node-label="" x="679" y="59" class="t-primary er-title" font-size="13" font-weight="700" text-anchor="middle">core.documents</text>
+          <line x1="504" y1="80" x2="854" y2="80" class="c-grid er-header-rule" stroke-width="1"/>
+          <g data-detail="context" data-er-row="0">
+            <line x1="504" y1="80" x2="854" y2="80" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+            <rect x="514" y="84" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="pk"/><text data-detail="context" x="525" y="94" class="t-database" font-size="9" font-weight="600">PK</text><rect x="539" y="84" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="fk"/><text data-detail="context" x="550" y="94" class="t-messagebus" font-size="9" font-weight="600">FK</text>
+            <text data-detail="context" x="566" y="94" class="t-primary er-name-pk" font-size="11">id</text>
+            <text data-detail="context" x="842" y="94" class="er-type" font-size="10.5" text-anchor="end">uuid</text>
+          </g>
+          <g data-detail="context" data-er-row="1">
+            <line x1="504" y1="99" x2="854" y2="99" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="508" y="100" width="342" height="17" rx="4" class="er-zebra"/>
+            <rect x="514" y="103" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="fk"/><text data-detail="context" x="525" y="113" class="t-messagebus" font-size="9" font-weight="600">FK</text>
+            <text data-detail="context" x="566" y="113" class="t-primary" font-size="11">kb_id</text>
+            <text data-detail="context" x="842" y="113" class="er-type" font-size="10.5" text-anchor="end">uuid</text>
+          </g>
+          <g data-detail="context" data-er-row="2">
+            <line x1="504" y1="118" x2="854" y2="118" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+
+            <text data-detail="context" x="566" y="132" class="t-primary" font-size="11">file_name</text>
+            <text data-detail="context" x="842" y="132" class="er-type" font-size="10.5" text-anchor="end">text</text>
+          </g>
+          <g data-detail="context" data-er-row="3">
+            <line x1="504" y1="137" x2="854" y2="137" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="508" y="138" width="342" height="17" rx="4" class="er-zebra"/>
+            <rect x="514" y="141" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="uk"/><text data-detail="context" x="525" y="151" class="t-muted" font-size="9" font-weight="600">UK</text>
+            <text data-detail="context" x="566" y="151" class="t-primary" font-size="11">file_name_key</text>
+            <text data-detail="context" x="842" y="151" class="er-type" font-size="10.5" text-anchor="end">text</text>
+          </g>
+          <g data-detail="context" data-er-row="4">
+            <line x1="504" y1="156" x2="854" y2="156" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+            <rect x="514" y="160" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="fk"/><text data-detail="context" x="525" y="170" class="t-messagebus" font-size="9" font-weight="600">FK</text>
+            <text data-detail="context" x="566" y="170" class="t-primary" font-size="11">current_version</text>
+            <text data-detail="context" x="842" y="170" class="er-type" font-size="10.5" text-anchor="end">integer</text>
+          </g>
+          <g data-detail="context" data-er-row="5">
+            <line x1="504" y1="175" x2="854" y2="175" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="508" y="176" width="342" height="17" rx="4" class="er-zebra"/>
+
+            <text data-detail="context" x="566" y="189" class="t-primary" font-size="11">status</text>
+            <text data-detail="context" x="842" y="189" class="er-type" font-size="10.5" text-anchor="end">varchar(16)</text>
+          </g>
+          <g data-detail="context" data-er-row="6">
+            <line x1="504" y1="194" x2="854" y2="194" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+
+            <text data-detail="context" x="566" y="208" class="t-primary" font-size="11">lifecycle</text>
+            <text data-detail="context" x="842" y="208" class="er-type" font-size="10.5" text-anchor="end">varchar(20)</text>
+          </g>
+          <g data-detail="context" data-er-row="7">
+            <line x1="504" y1="213" x2="854" y2="213" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="508" y="214" width="342" height="17" rx="4" class="er-zebra"/>
+            <rect x="514" y="217" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="fk"/><text data-detail="context" x="525" y="227" class="t-messagebus" font-size="9" font-weight="600">FK</text>
+            <text data-detail="context" x="566" y="227" class="t-primary" font-size="11">published_attempt_id</text>
+            <text data-detail="context" x="842" y="227" class="er-type" font-size="10.5" text-anchor="end">uuid</text>
+          </g>
+          <g data-detail="context" data-er-row="8">
+            <line x1="504" y1="232" x2="854" y2="232" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+            <rect x="514" y="236" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="fk"/><text data-detail="context" x="525" y="246" class="t-messagebus" font-size="9" font-weight="600">FK</text>
+            <text data-detail="context" x="566" y="246" class="t-primary" font-size="11">created_by</text>
+            <text data-detail="context" x="842" y="246" class="er-type" font-size="10.5" text-anchor="end">uuid</text>
+          </g>
+          <g data-detail="context" data-er-row="9">
+            <line x1="504" y1="251" x2="854" y2="251" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="508" y="252" width="342" height="17" rx="4" class="er-zebra"/>
+
+            <text data-detail="context" x="566" y="265" class="t-primary" font-size="11">created_at</text>
+            <text data-detail="context" x="842" y="265" class="er-type" font-size="10.5" text-anchor="end">timestamptz</text>
+          </g>
+          <g data-detail="context" data-er-row="10">
+            <line x1="504" y1="270" x2="854" y2="270" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+
+            <text data-detail="context" x="566" y="284" class="t-primary" font-size="11">updated_at</text>
+            <text data-detail="context" x="842" y="284" class="er-type" font-size="10.5" text-anchor="end">timestamptz</text>
+          </g>
+          <g data-detail="context" data-er-row="11">
+            <line x1="504" y1="289" x2="854" y2="289" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="508" y="290" width="342" height="17" rx="4" class="er-zebra"/>
+
+            <text data-detail="context" x="566" y="303" class="t-primary" font-size="11">delete_error_code</text>
+            <text data-detail="context" x="842" y="303" class="er-type" font-size="10.5" text-anchor="end">text</text>
+          </g>
+          <g data-detail="context" data-er-row="12">
+            <line x1="504" y1="308" x2="854" y2="308" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+
+            <text data-detail="context" x="566" y="322" class="t-primary" font-size="11">delete_error_detail</text>
+            <text data-detail="context" x="842" y="322" class="er-type" font-size="10.5" text-anchor="end">text</text>
+          </g>
+          <g data-detail="context" data-er-row="13">
+            <line x1="504" y1="327" x2="854" y2="327" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="508" y="328" width="342" height="17" rx="4" class="er-zebra"/>
+
+            <text data-detail="context" x="566" y="341" class="t-primary" font-size="11">deleted_at</text>
+            <text data-detail="context" x="842" y="341" class="er-type" font-size="10.5" text-anchor="end">timestamptz</text>
+          </g>
+        </g>
+
+        <g id="node-document_versions" data-node-id="document_versions" data-node-label="core.document_versions" tabindex="0" role="button" aria-label="聚焦core.document_versions，文件版本与物理清理, 实体" aria-pressed="false" data-node-kind="database" data-node-sublabel="文件版本与物理清理" data-node-tag="文档与处理" data-node-context="实体" class="er-hue-frontend">
+          <title>core.document_versions · 文件版本与物理清理 · 实体 · 文档与处理</title>
+          <rect x="504" y="432" width="350" height="274" rx="8" class="c-mask"/>
+          <rect x="504" y="432" width="350" height="274" rx="8" class="c-database er-table" data-animate="node" style="--step:5" stroke-width="1.2"/>
+          <path class="er-table-header" d="M 512 432 H 846 A 8 8 0 0 1 854 440 V 472 H 504 V 440 A 8 8 0 0 1 512 432 Z"/>
+          <path class="er-table-cap" d="M 516 433.4 H 842" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+          <g aria-hidden="true" data-semantic-sigil="database" class="semantic-sigil s-database" transform="translate(512 439) scale(0.875)">
+            <ellipse cx="8" cy="4" rx="5" ry="2"/>
+            <path d="M3 4v8c0 1.1 2.2 2 5 2s5-.9 5-2V4M3 8c0 1.1 2.2 2 5 2s5-.9 5-2"/>
+          </g>
+          <text data-node-label="" x="679" y="451" class="t-primary er-title" font-size="13" font-weight="700" text-anchor="middle">core.document_versions</text>
+          <line x1="504" y1="472" x2="854" y2="472" class="c-grid er-header-rule" stroke-width="1"/>
+          <g data-detail="context" data-er-row="0">
+            <line x1="504" y1="472" x2="854" y2="472" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+            <rect x="514" y="476" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="pk"/><text data-detail="context" x="525" y="486" class="t-database" font-size="9" font-weight="600">PK</text><rect x="539" y="476" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="fk"/><text data-detail="context" x="550" y="486" class="t-messagebus" font-size="9" font-weight="600">FK</text>
+            <text data-detail="context" x="566" y="486" class="t-primary er-name-pk" font-size="11">document_id</text>
+            <text data-detail="context" x="842" y="486" class="er-type" font-size="10.5" text-anchor="end">uuid</text>
+          </g>
+          <g data-detail="context" data-er-row="1">
+            <line x1="504" y1="491" x2="854" y2="491" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="508" y="492" width="342" height="17" rx="4" class="er-zebra"/>
+            <rect x="514" y="495" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="pk"/><text data-detail="context" x="525" y="505" class="t-database" font-size="9" font-weight="600">PK</text>
+            <text data-detail="context" x="566" y="505" class="t-primary er-name-pk" font-size="11">document_version</text>
+            <text data-detail="context" x="842" y="505" class="er-type" font-size="10.5" text-anchor="end">integer</text>
+          </g>
+          <g data-detail="context" data-er-row="2">
+            <line x1="504" y1="510" x2="854" y2="510" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+
+            <text data-detail="context" x="566" y="524" class="t-primary" font-size="11">original_file_name</text>
+            <text data-detail="context" x="842" y="524" class="er-type" font-size="10.5" text-anchor="end">text</text>
+          </g>
+          <g data-detail="context" data-er-row="3">
+            <line x1="504" y1="529" x2="854" y2="529" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="508" y="530" width="342" height="17" rx="4" class="er-zebra"/>
+            <rect x="514" y="533" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="uk"/><text data-detail="context" x="525" y="543" class="t-muted" font-size="9" font-weight="600">UK</text>
+            <text data-detail="context" x="566" y="543" class="t-primary" font-size="11">storage_key</text>
+            <text data-detail="context" x="842" y="543" class="er-type" font-size="10.5" text-anchor="end">text</text>
+          </g>
+          <g data-detail="context" data-er-row="4">
+            <line x1="504" y1="548" x2="854" y2="548" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+
+            <text data-detail="context" x="566" y="562" class="t-primary" font-size="11">media_type</text>
+            <text data-detail="context" x="842" y="562" class="er-type" font-size="10.5" text-anchor="end">text</text>
+          </g>
+          <g data-detail="context" data-er-row="5">
+            <line x1="504" y1="567" x2="854" y2="567" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="508" y="568" width="342" height="17" rx="4" class="er-zebra"/>
+
+            <text data-detail="context" x="566" y="581" class="t-primary" font-size="11">size_bytes</text>
+            <text data-detail="context" x="842" y="581" class="er-type" font-size="10.5" text-anchor="end">bigint</text>
+          </g>
+          <g data-detail="context" data-er-row="6">
+            <line x1="504" y1="586" x2="854" y2="586" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+
+            <text data-detail="context" x="566" y="600" class="t-primary" font-size="11">file_sha256</text>
+            <text data-detail="context" x="842" y="600" class="er-type" font-size="10.5" text-anchor="end">char(64)</text>
+          </g>
+          <g data-detail="context" data-er-row="7">
+            <line x1="504" y1="605" x2="854" y2="605" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="508" y="606" width="342" height="17" rx="4" class="er-zebra"/>
+
+            <text data-detail="context" x="566" y="619" class="t-primary" font-size="11">file_state</text>
+            <text data-detail="context" x="842" y="619" class="er-type" font-size="10.5" text-anchor="end">varchar(20)</text>
+          </g>
+          <g data-detail="context" data-er-row="8">
+            <line x1="504" y1="624" x2="854" y2="624" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+
+            <text data-detail="context" x="566" y="638" class="t-primary" font-size="11">cleanup_error</text>
+            <text data-detail="context" x="842" y="638" class="er-type" font-size="10.5" text-anchor="end">text</text>
+          </g>
+          <g data-detail="context" data-er-row="9">
+            <line x1="504" y1="643" x2="854" y2="643" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="508" y="644" width="342" height="17" rx="4" class="er-zebra"/>
+            <rect x="514" y="647" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="fk"/><text data-detail="context" x="525" y="657" class="t-messagebus" font-size="9" font-weight="600">FK</text>
+            <text data-detail="context" x="566" y="657" class="t-primary" font-size="11">uploaded_by</text>
+            <text data-detail="context" x="842" y="657" class="er-type" font-size="10.5" text-anchor="end">uuid</text>
+          </g>
+          <g data-detail="context" data-er-row="10">
+            <line x1="504" y1="662" x2="854" y2="662" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+
+            <text data-detail="context" x="566" y="676" class="t-primary" font-size="11">created_at</text>
+            <text data-detail="context" x="842" y="676" class="er-type" font-size="10.5" text-anchor="end">timestamptz</text>
+          </g>
+          <g data-detail="context" data-er-row="11">
+            <line x1="504" y1="681" x2="854" y2="681" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="508" y="682" width="342" height="17" rx="4" class="er-zebra"/>
+
+            <text data-detail="context" x="566" y="695" class="t-primary" font-size="11">file_deleted_at</text>
+            <text data-detail="context" x="842" y="695" class="er-type" font-size="10.5" text-anchor="end">timestamptz</text>
+          </g>
+        </g>
+
+        <g id="node-processing_jobs" data-node-id="processing_jobs" data-node-label="core.processing_jobs" tabindex="0" role="button" aria-label="聚焦core.processing_jobs，文档处理逻辑任务, 实体" aria-pressed="false" data-node-kind="database" data-node-sublabel="文档处理逻辑任务" data-node-tag="文档与处理" data-node-context="实体" class="er-hue-frontend">
+          <title>core.processing_jobs · 文档处理逻辑任务 · 实体 · 文档与处理</title>
+          <rect x="504" y="824" width="350" height="141" rx="8" class="c-mask"/>
+          <rect x="504" y="824" width="350" height="141" rx="8" class="c-database er-table" data-animate="node" style="--step:7" stroke-width="1.2"/>
+          <path class="er-table-header" d="M 512 824 H 846 A 8 8 0 0 1 854 832 V 864 H 504 V 832 A 8 8 0 0 1 512 824 Z"/>
+          <path class="er-table-cap" d="M 516 825.4 H 842" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+          <g aria-hidden="true" data-semantic-sigil="database" class="semantic-sigil s-database" transform="translate(512 831) scale(0.875)">
+            <ellipse cx="8" cy="4" rx="5" ry="2"/>
+            <path d="M3 4v8c0 1.1 2.2 2 5 2s5-.9 5-2V4M3 8c0 1.1 2.2 2 5 2s5-.9 5-2"/>
+          </g>
+          <text data-node-label="" x="679" y="843" class="t-primary er-title" font-size="13" font-weight="700" text-anchor="middle">core.processing_jobs</text>
+          <line x1="504" y1="864" x2="854" y2="864" class="c-grid er-header-rule" stroke-width="1"/>
+          <g data-detail="context" data-er-row="0">
+            <line x1="504" y1="864" x2="854" y2="864" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+            <rect x="514" y="868" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="pk"/><text data-detail="context" x="525" y="878" class="t-database" font-size="9" font-weight="600">PK</text>
+            <text data-detail="context" x="566" y="878" class="t-primary er-name-pk" font-size="11">id</text>
+            <text data-detail="context" x="842" y="878" class="er-type" font-size="10.5" text-anchor="end">uuid</text>
+          </g>
+          <g data-detail="context" data-er-row="1">
+            <line x1="504" y1="883" x2="854" y2="883" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="508" y="884" width="342" height="17" rx="4" class="er-zebra"/>
+            <rect x="514" y="887" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="fk"/><text data-detail="context" x="525" y="897" class="t-messagebus" font-size="9" font-weight="600">FK</text><rect x="539" y="887" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="uk"/><text data-detail="context" x="550" y="897" class="t-muted" font-size="9" font-weight="600">UK</text>
+            <text data-detail="context" x="566" y="897" class="t-primary" font-size="11">document_id</text>
+            <text data-detail="context" x="842" y="897" class="er-type" font-size="10.5" text-anchor="end">uuid</text>
+          </g>
+          <g data-detail="context" data-er-row="2">
+            <line x1="504" y1="902" x2="854" y2="902" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+            <rect x="514" y="906" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="fk"/><text data-detail="context" x="525" y="916" class="t-messagebus" font-size="9" font-weight="600">FK</text><rect x="539" y="906" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="uk"/><text data-detail="context" x="550" y="916" class="t-muted" font-size="9" font-weight="600">UK</text>
+            <text data-detail="context" x="566" y="916" class="t-primary" font-size="11">document_version</text>
+            <text data-detail="context" x="842" y="916" class="er-type" font-size="10.5" text-anchor="end">integer</text>
+          </g>
+          <g data-detail="context" data-er-row="3">
+            <line x1="504" y1="921" x2="854" y2="921" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="508" y="922" width="342" height="17" rx="4" class="er-zebra"/>
+            <rect x="514" y="925" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="fk"/><text data-detail="context" x="525" y="935" class="t-messagebus" font-size="9" font-weight="600">FK</text>
+            <text data-detail="context" x="566" y="935" class="t-primary" font-size="11">created_by</text>
+            <text data-detail="context" x="842" y="935" class="er-type" font-size="10.5" text-anchor="end">uuid</text>
+          </g>
+          <g data-detail="context" data-er-row="4">
+            <line x1="504" y1="940" x2="854" y2="940" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+
+            <text data-detail="context" x="566" y="954" class="t-primary" font-size="11">created_at</text>
+            <text data-detail="context" x="842" y="954" class="er-type" font-size="10.5" text-anchor="end">timestamptz</text>
+          </g>
+        </g>
+
+        <g id="node-processing_attempts" data-node-id="processing_attempts" data-node-label="core.processing_attempts" tabindex="0" role="button" aria-label="聚焦core.processing_attempts，文档处理执行记录, 实体" aria-pressed="false" data-node-kind="database" data-node-sublabel="文档处理执行记录" data-node-tag="文档与处理" data-node-context="实体" class="er-hue-frontend">
+          <title>core.processing_attempts · 文档处理执行记录 · 实体 · 文档与处理</title>
+          <rect x="504" y="1292" width="350" height="407" rx="8" class="c-mask"/>
+          <rect x="504" y="1292" width="350" height="407" rx="8" class="c-database er-table" data-animate="node" style="--step:9" stroke-width="1.2"/>
+          <path class="er-table-header" d="M 512 1292 H 846 A 8 8 0 0 1 854 1300 V 1332 H 504 V 1300 A 8 8 0 0 1 512 1292 Z"/>
+          <path class="er-table-cap" d="M 516 1293.4 H 842" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+          <g aria-hidden="true" data-semantic-sigil="database" class="semantic-sigil s-database" transform="translate(512 1299) scale(0.875)">
+            <ellipse cx="8" cy="4" rx="5" ry="2"/>
+            <path d="M3 4v8c0 1.1 2.2 2 5 2s5-.9 5-2V4M3 8c0 1.1 2.2 2 5 2s5-.9 5-2"/>
+          </g>
+          <text data-node-label="" x="679" y="1311" class="t-primary er-title" font-size="13" font-weight="700" text-anchor="middle">core.processing_attempts</text>
+          <line x1="504" y1="1332" x2="854" y2="1332" class="c-grid er-header-rule" stroke-width="1"/>
+          <g data-detail="context" data-er-row="0">
+            <line x1="504" y1="1332" x2="854" y2="1332" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+            <rect x="514" y="1336" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="pk"/><text data-detail="context" x="525" y="1346" class="t-database" font-size="9" font-weight="600">PK</text>
+            <text data-detail="context" x="566" y="1346" class="t-primary er-name-pk" font-size="11">id</text>
+            <text data-detail="context" x="842" y="1346" class="er-type" font-size="10.5" text-anchor="end">uuid</text>
+          </g>
+          <g data-detail="context" data-er-row="1">
+            <line x1="504" y1="1351" x2="854" y2="1351" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="508" y="1352" width="342" height="17" rx="4" class="er-zebra"/>
+            <rect x="514" y="1355" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="fk"/><text data-detail="context" x="525" y="1365" class="t-messagebus" font-size="9" font-weight="600">FK</text><rect x="539" y="1355" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="uk"/><text data-detail="context" x="550" y="1365" class="t-muted" font-size="9" font-weight="600">UK</text>
+            <text data-detail="context" x="566" y="1365" class="t-primary" font-size="11">job_id</text>
+            <text data-detail="context" x="842" y="1365" class="er-type" font-size="10.5" text-anchor="end">uuid</text>
+          </g>
+          <g data-detail="context" data-er-row="2">
+            <line x1="504" y1="1370" x2="854" y2="1370" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+            <rect x="514" y="1374" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="fk"/><text data-detail="context" x="525" y="1384" class="t-messagebus" font-size="9" font-weight="600">FK</text>
+            <text data-detail="context" x="566" y="1384" class="t-primary" font-size="11">document_id</text>
+            <text data-detail="context" x="842" y="1384" class="er-type" font-size="10.5" text-anchor="end">uuid</text>
+          </g>
+          <g data-detail="context" data-er-row="3">
+            <line x1="504" y1="1389" x2="854" y2="1389" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="508" y="1390" width="342" height="17" rx="4" class="er-zebra"/>
+            <rect x="514" y="1393" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="fk"/><text data-detail="context" x="525" y="1403" class="t-messagebus" font-size="9" font-weight="600">FK</text>
+            <text data-detail="context" x="566" y="1403" class="t-primary" font-size="11">document_version</text>
+            <text data-detail="context" x="842" y="1403" class="er-type" font-size="10.5" text-anchor="end">integer</text>
+          </g>
+          <g data-detail="context" data-er-row="4">
+            <line x1="504" y1="1408" x2="854" y2="1408" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+            <rect x="514" y="1412" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="uk"/><text data-detail="context" x="525" y="1422" class="t-muted" font-size="9" font-weight="600">UK</text>
+            <text data-detail="context" x="566" y="1422" class="t-primary" font-size="11">attempt_no</text>
+            <text data-detail="context" x="842" y="1422" class="er-type" font-size="10.5" text-anchor="end">integer</text>
+          </g>
+          <g data-detail="context" data-er-row="5">
+            <line x1="504" y1="1427" x2="854" y2="1427" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="508" y="1428" width="342" height="17" rx="4" class="er-zebra"/>
+
+            <text data-detail="context" x="566" y="1441" class="t-primary" font-size="11">status</text>
+            <text data-detail="context" x="842" y="1441" class="er-type" font-size="10.5" text-anchor="end">varchar(20)</text>
+          </g>
+          <g data-detail="context" data-er-row="6">
+            <line x1="504" y1="1446" x2="854" y2="1446" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+
+            <text data-detail="context" x="566" y="1460" class="t-primary" font-size="11">embedding_model_id</text>
+            <text data-detail="context" x="842" y="1460" class="er-type" font-size="10.5" text-anchor="end">text</text>
+          </g>
+          <g data-detail="context" data-er-row="7">
+            <line x1="504" y1="1465" x2="854" y2="1465" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="508" y="1466" width="342" height="17" rx="4" class="er-zebra"/>
+
+            <text data-detail="context" x="566" y="1479" class="t-primary" font-size="11">embedding_dimensions</text>
+            <text data-detail="context" x="842" y="1479" class="er-type" font-size="10.5" text-anchor="end">integer</text>
+          </g>
+          <g data-detail="context" data-er-row="8">
+            <line x1="504" y1="1484" x2="854" y2="1484" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+
+            <text data-detail="context" x="566" y="1498" class="t-primary" font-size="11">dispatch_count</text>
+            <text data-detail="context" x="842" y="1498" class="er-type" font-size="10.5" text-anchor="end">integer</text>
+          </g>
+          <g data-detail="context" data-er-row="9">
+            <line x1="504" y1="1503" x2="854" y2="1503" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="508" y="1504" width="342" height="17" rx="4" class="er-zebra"/>
+            <rect x="514" y="1507" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="fk"/><text data-detail="context" x="525" y="1517" class="t-messagebus" font-size="9" font-weight="600">FK</text>
+            <text data-detail="context" x="566" y="1517" class="t-primary" font-size="11">requested_by</text>
+            <text data-detail="context" x="842" y="1517" class="er-type" font-size="10.5" text-anchor="end">uuid</text>
+          </g>
+          <g data-detail="context" data-er-row="10">
+            <line x1="504" y1="1522" x2="854" y2="1522" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+
+            <text data-detail="context" x="566" y="1536" class="t-primary" font-size="11">created_at</text>
+            <text data-detail="context" x="842" y="1536" class="er-type" font-size="10.5" text-anchor="end">timestamptz</text>
+          </g>
+          <g data-detail="context" data-er-row="11">
+            <line x1="504" y1="1541" x2="854" y2="1541" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="508" y="1542" width="342" height="17" rx="4" class="er-zebra"/>
+
+            <text data-detail="context" x="566" y="1555" class="t-primary" font-size="11">deadline_at</text>
+            <text data-detail="context" x="842" y="1555" class="er-type" font-size="10.5" text-anchor="end">timestamptz</text>
+          </g>
+          <g data-detail="context" data-er-row="12">
+            <line x1="504" y1="1560" x2="854" y2="1560" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+
+            <text data-detail="context" x="566" y="1574" class="t-primary" font-size="11">last_dispatched_at</text>
+            <text data-detail="context" x="842" y="1574" class="er-type" font-size="10.5" text-anchor="end">timestamptz</text>
+          </g>
+          <g data-detail="context" data-er-row="13">
+            <line x1="504" y1="1579" x2="854" y2="1579" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="508" y="1580" width="342" height="17" rx="4" class="er-zebra"/>
+
+            <text data-detail="context" x="566" y="1593" class="t-primary" font-size="11">started_at</text>
+            <text data-detail="context" x="842" y="1593" class="er-type" font-size="10.5" text-anchor="end">timestamptz</text>
+          </g>
+          <g data-detail="context" data-er-row="14">
+            <line x1="504" y1="1598" x2="854" y2="1598" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+
+            <text data-detail="context" x="566" y="1612" class="t-primary" font-size="11">finished_at</text>
+            <text data-detail="context" x="842" y="1612" class="er-type" font-size="10.5" text-anchor="end">timestamptz</text>
+          </g>
+          <g data-detail="context" data-er-row="15">
+            <line x1="504" y1="1617" x2="854" y2="1617" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="508" y="1618" width="342" height="17" rx="4" class="er-zebra"/>
+
+            <text data-detail="context" x="566" y="1631" class="t-primary" font-size="11">chunk_count</text>
+            <text data-detail="context" x="842" y="1631" class="er-type" font-size="10.5" text-anchor="end">integer</text>
+          </g>
+          <g data-detail="context" data-er-row="16">
+            <line x1="504" y1="1636" x2="854" y2="1636" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+
+            <text data-detail="context" x="566" y="1650" class="t-primary" font-size="11">manifest_sha256</text>
+            <text data-detail="context" x="842" y="1650" class="er-type" font-size="10.5" text-anchor="end">char(64)</text>
+          </g>
+          <g data-detail="context" data-er-row="17">
+            <line x1="504" y1="1655" x2="854" y2="1655" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="508" y="1656" width="342" height="17" rx="4" class="er-zebra"/>
+
+            <text data-detail="context" x="566" y="1669" class="t-primary" font-size="11">error_code</text>
+            <text data-detail="context" x="842" y="1669" class="er-type" font-size="10.5" text-anchor="end">text</text>
+          </g>
+          <g data-detail="context" data-er-row="18">
+            <line x1="504" y1="1674" x2="854" y2="1674" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+
+            <text data-detail="context" x="566" y="1688" class="t-primary" font-size="11">error_detail</text>
+            <text data-detail="context" x="842" y="1688" class="er-type" font-size="10.5" text-anchor="end">text</text>
+          </g>
+        </g>
+
+        <g id="node-conversations" data-node-id="conversations" data-node-label="core.conversations" tabindex="0" role="button" aria-label="聚焦core.conversations，对话会话, 实体" aria-pressed="false" data-node-kind="database" data-node-sublabel="对话会话" data-node-tag="会话与生成" data-node-context="实体" class="er-hue-backend">
+          <title>core.conversations · 对话会话 · 实体 · 会话与生成</title>
+          <rect x="959" y="40" width="350" height="198" rx="8" class="c-mask"/>
+          <rect x="959" y="40" width="350" height="198" rx="8" class="c-database er-table" data-animate="node" style="--step:11" stroke-width="1.2"/>
+          <path class="er-table-header" d="M 967 40 H 1301 A 8 8 0 0 1 1309 48 V 80 H 959 V 48 A 8 8 0 0 1 967 40 Z"/>
+          <path class="er-table-cap" d="M 971 41.4 H 1297" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+          <g aria-hidden="true" data-semantic-sigil="database" class="semantic-sigil s-database" transform="translate(967 47) scale(0.875)">
+            <ellipse cx="8" cy="4" rx="5" ry="2"/>
+            <path d="M3 4v8c0 1.1 2.2 2 5 2s5-.9 5-2V4M3 8c0 1.1 2.2 2 5 2s5-.9 5-2"/>
+          </g>
+          <text data-node-label="" x="1134" y="59" class="t-primary er-title" font-size="13" font-weight="700" text-anchor="middle">core.conversations</text>
+          <line x1="959" y1="80" x2="1309" y2="80" class="c-grid er-header-rule" stroke-width="1"/>
+          <g data-detail="context" data-er-row="0">
+            <line x1="959" y1="80" x2="1309" y2="80" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+            <rect x="969" y="84" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="pk"/><text data-detail="context" x="980" y="94" class="t-database" font-size="9" font-weight="600">PK</text>
+            <text data-detail="context" x="1001" y="94" class="t-primary er-name-pk" font-size="11">id</text>
+            <text data-detail="context" x="1297" y="94" class="er-type" font-size="10.5" text-anchor="end">uuid</text>
+          </g>
+          <g data-detail="context" data-er-row="1">
+            <line x1="959" y1="99" x2="1309" y2="99" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="963" y="100" width="342" height="17" rx="4" class="er-zebra"/>
+            <rect x="969" y="103" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="fk"/><text data-detail="context" x="980" y="113" class="t-messagebus" font-size="9" font-weight="600">FK</text>
+            <text data-detail="context" x="1001" y="113" class="t-primary" font-size="11">owner_id</text>
+            <text data-detail="context" x="1297" y="113" class="er-type" font-size="10.5" text-anchor="end">uuid</text>
+          </g>
+          <g data-detail="context" data-er-row="2">
+            <line x1="959" y1="118" x2="1309" y2="118" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+            <rect x="969" y="122" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="fk"/><text data-detail="context" x="980" y="132" class="t-messagebus" font-size="9" font-weight="600">FK</text>
+            <text data-detail="context" x="1001" y="132" class="t-primary" font-size="11">kb_id</text>
+            <text data-detail="context" x="1297" y="132" class="er-type" font-size="10.5" text-anchor="end">uuid</text>
+          </g>
+          <g data-detail="context" data-er-row="3">
+            <line x1="959" y1="137" x2="1309" y2="137" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="963" y="138" width="342" height="17" rx="4" class="er-zebra"/>
+
+            <text data-detail="context" x="1001" y="151" class="t-primary" font-size="11">title</text>
+            <text data-detail="context" x="1297" y="151" class="er-type" font-size="10.5" text-anchor="end">text</text>
+          </g>
+          <g data-detail="context" data-er-row="4">
+            <line x1="959" y1="156" x2="1309" y2="156" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+
+            <text data-detail="context" x="1001" y="170" class="t-primary" font-size="11">next_message_ordinal</text>
+            <text data-detail="context" x="1297" y="170" class="er-type" font-size="10.5" text-anchor="end">bigint</text>
+          </g>
+          <g data-detail="context" data-er-row="5">
+            <line x1="959" y1="175" x2="1309" y2="175" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="963" y="176" width="342" height="17" rx="4" class="er-zebra"/>
+
+            <text data-detail="context" x="1001" y="189" class="t-primary" font-size="11">created_at</text>
+            <text data-detail="context" x="1297" y="189" class="er-type" font-size="10.5" text-anchor="end">timestamptz</text>
+          </g>
+          <g data-detail="context" data-er-row="6">
+            <line x1="959" y1="194" x2="1309" y2="194" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+
+            <text data-detail="context" x="1001" y="208" class="t-primary" font-size="11">last_message_at</text>
+            <text data-detail="context" x="1297" y="208" class="er-type" font-size="10.5" text-anchor="end">timestamptz</text>
+          </g>
+          <g data-detail="context" data-er-row="7">
+            <line x1="959" y1="213" x2="1309" y2="213" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="963" y="214" width="342" height="17" rx="4" class="er-zebra"/>
+
+            <text data-detail="context" x="1001" y="227" class="t-primary" font-size="11">updated_at</text>
+            <text data-detail="context" x="1297" y="227" class="er-type" font-size="10.5" text-anchor="end">timestamptz</text>
+          </g>
+        </g>
+
+        <g id="node-messages" data-node-id="messages" data-node-label="core.messages" tabindex="0" role="button" aria-label="聚焦core.messages，当前可见消息, 实体" aria-pressed="false" data-node-kind="database" data-node-sublabel="当前可见消息" data-node-tag="会话与生成" data-node-context="实体" class="er-hue-backend">
+          <title>core.messages · 当前可见消息 · 实体 · 会话与生成</title>
+          <rect x="959" y="432" width="350" height="217" rx="8" class="c-mask"/>
+          <rect x="959" y="432" width="350" height="217" rx="8" class="c-database er-table" data-animate="node" style="--step:12" stroke-width="1.2"/>
+          <path class="er-table-header" d="M 967 432 H 1301 A 8 8 0 0 1 1309 440 V 472 H 959 V 440 A 8 8 0 0 1 967 432 Z"/>
+          <path class="er-table-cap" d="M 971 433.4 H 1297" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+          <g aria-hidden="true" data-semantic-sigil="database" class="semantic-sigil s-database" transform="translate(967 439) scale(0.875)">
+            <ellipse cx="8" cy="4" rx="5" ry="2"/>
+            <path d="M3 4v8c0 1.1 2.2 2 5 2s5-.9 5-2V4M3 8c0 1.1 2.2 2 5 2s5-.9 5-2"/>
+          </g>
+          <text data-node-label="" x="1134" y="451" class="t-primary er-title" font-size="13" font-weight="700" text-anchor="middle">core.messages</text>
+          <line x1="959" y1="472" x2="1309" y2="472" class="c-grid er-header-rule" stroke-width="1"/>
+          <g data-detail="context" data-er-row="0">
+            <line x1="959" y1="472" x2="1309" y2="472" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+            <rect x="969" y="476" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="pk"/><text data-detail="context" x="980" y="486" class="t-database" font-size="9" font-weight="600">PK</text>
+            <text data-detail="context" x="1021" y="486" class="t-primary er-name-pk" font-size="11">id</text>
+            <text data-detail="context" x="1297" y="486" class="er-type" font-size="10.5" text-anchor="end">uuid</text>
+          </g>
+          <g data-detail="context" data-er-row="1">
+            <line x1="959" y1="491" x2="1309" y2="491" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="963" y="492" width="342" height="17" rx="4" class="er-zebra"/>
+            <rect x="969" y="495" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="fk"/><text data-detail="context" x="980" y="505" class="t-messagebus" font-size="9" font-weight="600">FK</text><rect x="994" y="495" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="uk"/><text data-detail="context" x="1005" y="505" class="t-muted" font-size="9" font-weight="600">UK</text>
+            <text data-detail="context" x="1021" y="505" class="t-primary" font-size="11">conversation_id</text>
+            <text data-detail="context" x="1297" y="505" class="er-type" font-size="10.5" text-anchor="end">uuid</text>
+          </g>
+          <g data-detail="context" data-er-row="2">
+            <line x1="959" y1="510" x2="1309" y2="510" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+            <rect x="969" y="514" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="uk"/><text data-detail="context" x="980" y="524" class="t-muted" font-size="9" font-weight="600">UK</text>
+            <text data-detail="context" x="1021" y="524" class="t-primary" font-size="11">ordinal</text>
+            <text data-detail="context" x="1297" y="524" class="er-type" font-size="10.5" text-anchor="end">bigint</text>
+          </g>
+          <g data-detail="context" data-er-row="3">
+            <line x1="959" y1="529" x2="1309" y2="529" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="963" y="530" width="342" height="17" rx="4" class="er-zebra"/>
+
+            <text data-detail="context" x="1021" y="543" class="t-primary" font-size="11">role</text>
+            <text data-detail="context" x="1297" y="543" class="er-type" font-size="10.5" text-anchor="end">varchar(16)</text>
+          </g>
+          <g data-detail="context" data-er-row="4">
+            <line x1="959" y1="548" x2="1309" y2="548" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+            <rect x="969" y="552" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="fk"/><text data-detail="context" x="980" y="562" class="t-messagebus" font-size="9" font-weight="600">FK</text><rect x="994" y="552" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="uk"/><text data-detail="context" x="1005" y="562" class="t-muted" font-size="9" font-weight="600">UK</text>
+            <text data-detail="context" x="1021" y="562" class="t-primary" font-size="11">reply_to_message_id</text>
+            <text data-detail="context" x="1297" y="562" class="er-type" font-size="10.5" text-anchor="end">uuid</text>
+          </g>
+          <g data-detail="context" data-er-row="5">
+            <line x1="959" y1="567" x2="1309" y2="567" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="963" y="568" width="342" height="17" rx="4" class="er-zebra"/>
+
+            <text data-detail="context" x="1021" y="581" class="t-primary" font-size="11">content</text>
+            <text data-detail="context" x="1297" y="581" class="er-type" font-size="10.5" text-anchor="end">text</text>
+          </g>
+          <g data-detail="context" data-er-row="6">
+            <line x1="959" y1="586" x2="1309" y2="586" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+            <rect x="969" y="590" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="fk"/><text data-detail="context" x="980" y="600" class="t-messagebus" font-size="9" font-weight="600">FK</text>
+            <text data-detail="context" x="1021" y="600" class="t-primary" font-size="11">current_run_id</text>
+            <text data-detail="context" x="1297" y="600" class="er-type" font-size="10.5" text-anchor="end">uuid</text>
+          </g>
+          <g data-detail="context" data-er-row="7">
+            <line x1="959" y1="605" x2="1309" y2="605" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="963" y="606" width="342" height="17" rx="4" class="er-zebra"/>
+
+            <text data-detail="context" x="1021" y="619" class="t-primary" font-size="11">created_at</text>
+            <text data-detail="context" x="1297" y="619" class="er-type" font-size="10.5" text-anchor="end">timestamptz</text>
+          </g>
+          <g data-detail="context" data-er-row="8">
+            <line x1="959" y1="624" x2="1309" y2="624" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+
+            <text data-detail="context" x="1021" y="638" class="t-primary" font-size="11">updated_at</text>
+            <text data-detail="context" x="1297" y="638" class="er-type" font-size="10.5" text-anchor="end">timestamptz</text>
+          </g>
+        </g>
+
+        <g id="node-generation_runs" data-node-id="generation_runs" data-node-label="core.generation_runs" tabindex="0" role="button" aria-label="聚焦core.generation_runs，AI 生成执行记录, 实体" aria-pressed="false" data-node-kind="database" data-node-sublabel="AI 生成执行记录" data-node-tag="会话与生成" data-node-context="实体" class="er-hue-backend">
+          <title>core.generation_runs · AI 生成执行记录 · 实体 · 会话与生成</title>
+          <rect x="959" y="824" width="350" height="388" rx="8" class="c-mask"/>
+          <rect x="959" y="824" width="350" height="388" rx="8" class="c-database er-table" data-animate="node" style="--step:12" stroke-width="1.2"/>
+          <path class="er-table-header" d="M 967 824 H 1301 A 8 8 0 0 1 1309 832 V 864 H 959 V 832 A 8 8 0 0 1 967 824 Z"/>
+          <path class="er-table-cap" d="M 971 825.4 H 1297" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+          <g aria-hidden="true" data-semantic-sigil="database" class="semantic-sigil s-database" transform="translate(967 831) scale(0.875)">
+            <ellipse cx="8" cy="4" rx="5" ry="2"/>
+            <path d="M3 4v8c0 1.1 2.2 2 5 2s5-.9 5-2V4M3 8c0 1.1 2.2 2 5 2s5-.9 5-2"/>
+          </g>
+          <text data-node-label="" x="1134" y="843" class="t-primary er-title" font-size="13" font-weight="700" text-anchor="middle">core.generation_runs</text>
+          <line x1="959" y1="864" x2="1309" y2="864" class="c-grid er-header-rule" stroke-width="1"/>
+          <g data-detail="context" data-er-row="0">
+            <line x1="959" y1="864" x2="1309" y2="864" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+            <rect x="969" y="868" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="pk"/><text data-detail="context" x="980" y="878" class="t-database" font-size="9" font-weight="600">PK</text>
+            <text data-detail="context" x="1001" y="878" class="t-primary er-name-pk" font-size="11">id</text>
+            <text data-detail="context" x="1297" y="878" class="er-type" font-size="10.5" text-anchor="end">uuid</text>
+          </g>
+          <g data-detail="context" data-er-row="1">
+            <line x1="959" y1="883" x2="1309" y2="883" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="963" y="884" width="342" height="17" rx="4" class="er-zebra"/>
+            <rect x="969" y="887" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="fk"/><text data-detail="context" x="980" y="897" class="t-messagebus" font-size="9" font-weight="600">FK</text>
+            <text data-detail="context" x="1001" y="897" class="t-primary" font-size="11">conversation_id</text>
+            <text data-detail="context" x="1297" y="897" class="er-type" font-size="10.5" text-anchor="end">uuid</text>
+          </g>
+          <g data-detail="context" data-er-row="2">
+            <line x1="959" y1="902" x2="1309" y2="902" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+            <rect x="969" y="906" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="fk"/><text data-detail="context" x="980" y="916" class="t-messagebus" font-size="9" font-weight="600">FK</text>
+            <text data-detail="context" x="1001" y="916" class="t-primary" font-size="11">user_message_id</text>
+            <text data-detail="context" x="1297" y="916" class="er-type" font-size="10.5" text-anchor="end">uuid</text>
+          </g>
+          <g data-detail="context" data-er-row="3">
+            <line x1="959" y1="921" x2="1309" y2="921" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="963" y="922" width="342" height="17" rx="4" class="er-zebra"/>
+            <rect x="969" y="925" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="fk"/><text data-detail="context" x="980" y="935" class="t-messagebus" font-size="9" font-weight="600">FK</text>
+            <text data-detail="context" x="1001" y="935" class="t-primary" font-size="11">assistant_message_id</text>
+            <text data-detail="context" x="1297" y="935" class="er-type" font-size="10.5" text-anchor="end">uuid</text>
+          </g>
+          <g data-detail="context" data-er-row="4">
+            <line x1="959" y1="940" x2="1309" y2="940" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+
+            <text data-detail="context" x="1001" y="954" class="t-primary" font-size="11">trigger_kind</text>
+            <text data-detail="context" x="1297" y="954" class="er-type" font-size="10.5" text-anchor="end">varchar(16)</text>
+          </g>
+          <g data-detail="context" data-er-row="5">
+            <line x1="959" y1="959" x2="1309" y2="959" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="963" y="960" width="342" height="17" rx="4" class="er-zebra"/>
+
+            <text data-detail="context" x="1001" y="973" class="t-primary" font-size="11">status</text>
+            <text data-detail="context" x="1297" y="973" class="er-type" font-size="10.5" text-anchor="end">varchar(16)</text>
+          </g>
+          <g data-detail="context" data-er-row="6">
+            <line x1="959" y1="978" x2="1309" y2="978" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+            <rect x="969" y="982" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="uk"/><text data-detail="context" x="980" y="992" class="t-muted" font-size="9" font-weight="600">UK</text>
+            <text data-detail="context" x="1001" y="992" class="t-primary" font-size="11">client_request_id</text>
+            <text data-detail="context" x="1297" y="992" class="er-type" font-size="10.5" text-anchor="end">uuid</text>
+          </g>
+          <g data-detail="context" data-er-row="7">
+            <line x1="959" y1="997" x2="1309" y2="997" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="963" y="998" width="342" height="17" rx="4" class="er-zebra"/>
+
+            <text data-detail="context" x="1001" y="1011" class="t-primary" font-size="11">request_sha256</text>
+            <text data-detail="context" x="1297" y="1011" class="er-type" font-size="10.5" text-anchor="end">char(64)</text>
+          </g>
+          <g data-detail="context" data-er-row="8">
+            <line x1="959" y1="1016" x2="1309" y2="1016" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+
+            <text data-detail="context" x="1001" y="1030" class="t-primary" font-size="11">llm_model_id</text>
+            <text data-detail="context" x="1297" y="1030" class="er-type" font-size="10.5" text-anchor="end">text</text>
+          </g>
+          <g data-detail="context" data-er-row="9">
+            <line x1="959" y1="1035" x2="1309" y2="1035" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="963" y="1036" width="342" height="17" rx="4" class="er-zebra"/>
+
+            <text data-detail="context" x="1001" y="1049" class="t-primary" font-size="11">evidence_manifest</text>
+            <text data-detail="context" x="1297" y="1049" class="er-type" font-size="10.5" text-anchor="end">jsonb</text>
+          </g>
+          <g data-detail="context" data-er-row="10">
+            <line x1="959" y1="1054" x2="1309" y2="1054" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+
+            <text data-detail="context" x="1001" y="1068" class="t-primary" font-size="11">last_seq</text>
+            <text data-detail="context" x="1297" y="1068" class="er-type" font-size="10.5" text-anchor="end">bigint</text>
+          </g>
+          <g data-detail="context" data-er-row="11">
+            <line x1="959" y1="1073" x2="1309" y2="1073" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="963" y="1074" width="342" height="17" rx="4" class="er-zebra"/>
+
+            <text data-detail="context" x="1001" y="1087" class="t-primary" font-size="11">requested_at</text>
+            <text data-detail="context" x="1297" y="1087" class="er-type" font-size="10.5" text-anchor="end">timestamptz</text>
+          </g>
+          <g data-detail="context" data-er-row="12">
+            <line x1="959" y1="1092" x2="1309" y2="1092" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+
+            <text data-detail="context" x="1001" y="1106" class="t-primary" font-size="11">first_text_deadline_at</text>
+            <text data-detail="context" x="1297" y="1106" class="er-type" font-size="10.5" text-anchor="end">timestamptz</text>
+          </g>
+          <g data-detail="context" data-er-row="13">
+            <line x1="959" y1="1111" x2="1309" y2="1111" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="963" y="1112" width="342" height="17" rx="4" class="er-zebra"/>
+
+            <text data-detail="context" x="1001" y="1125" class="t-primary" font-size="11">deadline_at</text>
+            <text data-detail="context" x="1297" y="1125" class="er-type" font-size="10.5" text-anchor="end">timestamptz</text>
+          </g>
+          <g data-detail="context" data-er-row="14">
+            <line x1="959" y1="1130" x2="1309" y2="1130" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+
+            <text data-detail="context" x="1001" y="1144" class="t-primary" font-size="11">first_text_at</text>
+            <text data-detail="context" x="1297" y="1144" class="er-type" font-size="10.5" text-anchor="end">timestamptz</text>
+          </g>
+          <g data-detail="context" data-er-row="15">
+            <line x1="959" y1="1149" x2="1309" y2="1149" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="963" y="1150" width="342" height="17" rx="4" class="er-zebra"/>
+
+            <text data-detail="context" x="1001" y="1163" class="t-primary" font-size="11">finished_at</text>
+            <text data-detail="context" x="1297" y="1163" class="er-type" font-size="10.5" text-anchor="end">timestamptz</text>
+          </g>
+          <g data-detail="context" data-er-row="16">
+            <line x1="959" y1="1168" x2="1309" y2="1168" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+
+            <text data-detail="context" x="1001" y="1182" class="t-primary" font-size="11">error_code</text>
+            <text data-detail="context" x="1297" y="1182" class="er-type" font-size="10.5" text-anchor="end">text</text>
+          </g>
+          <g data-detail="context" data-er-row="17">
+            <line x1="959" y1="1187" x2="1309" y2="1187" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="963" y="1188" width="342" height="17" rx="4" class="er-zebra"/>
+
+            <text data-detail="context" x="1001" y="1201" class="t-primary" font-size="11">error_detail</text>
+            <text data-detail="context" x="1297" y="1201" class="er-type" font-size="10.5" text-anchor="end">text</text>
+          </g>
+        </g>
+
+        <g id="node-citations" data-node-id="citations" data-node-label="core.citations" tabindex="0" role="button" aria-label="聚焦core.citations，AI 回答引用, 实体" aria-pressed="false" data-node-kind="database" data-node-sublabel="AI 回答引用" data-node-tag="证据与向量" data-node-context="实体" class="er-hue-cloud">
+          <title>core.citations · AI 回答引用 · 实体 · 证据与向量</title>
+          <rect x="1420" y="40" width="350" height="236" rx="8" class="c-mask"/>
+          <rect x="1420" y="40" width="350" height="236" rx="8" class="c-database er-table" data-animate="node" style="--step:12" stroke-width="1.2"/>
+          <path class="er-table-header" d="M 1428 40 H 1762 A 8 8 0 0 1 1770 48 V 80 H 1420 V 48 A 8 8 0 0 1 1428 40 Z"/>
+          <path class="er-table-cap" d="M 1432 41.4 H 1758" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+          <g aria-hidden="true" data-semantic-sigil="database" class="semantic-sigil s-database" transform="translate(1428 47) scale(0.875)">
+            <ellipse cx="8" cy="4" rx="5" ry="2"/>
+            <path d="M3 4v8c0 1.1 2.2 2 5 2s5-.9 5-2V4M3 8c0 1.1 2.2 2 5 2s5-.9 5-2"/>
+          </g>
+          <text data-node-label="" x="1595" y="59" class="t-primary er-title" font-size="13" font-weight="700" text-anchor="middle">core.citations</text>
+          <line x1="1420" y1="80" x2="1770" y2="80" class="c-grid er-header-rule" stroke-width="1"/>
+          <g data-detail="context" data-er-row="0">
+            <line x1="1420" y1="80" x2="1770" y2="80" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+            <rect x="1430" y="84" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="pk"/><text data-detail="context" x="1441" y="94" class="t-database" font-size="9" font-weight="600">PK</text>
+            <text data-detail="context" x="1482" y="94" class="t-primary er-name-pk" font-size="11">id</text>
+            <text data-detail="context" x="1758" y="94" class="er-type" font-size="10.5" text-anchor="end">uuid</text>
+          </g>
+          <g data-detail="context" data-er-row="1">
+            <line x1="1420" y1="99" x2="1770" y2="99" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="1424" y="100" width="342" height="17" rx="4" class="er-zebra"/>
+            <rect x="1430" y="103" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="fk"/><text data-detail="context" x="1441" y="113" class="t-messagebus" font-size="9" font-weight="600">FK</text><rect x="1455" y="103" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="uk"/><text data-detail="context" x="1466" y="113" class="t-muted" font-size="9" font-weight="600">UK</text>
+            <text data-detail="context" x="1482" y="113" class="t-primary" font-size="11">generation_run_id</text>
+            <text data-detail="context" x="1758" y="113" class="er-type" font-size="10.5" text-anchor="end">uuid</text>
+          </g>
+          <g data-detail="context" data-er-row="2">
+            <line x1="1420" y1="118" x2="1770" y2="118" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+            <rect x="1430" y="122" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="fk"/><text data-detail="context" x="1441" y="132" class="t-messagebus" font-size="9" font-weight="600">FK</text>
+            <text data-detail="context" x="1482" y="132" class="t-primary" font-size="11">assistant_message_id</text>
+            <text data-detail="context" x="1758" y="132" class="er-type" font-size="10.5" text-anchor="end">uuid</text>
+          </g>
+          <g data-detail="context" data-er-row="3">
+            <line x1="1420" y1="137" x2="1770" y2="137" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="1424" y="138" width="342" height="17" rx="4" class="er-zebra"/>
+            <rect x="1430" y="141" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="uk"/><text data-detail="context" x="1441" y="151" class="t-muted" font-size="9" font-weight="600">UK</text>
+            <text data-detail="context" x="1482" y="151" class="t-primary" font-size="11">citation_no</text>
+            <text data-detail="context" x="1758" y="151" class="er-type" font-size="10.5" text-anchor="end">integer</text>
+          </g>
+          <g data-detail="context" data-er-row="4">
+            <line x1="1420" y1="156" x2="1770" y2="156" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+            <rect x="1430" y="160" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="uk"/><text data-detail="context" x="1441" y="170" class="t-muted" font-size="9" font-weight="600">UK</text>
+            <text data-detail="context" x="1482" y="170" class="t-primary" font-size="11">evidence_id</text>
+            <text data-detail="context" x="1758" y="170" class="er-type" font-size="10.5" text-anchor="end">text</text>
+          </g>
+          <g data-detail="context" data-er-row="5">
+            <line x1="1420" y1="175" x2="1770" y2="175" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="1424" y="176" width="342" height="17" rx="4" class="er-zebra"/>
+            <rect x="1430" y="179" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="fk"/><text data-detail="context" x="1441" y="189" class="t-messagebus" font-size="9" font-weight="600">FK</text>
+            <text data-detail="context" x="1482" y="189" class="t-primary" font-size="11">document_id</text>
+            <text data-detail="context" x="1758" y="189" class="er-type" font-size="10.5" text-anchor="end">uuid</text>
+          </g>
+          <g data-detail="context" data-er-row="6">
+            <line x1="1420" y1="194" x2="1770" y2="194" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+            <rect x="1430" y="198" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="fk"/><text data-detail="context" x="1441" y="208" class="t-messagebus" font-size="9" font-weight="600">FK</text>
+            <text data-detail="context" x="1482" y="208" class="t-primary" font-size="11">document_version</text>
+            <text data-detail="context" x="1758" y="208" class="er-type" font-size="10.5" text-anchor="end">integer</text>
+          </g>
+          <g data-detail="context" data-er-row="7">
+            <line x1="1420" y1="213" x2="1770" y2="213" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="1424" y="214" width="342" height="17" rx="4" class="er-zebra"/>
+            <rect x="1430" y="217" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="fk"/><text data-detail="context" x="1441" y="227" class="t-messagebus" font-size="9" font-weight="600">FK</text>
+            <text data-detail="context" x="1482" y="227" class="t-primary" font-size="11">attempt_id</text>
+            <text data-detail="context" x="1758" y="227" class="er-type" font-size="10.5" text-anchor="end">uuid</text>
+          </g>
+          <g data-detail="context" data-er-row="8">
+            <line x1="1420" y1="232" x2="1770" y2="232" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+
+            <text data-detail="context" x="1482" y="246" class="t-primary" font-size="11">source_chunk_id</text>
+            <text data-detail="context" x="1758" y="246" class="er-type" font-size="10.5" text-anchor="end">uuid</text>
+          </g>
+          <g data-detail="context" data-er-row="9">
+            <line x1="1420" y1="251" x2="1770" y2="251" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="1424" y="252" width="342" height="17" rx="4" class="er-zebra"/>
+
+            <text data-detail="context" x="1482" y="265" class="t-primary" font-size="11">created_at</text>
+            <text data-detail="context" x="1758" y="265" class="er-type" font-size="10.5" text-anchor="end">timestamptz</text>
+          </g>
+        </g>
+
+        <g id="node-document_chunks" data-node-id="document_chunks" data-node-label="ai.document_chunks" tabindex="0" role="button" aria-label="聚焦ai.document_chunks，解析切片与向量, 实体" aria-pressed="false" data-node-kind="database" data-node-sublabel="解析切片与向量" data-node-tag="证据与向量" data-node-context="实体" class="er-hue-cloud">
+          <title>ai.document_chunks · 解析切片与向量 · 实体 · 证据与向量</title>
+          <rect x="1420" y="432" width="350" height="312" rx="8" class="c-mask"/>
+          <rect x="1420" y="432" width="350" height="312" rx="8" class="c-database er-table" data-animate="node" style="--step:12" stroke-width="1.2"/>
+          <path class="er-table-header" d="M 1428 432 H 1762 A 8 8 0 0 1 1770 440 V 472 H 1420 V 440 A 8 8 0 0 1 1428 432 Z"/>
+          <path class="er-table-cap" d="M 1432 433.4 H 1758" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+          <g aria-hidden="true" data-semantic-sigil="database" class="semantic-sigil s-database" transform="translate(1428 439) scale(0.875)">
+            <ellipse cx="8" cy="4" rx="5" ry="2"/>
+            <path d="M3 4v8c0 1.1 2.2 2 5 2s5-.9 5-2V4M3 8c0 1.1 2.2 2 5 2s5-.9 5-2"/>
+          </g>
+          <text data-node-label="" x="1595" y="451" class="t-primary er-title" font-size="13" font-weight="700" text-anchor="middle">ai.document_chunks</text>
+          <line x1="1420" y1="472" x2="1770" y2="472" class="c-grid er-header-rule" stroke-width="1"/>
+          <g data-detail="context" data-er-row="0">
+            <line x1="1420" y1="472" x2="1770" y2="472" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+            <rect x="1430" y="476" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="pk"/><text data-detail="context" x="1441" y="486" class="t-database" font-size="9" font-weight="600">PK</text>
+            <text data-detail="context" x="1482" y="486" class="t-primary er-name-pk" font-size="11">id</text>
+            <text data-detail="context" x="1758" y="486" class="er-type" font-size="10.5" text-anchor="end">uuid</text>
+          </g>
+          <g data-detail="context" data-er-row="1">
+            <line x1="1420" y1="491" x2="1770" y2="491" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="1424" y="492" width="342" height="17" rx="4" class="er-zebra"/>
+            <rect x="1430" y="495" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="fk"/><text data-detail="context" x="1441" y="505" class="t-messagebus" font-size="9" font-weight="600">FK</text>
+            <text data-detail="context" x="1482" y="505" class="t-primary" font-size="11">document_id</text>
+            <text data-detail="context" x="1758" y="505" class="er-type" font-size="10.5" text-anchor="end">uuid</text>
+          </g>
+          <g data-detail="context" data-er-row="2">
+            <line x1="1420" y1="510" x2="1770" y2="510" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+            <rect x="1430" y="514" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="fk"/><text data-detail="context" x="1441" y="524" class="t-messagebus" font-size="9" font-weight="600">FK</text>
+            <text data-detail="context" x="1482" y="524" class="t-primary" font-size="11">document_version</text>
+            <text data-detail="context" x="1758" y="524" class="er-type" font-size="10.5" text-anchor="end">integer</text>
+          </g>
+          <g data-detail="context" data-er-row="3">
+            <line x1="1420" y1="529" x2="1770" y2="529" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="1424" y="530" width="342" height="17" rx="4" class="er-zebra"/>
+            <rect x="1430" y="533" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="fk"/><text data-detail="context" x="1441" y="543" class="t-messagebus" font-size="9" font-weight="600">FK</text><rect x="1455" y="533" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="uk"/><text data-detail="context" x="1466" y="543" class="t-muted" font-size="9" font-weight="600">UK</text>
+            <text data-detail="context" x="1482" y="543" class="t-primary" font-size="11">attempt_id</text>
+            <text data-detail="context" x="1758" y="543" class="er-type" font-size="10.5" text-anchor="end">uuid</text>
+          </g>
+          <g data-detail="context" data-er-row="4">
+            <line x1="1420" y1="548" x2="1770" y2="548" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+            <rect x="1430" y="552" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="uk"/><text data-detail="context" x="1441" y="562" class="t-muted" font-size="9" font-weight="600">UK</text>
+            <text data-detail="context" x="1482" y="562" class="t-primary" font-size="11">chunk_index</text>
+            <text data-detail="context" x="1758" y="562" class="er-type" font-size="10.5" text-anchor="end">integer</text>
+          </g>
+          <g data-detail="context" data-er-row="5">
+            <line x1="1420" y1="567" x2="1770" y2="567" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="1424" y="568" width="342" height="17" rx="4" class="er-zebra"/>
+
+            <text data-detail="context" x="1482" y="581" class="t-primary" font-size="11">content</text>
+            <text data-detail="context" x="1758" y="581" class="er-type" font-size="10.5" text-anchor="end">text</text>
+          </g>
+          <g data-detail="context" data-er-row="6">
+            <line x1="1420" y1="586" x2="1770" y2="586" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+
+            <text data-detail="context" x="1482" y="600" class="t-primary" font-size="11">token_count</text>
+            <text data-detail="context" x="1758" y="600" class="er-type" font-size="10.5" text-anchor="end">integer</text>
+          </g>
+          <g data-detail="context" data-er-row="7">
+            <line x1="1420" y1="605" x2="1770" y2="605" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="1424" y="606" width="342" height="17" rx="4" class="er-zebra"/>
+
+            <text data-detail="context" x="1482" y="619" class="t-primary" font-size="11">page_start</text>
+            <text data-detail="context" x="1758" y="619" class="er-type" font-size="10.5" text-anchor="end">integer</text>
+          </g>
+          <g data-detail="context" data-er-row="8">
+            <line x1="1420" y1="624" x2="1770" y2="624" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+
+            <text data-detail="context" x="1482" y="638" class="t-primary" font-size="11">page_end</text>
+            <text data-detail="context" x="1758" y="638" class="er-type" font-size="10.5" text-anchor="end">integer</text>
+          </g>
+          <g data-detail="context" data-er-row="9">
+            <line x1="1420" y1="643" x2="1770" y2="643" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="1424" y="644" width="342" height="17" rx="4" class="er-zebra"/>
+
+            <text data-detail="context" x="1482" y="657" class="t-primary" font-size="11">locator</text>
+            <text data-detail="context" x="1758" y="657" class="er-type" font-size="10.5" text-anchor="end">jsonb</text>
+          </g>
+          <g data-detail="context" data-er-row="10">
+            <line x1="1420" y1="662" x2="1770" y2="662" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+
+            <text data-detail="context" x="1482" y="676" class="t-primary" font-size="11">embedding_model_id</text>
+            <text data-detail="context" x="1758" y="676" class="er-type" font-size="10.5" text-anchor="end">text</text>
+          </g>
+          <g data-detail="context" data-er-row="11">
+            <line x1="1420" y1="681" x2="1770" y2="681" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="1424" y="682" width="342" height="17" rx="4" class="er-zebra"/>
+
+            <text data-detail="context" x="1482" y="695" class="t-primary" font-size="11">embedding_dimensions</text>
+            <text data-detail="context" x="1758" y="695" class="er-type" font-size="10.5" text-anchor="end">integer</text>
+          </g>
+          <g data-detail="context" data-er-row="12">
+            <line x1="1420" y1="700" x2="1770" y2="700" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+
+            <text data-detail="context" x="1482" y="714" class="t-primary" font-size="11">embedding</text>
+            <text data-detail="context" x="1758" y="714" class="er-type" font-size="10.5" text-anchor="end">vector</text>
+          </g>
+          <g data-detail="context" data-er-row="13">
+            <line x1="1420" y1="719" x2="1770" y2="719" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="1424" y="720" width="342" height="17" rx="4" class="er-zebra"/>
+
+            <text data-detail="context" x="1482" y="733" class="t-primary" font-size="11">created_at</text>
+            <text data-detail="context" x="1758" y="733" class="er-type" font-size="10.5" text-anchor="end">timestamptz</text>
+          </g>
+        </g>
+
+        <g id="node-retrievable_chunks" data-node-id="retrievable_chunks" data-node-label="ai.retrievable_chunks · VIEW" tabindex="0" role="button" aria-label="聚焦ai.retrievable_chunks · VIEW，VIEW · 发布过滤，不决定用户权限, 实体" aria-pressed="false" data-node-kind="database" data-node-sublabel="VIEW · 发布过滤，不决定用户权限" data-node-tag="证据与向量" data-node-context="实体" class="er-hue-cloud">
+          <title>ai.retrievable_chunks · VIEW · VIEW · 发布过滤，不决定用户权限 · 实体 · 证据与向量</title>
+          <rect x="1420" y="824" width="350" height="331" rx="8" class="c-mask"/>
+          <rect x="1420" y="824" width="350" height="331" rx="8" class="c-database er-table" data-animate="node" style="--step:12" stroke-width="1.2"/>
+          <path class="er-table-header" d="M 1428 824 H 1762 A 8 8 0 0 1 1770 832 V 864 H 1420 V 832 A 8 8 0 0 1 1428 824 Z"/>
+          <path class="er-table-cap" d="M 1432 825.4 H 1758" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+          <g aria-hidden="true" data-semantic-sigil="database" class="semantic-sigil s-database" transform="translate(1428 831) scale(0.875)">
+            <ellipse cx="8" cy="4" rx="5" ry="2"/>
+            <path d="M3 4v8c0 1.1 2.2 2 5 2s5-.9 5-2V4M3 8c0 1.1 2.2 2 5 2s5-.9 5-2"/>
+          </g>
+          <text data-node-label="" x="1595" y="843" class="t-primary er-title" font-size="13" font-weight="700" text-anchor="middle">ai.retrievable_chunks · VIEW</text>
+          <line x1="1420" y1="864" x2="1770" y2="864" class="c-grid er-header-rule" stroke-width="1"/>
+          <g data-detail="context" data-er-row="0">
+            <line x1="1420" y1="864" x2="1770" y2="864" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+
+            <text data-detail="context" x="1462" y="878" class="t-primary" font-size="11">chunk_id</text>
+            <text data-detail="context" x="1758" y="878" class="er-type" font-size="10.5" text-anchor="end">uuid</text>
+          </g>
+          <g data-detail="context" data-er-row="1">
+            <line x1="1420" y1="883" x2="1770" y2="883" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="1424" y="884" width="342" height="17" rx="4" class="er-zebra"/>
+
+            <text data-detail="context" x="1462" y="897" class="t-primary" font-size="11">kb_id</text>
+            <text data-detail="context" x="1758" y="897" class="er-type" font-size="10.5" text-anchor="end">uuid</text>
+          </g>
+          <g data-detail="context" data-er-row="2">
+            <line x1="1420" y1="902" x2="1770" y2="902" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+
+            <text data-detail="context" x="1462" y="916" class="t-primary" font-size="11">document_id</text>
+            <text data-detail="context" x="1758" y="916" class="er-type" font-size="10.5" text-anchor="end">uuid</text>
+          </g>
+          <g data-detail="context" data-er-row="3">
+            <line x1="1420" y1="921" x2="1770" y2="921" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="1424" y="922" width="342" height="17" rx="4" class="er-zebra"/>
+
+            <text data-detail="context" x="1462" y="935" class="t-primary" font-size="11">document_version</text>
+            <text data-detail="context" x="1758" y="935" class="er-type" font-size="10.5" text-anchor="end">integer</text>
+          </g>
+          <g data-detail="context" data-er-row="4">
+            <line x1="1420" y1="940" x2="1770" y2="940" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+
+            <text data-detail="context" x="1462" y="954" class="t-primary" font-size="11">attempt_id</text>
+            <text data-detail="context" x="1758" y="954" class="er-type" font-size="10.5" text-anchor="end">uuid</text>
+          </g>
+          <g data-detail="context" data-er-row="5">
+            <line x1="1420" y1="959" x2="1770" y2="959" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="1424" y="960" width="342" height="17" rx="4" class="er-zebra"/>
+
+            <text data-detail="context" x="1462" y="973" class="t-primary" font-size="11">file_name</text>
+            <text data-detail="context" x="1758" y="973" class="er-type" font-size="10.5" text-anchor="end">text</text>
+          </g>
+          <g data-detail="context" data-er-row="6">
+            <line x1="1420" y1="978" x2="1770" y2="978" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+
+            <text data-detail="context" x="1462" y="992" class="t-primary" font-size="11">media_type</text>
+            <text data-detail="context" x="1758" y="992" class="er-type" font-size="10.5" text-anchor="end">text</text>
+          </g>
+          <g data-detail="context" data-er-row="7">
+            <line x1="1420" y1="997" x2="1770" y2="997" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="1424" y="998" width="342" height="17" rx="4" class="er-zebra"/>
+
+            <text data-detail="context" x="1462" y="1011" class="t-primary" font-size="11">chunk_index</text>
+            <text data-detail="context" x="1758" y="1011" class="er-type" font-size="10.5" text-anchor="end">integer</text>
+          </g>
+          <g data-detail="context" data-er-row="8">
+            <line x1="1420" y1="1016" x2="1770" y2="1016" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+
+            <text data-detail="context" x="1462" y="1030" class="t-primary" font-size="11">content</text>
+            <text data-detail="context" x="1758" y="1030" class="er-type" font-size="10.5" text-anchor="end">text</text>
+          </g>
+          <g data-detail="context" data-er-row="9">
+            <line x1="1420" y1="1035" x2="1770" y2="1035" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="1424" y="1036" width="342" height="17" rx="4" class="er-zebra"/>
+
+            <text data-detail="context" x="1462" y="1049" class="t-primary" font-size="11">page_start</text>
+            <text data-detail="context" x="1758" y="1049" class="er-type" font-size="10.5" text-anchor="end">integer</text>
+          </g>
+          <g data-detail="context" data-er-row="10">
+            <line x1="1420" y1="1054" x2="1770" y2="1054" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+
+            <text data-detail="context" x="1462" y="1068" class="t-primary" font-size="11">page_end</text>
+            <text data-detail="context" x="1758" y="1068" class="er-type" font-size="10.5" text-anchor="end">integer</text>
+          </g>
+          <g data-detail="context" data-er-row="11">
+            <line x1="1420" y1="1073" x2="1770" y2="1073" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="1424" y="1074" width="342" height="17" rx="4" class="er-zebra"/>
+
+            <text data-detail="context" x="1462" y="1087" class="t-primary" font-size="11">locator</text>
+            <text data-detail="context" x="1758" y="1087" class="er-type" font-size="10.5" text-anchor="end">jsonb</text>
+          </g>
+          <g data-detail="context" data-er-row="12">
+            <line x1="1420" y1="1092" x2="1770" y2="1092" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+
+            <text data-detail="context" x="1462" y="1106" class="t-primary" font-size="11">embedding_model_id</text>
+            <text data-detail="context" x="1758" y="1106" class="er-type" font-size="10.5" text-anchor="end">text</text>
+          </g>
+          <g data-detail="context" data-er-row="13">
+            <line x1="1420" y1="1111" x2="1770" y2="1111" class="c-grid er-row-rule" stroke-width="0.5"/>
+            <rect x="1424" y="1112" width="342" height="17" rx="4" class="er-zebra"/>
+
+            <text data-detail="context" x="1462" y="1125" class="t-primary" font-size="11">embedding_dimensions</text>
+            <text data-detail="context" x="1758" y="1125" class="er-type" font-size="10.5" text-anchor="end">integer</text>
+          </g>
+          <g data-detail="context" data-er-row="14">
+            <line x1="1420" y1="1130" x2="1770" y2="1130" class="c-grid er-row-rule" stroke-width="0.5"/>
+
+
+            <text data-detail="context" x="1462" y="1144" class="t-primary" font-size="11">embedding</text>
+            <text data-detail="context" x="1758" y="1144" class="er-type" font-size="10.5" text-anchor="end">vector</text>
+          </g>
+        </g>
+
+        <!-- Relationship labels -->
+        <g data-detail="context" data-edge-from="knowledge_bases" data-edge-to="users" data-edge-label="创建人" data-edge-key="0" data-edge-id="r1" data-er-ends="many one optional">
+          <rect x="145.51999999999998" y="318.5" width="43.48" height="14" rx="3" class="c-mask"/>
+          <text x="167.26" y="328.5" class="t-muted" font-size="9" text-anchor="middle">创建人</text>
+        </g>
+        <g data-detail="context" data-edge-from="kb_members" data-edge-to="knowledge_bases" data-edge-label="知识库授权" data-edge-key="1" data-edge-id="r2" data-er-ends="many one optional">
+          <rect x="123.19999999999999" y="782.75" width="65.8" height="14" rx="3" class="c-mask"/>
+          <text x="156.1" y="792.75" class="t-muted" font-size="9" text-anchor="middle">知识库授权</text>
+        </g>
+        <g data-detail="context" data-edge-from="kb_members" data-edge-to="users" data-edge-label="成员与授权人" data-edge-key="2" data-edge-id="r3" data-er-ends="many one optional">
+          <rect x="225.00000000000003" y="755" width="76.96" height="14" rx="3" class="c-mask"/>
+          <text x="263.48" y="765" class="t-muted" font-size="9" text-anchor="middle">成员与授权人</text>
+        </g>
+        <g data-detail="context" data-edge-from="documents" data-edge-to="knowledge_bases" data-edge-label="包含" data-edge-key="3" data-edge-id="r4" data-er-ends="many one optional">
+          <rect x="461.34" y="226" width="32.32" height="14" rx="3" class="c-mask"/>
+          <text x="477.5" y="236" class="t-muted" font-size="9" text-anchor="middle">包含</text>
+        </g>
+        <g data-detail="context" data-edge-from="documents" data-edge-to="users" data-edge-label="上传人" data-edge-key="4" data-edge-id="r5" data-er-ends="many one optional">
+          <rect x="455.76" y="156" width="43.48" height="14" rx="3" class="c-mask"/>
+          <text x="477.5" y="166" class="t-muted" font-size="9" text-anchor="middle">上传人</text>
+        </g>
+        <g data-detail="context" data-edge-from="document_versions" data-edge-to="documents" data-edge-label="内部文件版本" data-edge-key="5" data-edge-id="r6" data-er-ends="many one optional">
+          <rect x="608.04" y="385" width="76.96" height="14" rx="3" class="c-mask"/>
+          <text x="646.52" y="395" class="t-muted" font-size="9" text-anchor="middle">内部文件版本</text>
+        </g>
+        <g data-detail="context" data-edge-from="document_versions" data-edge-to="users" data-edge-label="版本上传人" data-edge-key="6" data-edge-id="r7" data-er-ends="many one optional">
+          <rect x="449" y="411" width="65.8" height="14" rx="3" class="c-mask"/>
+          <text x="481.9" y="421" class="t-muted" font-size="9" text-anchor="middle">版本上传人</text>
+        </g>
+        <g data-detail="context" data-edge-from="processing_jobs" data-edge-to="document_versions" data-edge-label="每版本一个任务" data-edge-key="7" data-edge-id="r8" data-er-ends="one optional">
+          <rect x="584.8800000000001" y="758" width="88.12" height="14" rx="3" class="c-mask"/>
+          <text x="628.94" y="768" class="t-muted" font-size="9" text-anchor="middle">每版本一个任务</text>
+        </g>
+        <g data-detail="context" data-edge-from="processing_jobs" data-edge-to="users" data-edge-label="任务创建人" data-edge-key="8" data-edge-id="r9" data-er-ends="many one optional">
+          <rect x="371.20000000000005" y="794.875" width="65.8" height="14" rx="3" class="c-mask"/>
+          <text x="404.1" y="804.875" class="t-muted" font-size="9" text-anchor="middle">任务创建人</text>
+        </g>
+        <g data-detail="context" data-edge-from="processing_attempts" data-edge-to="processing_jobs" data-edge-label="手动重试新增尝试" data-edge-key="9" data-edge-id="r10" data-er-ends="many one optional">
+          <rect x="561.72" y="1121.5" width="99.28" height="14" rx="3" class="c-mask"/>
+          <text x="611.36" y="1131.5" class="t-muted" font-size="9" text-anchor="middle">手动重试新增尝试</text>
+        </g>
+        <g data-detail="context" data-edge-from="processing_attempts" data-edge-to="users" data-edge-label="尝试发起人" data-edge-key="10" data-edge-id="r11" data-er-ends="many one optional">
+          <rect x="371.20000000000005" y="1159" width="65.8" height="14" rx="3" class="c-mask"/>
+          <text x="404.1" y="1169" class="t-muted" font-size="9" text-anchor="middle">尝试发起人</text>
+        </g>
+        <g data-detail="context" data-edge-from="conversations" data-edge-to="users" data-edge-label="个人会话" data-edge-key="11" data-edge-id="r12" data-er-ends="many one optional">
+          <rect x="885.68" y="99" width="54.64" height="14" rx="3" class="c-mask"/>
+          <text x="913" y="109" class="t-muted" font-size="9" text-anchor="middle">个人会话</text>
+        </g>
+        <g data-detail="context" data-edge-from="conversations" data-edge-to="knowledge_bases" data-edge-label="固定单知识库" data-edge-key="12" data-edge-id="r13" data-er-ends="many one optional">
+          <rect x="869.52" y="169" width="76.96" height="14" rx="3" class="c-mask"/>
+          <text x="908" y="179" class="t-muted" font-size="9" text-anchor="middle">固定单知识库</text>
+        </g>
+        <g data-detail="context" data-edge-from="messages" data-edge-to="conversations" data-edge-label="消息顺序" data-edge-key="13" data-edge-id="r14" data-er-ends="many one optional">
+          <rect x="1061.3600000000001" y="328" width="54.64" height="14" rx="3" class="c-mask"/>
+          <text x="1088.68" y="338" class="t-muted" font-size="9" text-anchor="middle">消息顺序</text>
+        </g>
+        <g data-detail="context" data-edge-from="generation_runs" data-edge-to="conversations" data-edge-label="生成执行" data-edge-key="14" data-edge-id="r16" data-er-ends="many one optional">
+          <rect x="1333" y="1036" width="54.64" height="14" rx="3" class="c-mask"/>
+          <text x="1360.32" y="1046" class="t-muted" font-size="9" text-anchor="middle">生成执行</text>
+        </g>
+        <g data-detail="context" data-edge-from="generation_runs" data-edge-to="messages" data-edge-label="问题与回答" data-edge-key="15" data-edge-id="r17" data-er-ends="many one optional">
+          <rect x="1164" y="770.25" width="65.8" height="14" rx="3" class="c-mask"/>
+          <text x="1196.9" y="780.25" class="t-muted" font-size="9" text-anchor="middle">问题与回答</text>
+        </g>
+        <g data-detail="context" data-edge-from="citations" data-edge-to="generation_runs" data-edge-label="引用编号" data-edge-key="16" data-edge-id="r18" data-er-ends="many one optional">
+          <rect x="1370.5" y="357" width="54.64" height="14" rx="3" class="c-mask"/>
+          <text x="1397.82" y="367" class="t-muted" font-size="9" text-anchor="middle">引用编号</text>
+        </g>
+        <g data-detail="context" data-edge-from="citations" data-edge-to="processing_attempts" data-edge-label="绑定来源尝试" data-edge-key="17" data-edge-id="r19" data-er-ends="many one optional">
+          <rect x="1313.04" y="87.5" width="76.96" height="14" rx="3" class="c-mask"/>
+          <text x="1351.52" y="97.5" class="t-muted" font-size="9" text-anchor="middle">绑定来源尝试</text>
+        </g>
+        <g data-detail="context" data-edge-from="document_chunks" data-edge-to="processing_attempts" data-edge-label="待发布或已发布切片" data-edge-key="18" data-edge-id="r20" data-er-ends="many one optional">
+          <rect x="1402" y="755.75" width="110.44" height="14" rx="3" class="c-mask"/>
+          <text x="1457.22" y="765.75" class="t-muted" font-size="9" text-anchor="middle">待发布或已发布切片</text>
+        </g>
+        <g data-detail="context" data-edge-from="documents" data-edge-to="processing_attempts" data-edge-label="当前发布指针" data-edge-key="19" data-edge-id="r21" data-er-ends="one optional">
+          <rect x="795.04" y="1163.625" width="76.96" height="14" rx="3" class="c-mask"/>
+          <text x="833.52" y="1173.625" class="t-muted" font-size="9" text-anchor="middle">当前发布指针</text>
+        </g>
+        <g data-detail="context" data-edge-from="messages" data-edge-to="generation_runs" data-edge-label="当前 run（联合FK）" data-edge-key="20" data-edge-id="current_run" data-er-ends="one optional">
+          <rect x="1005.56" y="688.75" width="110.44" height="14" rx="3" class="c-mask"/>
+          <text x="1060.78" y="698.75" class="t-muted" font-size="9" text-anchor="middle">当前 run（联合FK）</text>
+        </g>
+        <g data-detail="context" data-edge-from="citations" data-edge-to="document_chunks" data-edge-label="历史逻辑来源（无FK）" data-edge-key="21" data-edge-id="historical_chunk" data-er-ends="many one optional">
+          <rect x="1467.4" y="347" width="121.6" height="14" rx="3" class="c-mask"/>
+          <text x="1528.2" y="357" class="t-messagebus" font-size="9" text-anchor="middle">历史逻辑来源（无FK）</text>
+        </g>
+        <g data-detail="context" data-edge-from="retrievable_chunks" data-edge-to="document_chunks" data-edge-label="派生（非FK）" data-edge-key="22" data-edge-id="view_chunks" data-er-ends="one optional">
+          <rect x="1512.04" y="777" width="76.96" height="14" rx="3" class="c-mask"/>
+          <text x="1550.52" y="787" class="t-messagebus" font-size="9" text-anchor="middle">派生（非FK）</text>
+        </g>
+        <g data-detail="context" data-edge-from="retrievable_chunks" data-edge-to="documents" data-edge-label="当前发布指针（非FK）" data-edge-key="23" data-edge-id="view_doc" data-er-ends="many one optional">
+          <rect x="1194.4" y="788.875" width="121.6" height="14" rx="3" class="c-mask"/>
+          <text x="1255.2" y="798.875" class="t-messagebus" font-size="9" text-anchor="middle">当前发布指针（非FK）</text>
+        </g>
+        <g data-detail="context" data-edge-from="retrievable_chunks" data-edge-to="knowledge_bases" data-edge-label="ACTIVE（非FK）" data-edge-key="24" data-edge-id="view_kb" data-er-ends="many one optional">
+          <rect x="1227.88" y="747.3125" width="88.12" height="14" rx="3" class="c-mask"/>
+          <text x="1271.94" y="757.3125" class="t-messagebus" font-size="9" text-anchor="middle">ACTIVE（非FK）</text>
         </g>
 
         <!-- Legend -->
         <g data-legend="">
-          <text x="40" y="2724" class="t-primary" font-size="12" font-weight="650">图例</text>
-          <g data-legend-semantic-kind="emphasis" data-legend-x="40" data-legend-baseline="2744" data-legend-width="105">
-            <path d="M 40 2741 L 74 2741" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
-            <text x="83" y="2744" class="t-muted" font-size="10" font-weight="500">主路径请求</text>
+          <text x="24" y="1721" class="t-primary" font-size="12" font-weight="650">图例</text>
+          <g data-legend-semantic-kind="pk" data-legend-x="24" data-legend-baseline="1741" data-legend-width="65">
+            <rect class="er-legend-hit" tabindex="0" role="img" aria-label="主键" x="18" y="1726" width="77" height="22" rx="11"/><rect x="24" y="1731" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="pk"/><text x="35" y="1741" class="t-database" text-anchor="middle" font-size="9" font-weight="600">PK</text>
+            <text x="54" y="1741" class="t-primary" font-size="12" font-weight="600">主键</text>
           </g>
-          <g data-legend-semantic-kind="return" data-legend-x="167" data-legend-baseline="2744" data-legend-width="68">
-            <path d="M 167 2741 L 201 2741" class="a-default" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
-            <text x="210" y="2744" class="t-muted" font-size="10" font-weight="500">返回</text>
+          <g data-legend-semantic-kind="fk" data-legend-x="111" data-legend-baseline="1741" data-legend-width="65">
+            <rect class="er-legend-hit" tabindex="0" role="img" aria-label="外键" x="105" y="1726" width="77" height="22" rx="11"/><rect x="111" y="1731" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="fk"/><text x="122" y="1741" class="t-messagebus" text-anchor="middle" font-size="9" font-weight="600">FK</text>
+            <text x="141" y="1741" class="t-primary" font-size="12" font-weight="600">外键</text>
           </g>
-          <g data-legend-semantic-kind="security" data-legend-x="257" data-legend-baseline="2744" data-legend-width="68">
-            <path d="M 257 2741 L 291 2741" class="a-security" stroke-width="1.4" marker-end="url(#arrowhead-security)"/>
-            <text x="300" y="2744" class="t-muted" font-size="10" font-weight="500">安全</text>
+          <g data-legend-semantic-kind="uk" data-legend-x="198" data-legend-baseline="1741" data-legend-width="83">
+            <rect class="er-legend-hit" tabindex="0" role="img" aria-label="唯一键" x="192" y="1726" width="95" height="22" rx="11"/><rect x="198" y="1731" width="22" height="13" rx="3" class="er-key-badge" data-er-badge="uk"/><text x="209" y="1741" class="t-muted" text-anchor="middle" font-size="9" font-weight="600">UK</text>
+            <text x="228" y="1741" class="t-primary" font-size="12" font-weight="600">唯一键</text>
           </g>
-          <g data-legend-semantic-kind="dashed" data-legend-x="347" data-legend-baseline="2744" data-legend-width="93">
-            <path d="M 347 2741 L 381 2741" class="a-dashed" stroke-width="1.4" marker-end="url(#arrowhead-dashed)"/>
-            <text x="390" y="2744" class="t-muted" font-size="10" font-weight="500">异步追踪</text>
+          <g data-legend-semantic-kind="one" data-legend-x="303" data-legend-baseline="1741" data-legend-width="66">
+            <line x1="299" y1="1729" x2="299" y2="1745" class="er-legend-divider" stroke-width="1"/><rect class="er-legend-hit" tabindex="0" role="img" aria-label="一" x="307" y="1726" width="68" height="22" rx="11"/><line x1="313" y1="1737" x2="341" y2="1737" class="er-legend-route" stroke-width="1.5"/><line x1="341" y1="1730" x2="341" y2="1744" class="er-legend-edge" stroke-width="2"/><g class="er-legend-glyph" transform="translate(319 1729)" style="stroke: var(--text-muted)" stroke-width="1.75" fill="none"><path d="M 17 1 L 17 15"/></g>
+            <text x="351" y="1741" class="t-primary" font-size="12" font-weight="600">一</text>
           </g>
-          <g data-legend-semantic-kind="default" data-legend-x="462" data-legend-baseline="2744" data-legend-width="93">
-            <path d="M 462 2741 L 496 2741" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
-            <text x="505" y="2744" class="t-muted" font-size="10" font-weight="500">普通消息</text>
+          <g data-legend-semantic-kind="many" data-legend-x="391" data-legend-baseline="1741" data-legend-width="56">
+            <rect class="er-legend-hit" tabindex="0" role="img" aria-label="多" x="385" y="1726" width="68" height="22" rx="11"/><line x1="391" y1="1737" x2="419" y2="1737" class="er-legend-route" stroke-width="1.5"/><line x1="419" y1="1730" x2="419" y2="1744" class="er-legend-edge" stroke-width="2"/><g class="er-legend-glyph" transform="translate(397 1729)" style="stroke: var(--text-muted)" stroke-width="1.75" fill="none"><path d="M 8 8 L 22 1 M 8 8 L 22 8 M 8 8 L 22 15"/></g>
+            <text x="429" y="1741" class="t-primary" font-size="12" font-weight="600">多</text>
+          </g>
+          <g data-legend-semantic-kind="optional" data-legend-x="469" data-legend-baseline="1741" data-legend-width="73">
+            <rect class="er-legend-hit" tabindex="0" role="img" aria-label="可选" x="463" y="1726" width="85" height="22" rx="11"/><line x1="469" y1="1737" x2="497" y2="1737" class="er-legend-route" stroke-width="1.5"/><line x1="497" y1="1730" x2="497" y2="1744" class="er-legend-edge" stroke-width="2"/><g class="er-legend-glyph" transform="translate(475 1729)" style="stroke: var(--text-muted)" stroke-width="1.75" fill="none"><circle cx="3.5" cy="8" r="2.6" class="c-mask"/><circle cx="3.5" cy="8" r="2.6"/></g>
+            <text x="507" y="1741" class="t-primary" font-size="12" font-weight="600">可选</text>
           </g>
         </g>
       </svg>
@@ -5788,25 +6867,39 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
     <div class="cards">
       <div class="card">
         <div class="card-header">
-          <div class="card-dot rose"></div>
-          <h3>权限与引用贯穿整条链路</h3>
+          <div class="card-dot cyan"></div>
+          <h3>先读关系，再看字段</h3>
         </div>
         <ul>
-          <li>浏览器不能直接请求 FastAPI；kbId 来自 Spring 校验后的签名作用域</li>
-          <li>pgvector 查询先过滤知识库与发布版本，再排序</li>
-          <li>引用取真实文档定位；打开历史引用和下载时再次检查</li>
+          <li>11张 core 表 + 1张 ai 表；View 是派生对象。</li>
+          <li>PK/UK 可为联合键或部分索引，各标记列不必单独唯一。</li>
+          <li>图按表对合并同类 FK；完整联合键与 NULL 规则见 database-design.md。</li>
+          <li>messages.reply_to_message_id 自关联同会话 USER，最多一个 ASSISTANT；HTML 以字段标记说明，Mermaid 保留自关联线。</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-dot amber"></div>
+          <h3>两组执行身份</h3>
+        </div>
+        <ul>
+          <li>文件替换增加 document_version；手动重试增加 attempt_id。</li>
+          <li>消息保存当前展示；generation_runs 记录每次执行。</li>
+          <li>发布/当前执行指针的循环 FK 延迟到事务提交检查。</li>
         </ul>
       </div>
 
       <div class="card">
         <div class="card-header">
           <div class="card-dot emerald"></div>
-          <h3>两套完成语义</h3>
+          <h3>检索和删除边界</h3>
         </div>
         <ul>
-          <li>FastAPI done = 计算完成；Spring done = 引用验证与持久化完成</li>
-          <li>流式片段按 runId/seq 管理，旧任务不能覆盖新回答</li>
-          <li>资料不足是正常结果；服务错误、超时必须明确标记未完成</li>
+          <li>View 过滤 ACTIVE + PUBLISHED + 当前版本 + published_attempt。</li>
+          <li>用户权限仍由 Spring 校验，FastAPI SQL 必须限定签名 kb_id。</li>
+          <li>切片写入触发器拒绝过期/取消/删除后的旧执行；物理清理后不能复活。</li>
+          <li>虚线是逻辑来源或 View 派生，不表示实际外键；向量维度不预先固定。</li>
         </ul>
       </div>
     </div>

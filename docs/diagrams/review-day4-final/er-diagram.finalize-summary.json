@@ -1,0 +1,152 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "finalize",
+  "status": "pass",
+  "type": "erd",
+  "quality": "standard",
+  "specification": {
+    "path": "D:\\Codex workplace\\enterprise-knowledge-agent\\docs\\diagrams\\sources\\er-diagram.candidate.json",
+    "sha256": "906d9ad775ec80190ed9e4cd44450d8aed16333ec4823b2a3a2f6c6a02c3393f",
+    "bytes": 27635
+  },
+  "artifact": {
+    "path": "D:\\Codex workplace\\enterprise-knowledge-agent\\docs\\diagrams\\er-diagram.html",
+    "sha256": "1c3ef7f400e86207618a79474b16544b0119ffc863fc114e90af33a609edfd40",
+    "bytes": 932886
+  },
+  "gates": {
+    "validate": "pass",
+    "deliver": "pass",
+    "check": "pass",
+    "browser-check": "pass"
+  },
+  "diagnostics": [],
+  "diagnosticSummary": {
+    "total": 0,
+    "shown": 0,
+    "truncated": false
+  },
+  "evidence": {
+    "receipt": "D:\\Codex workplace\\enterprise-knowledge-agent\\docs\\diagrams\\review-day4-final\\er-diagram.finalize.json",
+    "summaryReceipt": "D:\\Codex workplace\\enterprise-knowledge-agent\\docs\\diagrams\\review-day4-final\\er-diagram.finalize-summary.json",
+    "browserCheckReceipt": "D:\\Codex workplace\\enterprise-knowledge-agent\\docs\\diagrams\\review-day4-final\\er-diagram.browser-check.json"
+  },
+  "visualReview": "not-requested",
+  "durationMs": 4565,
+  "browserCheck": {
+    "requested": true,
+    "ran": true
+  },
+  "visualReviewRecommendation": {
+    "action": "inspect-route-readability",
+    "signals": {
+      "routesOverSuggestedBends": 7,
+      "routesOverSuggestedStretch": 3
+    },
+    "reason": "Automated gates passed, but crossings or detours still need perceptual review before claiming visual quality.",
+    "affectedRoutes": {
+      "crossings": [],
+      "detours": [
+        {
+          "relationship": {
+            "id": "r3",
+            "from": "kb_members",
+            "to": "users",
+            "label": "成员与授权人",
+            "collectionIndex": 2,
+            "artifactIndex": 3
+          },
+          "bends": 4,
+          "stretch": 1.661,
+          "directCorridorBlockers": [
+            {
+              "id": "knowledge_bases",
+              "label": "core.knowledge_bases",
+              "box": [
+                32,
+                432,
+                350,
+                255
+              ]
+            }
+          ]
+        },
+        {
+          "relationship": {
+            "id": "r12",
+            "from": "conversations",
+            "to": "users",
+            "label": "个人会话",
+            "collectionIndex": 11,
+            "artifactIndex": 12
+          },
+          "bends": 4,
+          "stretch": 1.175
+        },
+        {
+          "relationship": {
+            "id": "r13",
+            "from": "conversations",
+            "to": "knowledge_bases",
+            "label": "固定单知识库",
+            "collectionIndex": 12,
+            "artifactIndex": 13
+          },
+          "bends": 4,
+          "stretch": 1
+        },
+        {
+          "relationship": {
+            "id": "r19",
+            "from": "citations",
+            "to": "processing_attempts",
+            "label": "绑定来源尝试",
+            "collectionIndex": 17,
+            "artifactIndex": 18
+          },
+          "bends": 6,
+          "stretch": 2.083
+        },
+        {
+          "relationship": {
+            "id": "r20",
+            "from": "document_chunks",
+            "to": "processing_attempts",
+            "label": "待发布或已发布切片",
+            "collectionIndex": 18,
+            "artifactIndex": 19
+          },
+          "bends": 4,
+          "stretch": 1.508
+        },
+        {
+          "relationship": {
+            "id": "view_doc",
+            "from": "retrievable_chunks",
+            "to": "documents",
+            "label": "当前发布指针（非FK）",
+            "collectionIndex": 23,
+            "artifactIndex": 24
+          },
+          "bends": 4,
+          "stretch": 1
+        },
+        {
+          "relationship": {
+            "id": "view_kb",
+            "from": "retrievable_chunks",
+            "to": "knowledge_bases",
+            "label": "ACTIVE（非FK）",
+            "collectionIndex": 24,
+            "artifactIndex": 25
+          },
+          "bends": 4,
+          "stretch": 1
+        }
+      ],
+      "truncated": false
+    },
+    "repair": "Advisory only: this mode places or routes these relationships itself. Report them; do not remove relationships or meaning to reduce crossings."
+  }
+}

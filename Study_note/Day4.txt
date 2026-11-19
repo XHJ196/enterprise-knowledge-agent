@@ -1,0 +1,295 @@
+Day 4：数据库设计与 ER 图
+项目：Enterprise Knowledge & Agent Platform
+日期：2026-11-18
+阅读顺序：先看本文，再结合 docs/database-design.md 和 docs/diagrams/er-diagram.html。
+本文对应设计方案，不代表已经创建数据库或验证运行性能。
+
+一、先想清楚：数据库保存的是业务事实
+
+数据库设计不是把页面上看到的所有东西列成字段。
+先问：这里有哪些独立事物？它们如何关联？什么状态必须一起改变？
+
+本项目的独立事物包括用户、知识库、授权、文档、文件版本、处理任务、
+处理尝试、对话、消息、生成执行、引用和切片。
+
+它们不是同一层面的概念：
+1. document 是一份逻辑文档的稳定身份。
+2. document_version 表示哪次上传的文件字节，替换才增加。
+3. processing_job 是处理该版本的逻辑任务。
+4. processing_attempt 是一次真实执行；失败后人工重试增加 attempt。
+5. generation_run 是一次 AI 回答执行，不是一次文档处理。
+
+Spring Boot 维护 core 的业务状态；FastAPI 写 ai 的解析结果与向量。
+schema 只是同一 PostgreSQL 数据库里的命名空间。访问限制仍要依靠数据库角色、
+GRANT 和应用鉴权；名字叫 core、ai 不会自动产生权限隔离。
+
+二、Primary Key：为什么每张业务表需要唯一标识？
+
+主键回答：“这一行到底是谁？”
+
+用户可以修改显示名称，文件可以替换，两个知识库可以出现同名文件。
+如果拿这些可变化的文字当全部关联依据，修改名称就会破坏其他记录。
+因此 users.id、documents.id、conversations.id 使用稳定 UUID。
+主键必须唯一且非空；PostgreSQL 会为主键建立唯一 B-tree 索引。
+
+但“需要唯一身份”不等于“每张表都必须额外加一个 id”。
+kb_members 的身份就是 (kb_id,user_id)：
+
+PRIMARY KEY (kb_id,user_id)
+
+同一用户在同一知识库的成员关系只有一份。两个字段一起识别这一行，
+叫联合主键。只看其中一个字段不唯一，也不应该唯一。
+document_versions 同样用 (document_id,document_version) 作联合主键。
+
+UUID 不是权限凭据。猜不到 ID 不能替代“这个会话是否属于当前用户”的校验。
+
+三、Foreign Key：怎样保证关联有效？
+
+外键保证“我所指向的父记录确实存在”。
+documents.kb_id 引用 knowledge_bases.id，因此不能插入一个属于不存在知识库的文档。
+messages.conversation_id 引用 conversations.id，因此不能凭空创建孤立消息。
+
+但只检查 ID 分别存在，仍可能关联错对象。
+假设文档 D1 和 D2 都存在，处理尝试 A2 属于 D2。
+把 D1 与 A2 拼在同一条切片里，每个 ID 都存在，但组合是错误的。
+因此切片需要联合外键：
+
+FOREIGN KEY (attempt_id,document_id,document_version)
+REFERENCES core.processing_attempts (id,document_id,document_version)
+
+父表要先声明这三个字段的联合 UNIQUE，数据库才能把它当作精确引用目标。
+这不仅检查“有这个尝试”，还检查“确实是这个文档的这个版本”。
+
+外键不能保证：
+1. 用户有权读取这个知识库。
+2. created_by 对应的用户一定是管理员。
+3. 指向的处理任务一定成功。
+这些是 Spring 的业务规则，要结合事务和当前状态校验。
+
+删除规则也有区别：
+NO ACTION / RESTRICT：还有引用时，拒绝破坏关联。
+ON DELETE CASCADE：删除父行时，删除属于它的子行。
+
+删除自己的会话可以级联清理消息、run 和引用；不能用级联删除代替原文件清理，
+因为数据库不会替你删除磁盘文件。知识库删除还必须保留“清理未完成”的进度。
+
+有些关联故意不建立物理外键：citations.source_chunk_id 保留历史来源身份。
+切片可以随来源文档被物理删除，历史引用仍要存在并提示“来源已删除”。
+因此它是逻辑引用，保存时由 Spring 核验，读取时检查当前有效性。
+这是明确的取舍，不能把“没有 FK”误解成“可以随意写来源 ID”。
+
+四、Unique Constraint：怎样防止重复？
+
+“先查没有，再插入”在并发下并不可靠：两个请求都可能查到没有。
+正确做法是应用先检查以提供友好提示，同时让数据库唯一约束作最后防线。
+
+本项目的例子：
+1. users.username_key 唯一，禁止 alice 和 ALICE 同时注册。
+2. kb_members 联合主键，禁止重复授予同一成员关系。
+3. 非 DELETED 知识库的 name_key 唯一；本轮已确认名称忽略英文字母大小写。
+4. 非 DELETED 文档的 (kb_id,file_name_key) 唯一；不同知识库允许同名文件。
+5. 同一 job 的 attempt_no 唯一；同一 attempt 的 chunk_index 唯一。
+6. 同一会话的 ordinal 唯一，消息排序不依赖可能相同的时间戳。
+
+只有部分行需要唯一时，用部分唯一索引：
+
+CREATE UNIQUE INDEX uq_active_generation
+ON core.generation_runs (conversation_id)
+WHERE status = 'GENERATING';
+
+这表示同一会话最多一个正在执行的 run。
+完成、停止和未完成的历史执行可以有多条，不会被误限制成“整个会话只能回答一次”。
+同理，处理尝试只有 QUEUED/DISPATCHED/RUNNING 属于占用状态。
+
+唯一约束不是所有业务规则的替身：只允许重试最后一轮、只允许管理员上传，
+仍须由 Spring 在锁定相应记录后判断。
+
+五、Index：为什么查询需要索引？
+
+没有适当索引时，数据库可能要扫描大量记录才能找到目标。
+索引像目录，可以缩小查找范围，但不是任何查询都一定使用它。
+数据很少时顺序扫描反而可能更便宜；最终用 EXPLAIN (ANALYZE, BUFFERS) 核对计划。
+
+本项目常见查询与对应索引：
+按员工找授权库：kb_members(user_id,kb_id)。
+按会话顺序读消息：唯一索引 messages(conversation_id,ordinal) 已覆盖。
+按用户列历史：conversations(owner_id,last_message_at DESC,...)。
+找即将超时的活动任务：processing_attempts(status,deadline_at) 的部分索引。
+按文档清理切片：document_chunks(document_id,document_version,attempt_id)。
+
+联合 B-tree 索引的字段顺序有意义。
+(kb_id,user_id) 适合按库找成员；不能假设它同样高效地完成所有按 user_id 的查询，
+所以按用户列授权通常还要反向索引 (user_id,kb_id)。
+
+代价：索引占磁盘、写入和更新也要维护；不是越多越好。
+PostgreSQL 已为 PK/UNIQUE 创建索引，不必再建一个字段顺序相同的普通索引。
+PostgreSQL 不会自动为引用方的每个 FK 创建索引，要根据关联和删除查询设计。
+
+普通 B-tree 不能替代向量相似检索索引。
+第一版只有少量样例，先在已授权范围内精确计算距离，先验证正确性。
+
+六、Transaction：多个操作怎样一起成功或一起失败？
+
+事务把一组数据库操作当作一个整体提交：失败就回滚。
+可以理解为 ACID：原子性、一致性、隔离性、持久性。
+“一致性”依靠已经定义的约束和程序规则，并不是开启事务就自动懂业务。
+
+发布文档时，至少要一起完成：
+1. 核验当前版本、有效 attempt、截止时间、切片清单。
+2. processing_attempts 记录 SUCCEEDED 和成功结果。
+3. documents 记录 PUBLISHED 和 published_attempt_id。
+
+这些必须在同一 core 事务里完成。
+不能先把文档设为已发布，过一会儿才发现成功任务没有保存。
+
+但 FastAPI 向量写入与 Spring 发布不是一个跨 HTTP 的数据库事务：
+FastAPI 先提交 ai 切片，再回调 Spring；Spring 核验后发布。
+在两者之间，切片虽然存在，但 View 因文档没有发布指针而不返回它。
+这避免为了本地作品集引入分布式事务。
+
+事务也不能自动回滚磁盘和外部模型：
+保存文件后插入数据库失败，需要显式清理文件；清理失败要记录补偿范围。
+调用 LLM 后数据库回滚，已产生的供应商调用成本也不会回滚。
+所以不要在持有数据库行锁的长事务中等待上传、解析器或模型。
+
+补充一个本项目需要的数据库触发器：
+取消外部解析进程只是尽力而为，它可能晚到并尝试继续写向量。
+因此 ai.document_chunks 的 INSERT/UPDATE 触发器需要读取 Spring 已保存的
+KB、文档和 attempt 状态，并按统一顺序取得共享锁。
+来源已经删除、版本替换、尝试终止或过期时，数据库拒绝这次写入。
+这样删除清理后，旧执行不能把切片再写回来。
+它是在执行有效性上补一道数据库约束，不负责判断员工有没有读取权限。
+触发器属于额外的跨表规则；FK 只检查关联存在，CHECK 通常只检查单行，
+两者不会自动懂得“这个来源现在已失效”。
+
+并发控制要继续考虑：
+SELECT ... FOR UPDATE 可以锁定要修改的会话/文档。
+部分唯一索引保证最多一个有效执行。
+带 runId/current_run_id/status/seq 的条件更新拒绝迟到片段。
+锁的顺序要一致，否则两个事务可能互相等待形成死锁。
+普通 SELECT 的旧快照不能自动保证撤权后没有流式片段被接纳，需同步权限变更和写入。
+本稿短事务使用默认 READ COMMITTED，拿锁后用后续语句重读当前授权和状态，
+不能把拿锁之前缓存的判断继续当作有效权限。
+
+延迟外键（DEFERRABLE INITIALLY DEFERRED）用于同一事务里的循环关联。
+例如新建文档要指向版本1，而版本1又要指向文档。
+它允许先插一方再插另一方，在提交时检查，不允许提交永久悬空数据。
+
+七、Database Normalization：为什么不能把字段全塞进一张表？
+
+假设在每条消息上重复保存用户名、知识库名称、所有成员和完整文档。
+一个用户名修改就要更新许多行，漏改会出现多个“真实姓名”；
+还没产生消息时无法单独建立空知识库；删除最后一条消息又可能误删唯一文档信息。
+这些分别是更新、插入和删除异常。
+
+规范化的直觉：一个独立事实尽量只由一个地方负责。
+用户资料放 users；知识库属性放 knowledge_bases；成员关系放 kb_members；
+消息正文放 messages；每次执行状态放 generation_runs；原文证据放 ai.document_chunks。
+通过键关联，不在每张表里重复复制完整对象。
+
+基础理解：
+第一范式：字段要具有明确结构，不用逗号字符串冒充成员表。
+第二范式：联合主键表的非键字段应依赖整个键；例如成员授权时间属于一组 KB+用户关系。
+第三范式：不要在成员表再复制依赖 user_id 的用户名，把用户名留在 users。
+
+规范化不是禁止所有冗余。
+conversations.title 是首问的派生缓存，编辑首问时同事务更新。
+processing_attempts 的 document_id/version 重复了 job 的来源，
+但通过联合 FK 强制相同，用于有效执行唯一约束和发布来源校验。
+关键是说明冗余的用途，并有机制防止不同步。
+
+八、JSONB：适合变化的小结构，不适合把关系全部藏起来
+
+JSONB 是 PostgreSQL 可查询、可索引的二进制 JSON 表示。
+适合不同格式的 locator，比如 TXT 的行范围、DOCX 的段落标识。
+也适合 run 的变长 evidence_manifest，用来保存当前执行的证据身份清单。
+
+本项目示意：
+locator = {"kind":"paragraph","start":4,"end":6}
+evidence_manifest = [{"evidence_id":"e1","document_id":"...", ...}]
+这里的省略号仅为概念说明，不是可直接提交的实际载荷。
+
+不适合用 JSONB 代替用户、授权和最终引用表：
+JSON 内的 ID 没有自动外键约束，很容易缺少唯一性与关联检查。
+也不要把 LLM 密钥、原文副本和任意文件路径藏进去。
+本稿对 locator 检查是对象，对 evidence_manifest 检查是数组；
+具体字段、长度、ID 和版本仍由服务校验。
+
+可用 ->> 提取文本、@> 判断包含。高频包含检索才评估 GIN 索引。
+如果只是按 run.id 取回整份 manifest，不要为了“用了 JSONB”就创建 GIN。
+JSONB 不保留原始空白和对象键顺序，重复键也不能当作独立事实保存。
+因此计算 manifest 摘要要先约定规范序列化，不能直接依赖原始 JSON 文本。
+
+九、pgvector 的 VECTOR：向量是检索数据，不是答案
+
+Embedding 把文字转成数字向量，用距离衡量语义相近程度。
+VECTOR 由 pgvector 扩展提供，不是 PostgreSQL 未安装扩展就有的原生类型。
+数据库迁移需要明确启用扩展，并检查部署版本兼容性。
+
+本稿字段写 embedding vector，不写 vector(1536) 等猜测维度。
+同时保存 embedding_model_id、embedding_dimensions，并检查：
+
+vector_dims(embedding) = embedding_dimensions
+
+这表示每一行声明的长度要等于实际长度。
+运行应用之前，仍必须选定并确认模型的真实维度，将配置绑定到 attempt；
+不固定建表数字并不代表运行时可以不管维度。
+
+两个向量同维度，也未必能比较：不同模型的向量空间不同。
+所以查询要与文档使用相同模型配置标识、维度和距离约定。
+更换 Embedding 模型通常要重建相关切片向量；
+只更换回答生成模型则不必当然地重建向量。
+
+常见距离算子：
+<-> 为欧氏距离；<=> 为余弦距离；<#> 为负内积，以便升序排列。
+本稿首版以余弦距离为检索契约，最终要核对模型推荐方式。
+距离更近只表示更相似，不保证答案正确、来源有权限或企业规定没有冲突。
+
+向量索引先了解：
+HNSW 使用近邻图，需考虑构建时间和内存。
+IVFFlat 使用聚类分区，需考虑数据量和分布。
+它们都是近似搜索，可能影响召回；不能因为加了索引就省略问答质量验收。
+距离算子类要和实际 ORDER BY 一致；不同扩展版本和类型的索引维度限制要单独核对。
+目前不确定维度，也不固定 m、ef_search、lists、probes 等参数。
+
+十、为什么 View 还不能替我们决定用户权限？
+
+ai.retrievable_chunks 不是普通表，也不是预先复制好的结果。
+它基于已提交数据实时过滤：
+1. 知识库 ACTIVE；文档内部 lifecycle ACTIVE。
+2. 文档 PUBLISHED。
+3. chunk.document_version = document.current_version。
+4. chunk.attempt_id = document.published_attempt_id。
+5. 来源文件仍存在，attempt 成功，模型与维度匹配。
+
+但一个共享 FastAPI 数据库连接并不知道浏览器是谁。
+因此 View 返回“可发布检索的切片”，并非“对这个用户已经授权的全部切片”。
+Spring 先查当前成员授权并签发单一 kb_id 范围；
+FastAPI 验证范围后，SQL 明确 WHERE kb_id = 已校验值，再计算距离；
+Spring 在发送正文、展示引用、历史和下载时继续检查当前权限。
+不能先全库召回，然后仅从最终引用列表里删掉越权来源。
+
+security_barrier 是优化器相关的 View 行为，不是按用户自动授权的 RLS。
+本地双服务共享信任边界也不等于数据库已经实现全部行级安全。
+
+十一、用一个场景串起所有表
+
+管理员上传 D 的文件v1：Spring 保存版本和 J1/A1；FastAPI 写 v1+A1 切片。
+Spring 验证完成，文档发布指针指向 A1，View 才允许检索。
+
+管理员更新为v2：通过上传校验后，current_version=2，清空发布指针。
+即使 v1+A1 的向量还没清理，View 也不再返回旧版本。
+A2 失败；管理员重试，创建同版本的新 A3。
+A2 晚到的成功不能发布，只有仍有效的 A3 才有机会成功。
+
+员工在授权知识库创建会话 C，发送问题 M1，创建回答 M2 和执行 R1。
+R1 使用当前可检索切片，最终将正文、引用和 COMPLETED 一起提交。
+如果 R1 中断，M2 保留部分正文，状态取 R1.INCOMPLETE。
+人工重试创建 R2，M2 指向 R2 并清空旧正文/引用；R1 晚到事件被拒绝。
+
+后来文档更新或删除：历史回答可以按权限继续显示，并提示来源过期；
+旧引用保留版本身份，但不能返回旧片段，也不能偷偷改指向新文档版本。
+若知识库授权被撤销，连历史正文和原标题也要隐藏。
+
+本阶段真正要掌握的是：先区分实体与执行，再用键、约束、事务和权限边界，
+让“当前有效的业务事实”只有一种解释。ER 图只是把这些关系画出来。

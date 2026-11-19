@@ -1,0 +1,2757 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "finalize",
+  "status": "pass",
+  "type": "erd",
+  "quality": "standard",
+  "startedAt": "2026-11-18T13:16:55.493Z",
+  "specification": {
+    "path": "D:\\Codex workplace\\enterprise-knowledge-agent\\docs\\diagrams\\sources\\er-diagram.candidate.json",
+    "sha256": "906d9ad775ec80190ed9e4cd44450d8aed16333ec4823b2a3a2f6c6a02c3393f",
+    "bytes": 27635
+  },
+  "artifact": {
+    "path": "D:\\Codex workplace\\enterprise-knowledge-agent\\docs\\diagrams\\er-diagram.html",
+    "sha256": "1c3ef7f400e86207618a79474b16544b0119ffc863fc114e90af33a609edfd40",
+    "bytes": 932886
+  },
+  "stages": {
+    "validate": {
+      "status": "pass",
+      "exitCode": 0,
+      "durationMs": null,
+      "execution": "embedded-in-deliver",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\ASUS\\.codex\\skills\\archify\\bin\\archify.mjs",
+        "deliver",
+        "erd",
+        "D:\\Codex workplace\\enterprise-knowledge-agent\\docs\\diagrams\\sources\\er-diagram.candidate.json",
+        "D:\\Codex workplace\\enterprise-knowledge-agent\\docs\\diagrams\\er-diagram.html",
+        "--quality",
+        "standard",
+        "--json"
+      ],
+      "receipt": {
+        "schemaVersion": 1,
+        "ok": true,
+        "command": "validate",
+        "specification": {
+          "sha256": "906d9ad775ec80190ed9e4cd44450d8aed16333ec4823b2a3a2f6c6a02c3393f",
+          "bytes": 27635
+        },
+        "validation": {
+          "checksPassed": 9,
+          "checkCount": 9,
+          "compositionProfile": "standard",
+          "compositionStatus": "pass",
+          "errors": 0,
+          "warnings": 23,
+          "compositionIssues": [
+            {
+              "severity": "warning",
+              "code": "composition/proper-crossing",
+              "relationship": {
+                "id": "r4",
+                "from": "documents",
+                "to": "knowledge_bases",
+                "label": "包含",
+                "collectionIndex": 3,
+                "artifactIndex": 4
+              },
+              "otherRelationship": {
+                "id": "r7",
+                "from": "document_versions",
+                "to": "users",
+                "label": "版本上传人",
+                "collectionIndex": 6,
+                "artifactIndex": 7
+              },
+              "point": [
+                443,
+                208
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/proper-crossing",
+              "relationship": {
+                "id": "r4",
+                "from": "documents",
+                "to": "knowledge_bases",
+                "label": "包含",
+                "collectionIndex": 3,
+                "artifactIndex": 4
+              },
+              "otherRelationship": {
+                "id": "r9",
+                "from": "processing_jobs",
+                "to": "users",
+                "label": "任务创建人",
+                "collectionIndex": 8,
+                "artifactIndex": 9
+              },
+              "point": [
+                443,
+                208
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/proper-crossing",
+              "relationship": {
+                "id": "r4",
+                "from": "documents",
+                "to": "knowledge_bases",
+                "label": "包含",
+                "collectionIndex": 3,
+                "artifactIndex": 4
+              },
+              "otherRelationship": {
+                "id": "r11",
+                "from": "processing_attempts",
+                "to": "users",
+                "label": "尝试发起人",
+                "collectionIndex": 10,
+                "artifactIndex": 11
+              },
+              "point": [
+                443,
+                208
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/proper-crossing",
+              "relationship": {
+                "id": "r6",
+                "from": "document_versions",
+                "to": "documents",
+                "label": "内部文件版本",
+                "collectionIndex": 5,
+                "artifactIndex": 6
+              },
+              "otherRelationship": {
+                "id": "r13",
+                "from": "conversations",
+                "to": "knowledge_bases",
+                "label": "固定单知识库",
+                "collectionIndex": 12,
+                "artifactIndex": 13
+              },
+              "point": [
+                691,
+                429
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/proper-crossing",
+              "relationship": {
+                "id": "r7",
+                "from": "document_versions",
+                "to": "users",
+                "label": "版本上传人",
+                "collectionIndex": 6,
+                "artifactIndex": 7
+              },
+              "otherRelationship": {
+                "id": "r13",
+                "from": "conversations",
+                "to": "knowledge_bases",
+                "label": "固定单知识库",
+                "collectionIndex": 12,
+                "artifactIndex": 13
+              },
+              "point": [
+                443,
+                429
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/proper-crossing",
+              "relationship": {
+                "id": "r8",
+                "from": "processing_jobs",
+                "to": "document_versions",
+                "label": "每版本一个任务",
+                "collectionIndex": 7,
+                "artifactIndex": 8
+              },
+              "otherRelationship": {
+                "id": "view_kb",
+                "from": "retrievable_chunks",
+                "to": "knowledge_bases",
+                "label": "ACTIVE（非FK）",
+                "collectionIndex": 24,
+                "artifactIndex": 25
+              },
+              "point": [
+                679,
+                719
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/proper-crossing",
+              "relationship": {
+                "id": "r9",
+                "from": "processing_jobs",
+                "to": "users",
+                "label": "任务创建人",
+                "collectionIndex": 8,
+                "artifactIndex": 9
+              },
+              "otherRelationship": {
+                "id": "r13",
+                "from": "conversations",
+                "to": "knowledge_bases",
+                "label": "固定单知识库",
+                "collectionIndex": 12,
+                "artifactIndex": 13
+              },
+              "point": [
+                443,
+                429
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/proper-crossing",
+              "relationship": {
+                "id": "r9",
+                "from": "processing_jobs",
+                "to": "users",
+                "label": "任务创建人",
+                "collectionIndex": 8,
+                "artifactIndex": 9
+              },
+              "otherRelationship": {
+                "id": "view_kb",
+                "from": "retrievable_chunks",
+                "to": "knowledge_bases",
+                "label": "ACTIVE（非FK）",
+                "collectionIndex": 24,
+                "artifactIndex": 25
+              },
+              "point": [
+                443,
+                719
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/proper-crossing",
+              "relationship": {
+                "id": "r11",
+                "from": "processing_attempts",
+                "to": "users",
+                "label": "尝试发起人",
+                "collectionIndex": 10,
+                "artifactIndex": 11
+              },
+              "otherRelationship": {
+                "id": "r13",
+                "from": "conversations",
+                "to": "knowledge_bases",
+                "label": "固定单知识库",
+                "collectionIndex": 12,
+                "artifactIndex": 13
+              },
+              "point": [
+                443,
+                429
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/proper-crossing",
+              "relationship": {
+                "id": "r11",
+                "from": "processing_attempts",
+                "to": "users",
+                "label": "尝试发起人",
+                "collectionIndex": 10,
+                "artifactIndex": 11
+              },
+              "otherRelationship": {
+                "id": "view_kb",
+                "from": "retrievable_chunks",
+                "to": "knowledge_bases",
+                "label": "ACTIVE（非FK）",
+                "collectionIndex": 24,
+                "artifactIndex": 25
+              },
+              "point": [
+                443,
+                719
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/proper-crossing",
+              "relationship": {
+                "id": "r13",
+                "from": "conversations",
+                "to": "knowledge_bases",
+                "label": "固定单知识库",
+                "collectionIndex": 12,
+                "artifactIndex": 13
+              },
+              "otherRelationship": {
+                "id": "r21",
+                "from": "documents",
+                "to": "processing_attempts",
+                "label": "当前发布指针",
+                "collectionIndex": 19,
+                "artifactIndex": 20
+              },
+              "point": [
+                857,
+                196
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/proper-crossing",
+              "relationship": {
+                "id": "r13",
+                "from": "conversations",
+                "to": "knowledge_bases",
+                "label": "固定单知识库",
+                "collectionIndex": 12,
+                "artifactIndex": 13
+              },
+              "otherRelationship": {
+                "id": "view_doc",
+                "from": "retrievable_chunks",
+                "to": "documents",
+                "label": "当前发布指针（非FK）",
+                "collectionIndex": 23,
+                "artifactIndex": 24
+              },
+              "point": [
+                857,
+                196
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/proper-crossing",
+              "relationship": {
+                "id": "r14",
+                "from": "messages",
+                "to": "conversations",
+                "label": "消息顺序",
+                "collectionIndex": 13,
+                "artifactIndex": 14
+              },
+              "otherRelationship": {
+                "id": "view_doc",
+                "from": "retrievable_chunks",
+                "to": "documents",
+                "label": "当前发布指针（非FK）",
+                "collectionIndex": 23,
+                "artifactIndex": 24
+              },
+              "point": [
+                1122,
+                251
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/proper-crossing",
+              "relationship": {
+                "id": "r16",
+                "from": "generation_runs",
+                "to": "conversations",
+                "label": "生成执行",
+                "collectionIndex": 14,
+                "artifactIndex": 15
+              },
+              "otherRelationship": {
+                "id": "view_doc",
+                "from": "retrievable_chunks",
+                "to": "documents",
+                "label": "当前发布指针（非FK）",
+                "collectionIndex": 23,
+                "artifactIndex": 24
+              },
+              "point": [
+                1333,
+                977.5
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/proper-crossing",
+              "relationship": {
+                "id": "r16",
+                "from": "generation_runs",
+                "to": "conversations",
+                "label": "生成执行",
+                "collectionIndex": 14,
+                "artifactIndex": 15
+              },
+              "otherRelationship": {
+                "id": "view_kb",
+                "from": "retrievable_chunks",
+                "to": "knowledge_bases",
+                "label": "ACTIVE（非FK）",
+                "collectionIndex": 24,
+                "artifactIndex": 25
+              },
+              "point": [
+                1333,
+                1001.5
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/proper-crossing",
+              "relationship": {
+                "id": "r17",
+                "from": "generation_runs",
+                "to": "messages",
+                "label": "问题与回答",
+                "collectionIndex": 15,
+                "artifactIndex": 16
+              },
+              "otherRelationship": {
+                "id": "view_kb",
+                "from": "retrievable_chunks",
+                "to": "knowledge_bases",
+                "label": "ACTIVE（非FK）",
+                "collectionIndex": 24,
+                "artifactIndex": 25
+              },
+              "point": [
+                1146,
+                719
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/proper-crossing",
+              "relationship": {
+                "id": "r18",
+                "from": "citations",
+                "to": "generation_runs",
+                "label": "引用编号",
+                "collectionIndex": 16,
+                "artifactIndex": 17
+              },
+              "otherRelationship": {
+                "id": "view_doc",
+                "from": "retrievable_chunks",
+                "to": "documents",
+                "label": "当前发布指针（非FK）",
+                "collectionIndex": 23,
+                "artifactIndex": 24
+              },
+              "point": [
+                1364.5,
+                977.5
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/proper-crossing",
+              "relationship": {
+                "id": "r18",
+                "from": "citations",
+                "to": "generation_runs",
+                "label": "引用编号",
+                "collectionIndex": 16,
+                "artifactIndex": 17
+              },
+              "otherRelationship": {
+                "id": "view_kb",
+                "from": "retrievable_chunks",
+                "to": "knowledge_bases",
+                "label": "ACTIVE（非FK）",
+                "collectionIndex": 24,
+                "artifactIndex": 25
+              },
+              "point": [
+                1364.5,
+                1001.5
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/proper-crossing",
+              "relationship": {
+                "id": "r21",
+                "from": "documents",
+                "to": "processing_attempts",
+                "label": "当前发布指针",
+                "collectionIndex": 19,
+                "artifactIndex": 20
+              },
+              "otherRelationship": {
+                "id": "view_kb",
+                "from": "retrievable_chunks",
+                "to": "knowledge_bases",
+                "label": "ACTIVE（非FK）",
+                "collectionIndex": 24,
+                "artifactIndex": 25
+              },
+              "point": [
+                878,
+                719
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/proper-crossing",
+              "relationship": {
+                "id": "current_run",
+                "from": "messages",
+                "to": "generation_runs",
+                "label": "当前 run（联合FK）",
+                "collectionIndex": 20,
+                "artifactIndex": 21
+              },
+              "otherRelationship": {
+                "id": "view_kb",
+                "from": "retrievable_chunks",
+                "to": "knowledge_bases",
+                "label": "ACTIVE（非FK）",
+                "collectionIndex": 24,
+                "artifactIndex": 25
+              },
+              "point": [
+                1122,
+                719
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/short-interior-segment",
+              "relationship": {
+                "id": "r17",
+                "from": "generation_runs",
+                "to": "messages",
+                "label": "问题与回答",
+                "collectionIndex": 15,
+                "artifactIndex": 16
+              },
+              "segmentIndex": 1,
+              "position": "interior",
+              "length": 12,
+              "from": [
+                1158,
+                730.5
+              ],
+              "to": [
+                1146,
+                730.5
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/short-interior-segment",
+              "relationship": {
+                "id": "current_run",
+                "from": "messages",
+                "to": "generation_runs",
+                "label": "当前 run（联合FK）",
+                "collectionIndex": 20,
+                "artifactIndex": 21
+              },
+              "segmentIndex": 1,
+              "position": "interior",
+              "length": 12,
+              "from": [
+                1122,
+                742.5
+              ],
+              "to": [
+                1110,
+                742.5
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/desktop-readability",
+              "nodeId": "users",
+              "owner": {
+                "kind": "node",
+                "id": "users"
+              },
+              "viewportWidth": 1440,
+              "viewportHeight": 900,
+              "availableDiagramWidth": 930,
+              "budgetBasis": "legacy-930",
+              "readerContract": "declared-wide-v1",
+              "requestedTargetPx": 7.5,
+              "requestedTargetMet": false,
+              "budgetLimit": "legacy",
+              "viewBoxWidth": 1794,
+              "scale": 0.5183946488294314,
+              "text": "PK",
+              "detail": "context",
+              "sourceFontPx": 9,
+              "projectedFontPx": 4.665551839464883,
+              "minimumProjectedFontPx": 6
+            }
+          ]
+        }
+      }
+    },
+    "deliver": {
+      "status": "pass",
+      "exitCode": 0,
+      "durationMs": 552,
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\ASUS\\.codex\\skills\\archify\\bin\\archify.mjs",
+        "deliver",
+        "erd",
+        "D:\\Codex workplace\\enterprise-knowledge-agent\\docs\\diagrams\\sources\\er-diagram.candidate.json",
+        "D:\\Codex workplace\\enterprise-knowledge-agent\\docs\\diagrams\\er-diagram.html",
+        "--quality",
+        "standard",
+        "--json"
+      ],
+      "receipt": {
+        "schemaVersion": 1,
+        "receiptId": "18dd8cde-0bfc-43bd-b8c3-b2ff96226f83",
+        "ok": true,
+        "command": "deliver",
+        "type": "erd",
+        "input": "D:\\Codex workplace\\enterprise-knowledge-agent\\docs\\diagrams\\sources\\er-diagram.candidate.json",
+        "output": "D:\\Codex workplace\\enterprise-knowledge-agent\\docs\\diagrams\\er-diagram.html",
+        "specification": {
+          "sha256": "906d9ad775ec80190ed9e4cd44450d8aed16333ec4823b2a3a2f6c6a02c3393f",
+          "bytes": 27635
+        },
+        "artifact": {
+          "sha256": "1c3ef7f400e86207618a79474b16544b0119ffc863fc114e90af33a609edfd40",
+          "bytes": 932886
+        },
+        "validation": {
+          "checksPassed": 9,
+          "checkCount": 9,
+          "compositionProfile": "standard",
+          "compositionStatus": "pass",
+          "errors": 0,
+          "warnings": 23,
+          "compositionIssues": [
+            {
+              "severity": "warning",
+              "code": "composition/proper-crossing",
+              "relationship": {
+                "id": "r4",
+                "from": "documents",
+                "to": "knowledge_bases",
+                "label": "包含",
+                "collectionIndex": 3,
+                "artifactIndex": 4
+              },
+              "otherRelationship": {
+                "id": "r7",
+                "from": "document_versions",
+                "to": "users",
+                "label": "版本上传人",
+                "collectionIndex": 6,
+                "artifactIndex": 7
+              },
+              "point": [
+                443,
+                208
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/proper-crossing",
+              "relationship": {
+                "id": "r4",
+                "from": "documents",
+                "to": "knowledge_bases",
+                "label": "包含",
+                "collectionIndex": 3,
+                "artifactIndex": 4
+              },
+              "otherRelationship": {
+                "id": "r9",
+                "from": "processing_jobs",
+                "to": "users",
+                "label": "任务创建人",
+                "collectionIndex": 8,
+                "artifactIndex": 9
+              },
+              "point": [
+                443,
+                208
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/proper-crossing",
+              "relationship": {
+                "id": "r4",
+                "from": "documents",
+                "to": "knowledge_bases",
+                "label": "包含",
+                "collectionIndex": 3,
+                "artifactIndex": 4
+              },
+              "otherRelationship": {
+                "id": "r11",
+                "from": "processing_attempts",
+                "to": "users",
+                "label": "尝试发起人",
+                "collectionIndex": 10,
+                "artifactIndex": 11
+              },
+              "point": [
+                443,
+                208
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/proper-crossing",
+              "relationship": {
+                "id": "r6",
+                "from": "document_versions",
+                "to": "documents",
+                "label": "内部文件版本",
+                "collectionIndex": 5,
+                "artifactIndex": 6
+              },
+              "otherRelationship": {
+                "id": "r13",
+                "from": "conversations",
+                "to": "knowledge_bases",
+                "label": "固定单知识库",
+                "collectionIndex": 12,
+                "artifactIndex": 13
+              },
+              "point": [
+                691,
+                429
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/proper-crossing",
+              "relationship": {
+                "id": "r7",
+                "from": "document_versions",
+                "to": "users",
+                "label": "版本上传人",
+                "collectionIndex": 6,
+                "artifactIndex": 7
+              },
+              "otherRelationship": {
+                "id": "r13",
+                "from": "conversations",
+                "to": "knowledge_bases",
+                "label": "固定单知识库",
+                "collectionIndex": 12,
+                "artifactIndex": 13
+              },
+              "point": [
+                443,
+                429
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/proper-crossing",
+              "relationship": {
+                "id": "r8",
+                "from": "processing_jobs",
+                "to": "document_versions",
+                "label": "每版本一个任务",
+                "collectionIndex": 7,
+                "artifactIndex": 8
+              },
+              "otherRelationship": {
+                "id": "view_kb",
+                "from": "retrievable_chunks",
+                "to": "knowledge_bases",
+                "label": "ACTIVE（非FK）",
+                "collectionIndex": 24,
+                "artifactIndex": 25
+              },
+              "point": [
+                679,
+                719
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/proper-crossing",
+              "relationship": {
+                "id": "r9",
+                "from": "processing_jobs",
+                "to": "users",
+                "label": "任务创建人",
+                "collectionIndex": 8,
+                "artifactIndex": 9
+              },
+              "otherRelationship": {
+                "id": "r13",
+                "from": "conversations",
+                "to": "knowledge_bases",
+                "label": "固定单知识库",
+                "collectionIndex": 12,
+                "artifactIndex": 13
+              },
+              "point": [
+                443,
+                429
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/proper-crossing",
+              "relationship": {
+                "id": "r9",
+                "from": "processing_jobs",
+                "to": "users",
+                "label": "任务创建人",
+                "collectionIndex": 8,
+                "artifactIndex": 9
+              },
+              "otherRelationship": {
+                "id": "view_kb",
+                "from": "retrievable_chunks",
+                "to": "knowledge_bases",
+                "label": "ACTIVE（非FK）",
+                "collectionIndex": 24,
+                "artifactIndex": 25
+              },
+              "point": [
+                443,
+                719
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/proper-crossing",
+              "relationship": {
+                "id": "r11",
+                "from": "processing_attempts",
+                "to": "users",
+                "label": "尝试发起人",
+                "collectionIndex": 10,
+                "artifactIndex": 11
+              },
+              "otherRelationship": {
+                "id": "r13",
+                "from": "conversations",
+                "to": "knowledge_bases",
+                "label": "固定单知识库",
+                "collectionIndex": 12,
+                "artifactIndex": 13
+              },
+              "point": [
+                443,
+                429
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/proper-crossing",
+              "relationship": {
+                "id": "r11",
+                "from": "processing_attempts",
+                "to": "users",
+                "label": "尝试发起人",
+                "collectionIndex": 10,
+                "artifactIndex": 11
+              },
+              "otherRelationship": {
+                "id": "view_kb",
+                "from": "retrievable_chunks",
+                "to": "knowledge_bases",
+                "label": "ACTIVE（非FK）",
+                "collectionIndex": 24,
+                "artifactIndex": 25
+              },
+              "point": [
+                443,
+                719
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/proper-crossing",
+              "relationship": {
+                "id": "r13",
+                "from": "conversations",
+                "to": "knowledge_bases",
+                "label": "固定单知识库",
+                "collectionIndex": 12,
+                "artifactIndex": 13
+              },
+              "otherRelationship": {
+                "id": "r21",
+                "from": "documents",
+                "to": "processing_attempts",
+                "label": "当前发布指针",
+                "collectionIndex": 19,
+                "artifactIndex": 20
+              },
+              "point": [
+                857,
+                196
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/proper-crossing",
+              "relationship": {
+                "id": "r13",
+                "from": "conversations",
+                "to": "knowledge_bases",
+                "label": "固定单知识库",
+                "collectionIndex": 12,
+                "artifactIndex": 13
+              },
+              "otherRelationship": {
+                "id": "view_doc",
+                "from": "retrievable_chunks",
+                "to": "documents",
+                "label": "当前发布指针（非FK）",
+                "collectionIndex": 23,
+                "artifactIndex": 24
+              },
+              "point": [
+                857,
+                196
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/proper-crossing",
+              "relationship": {
+                "id": "r14",
+                "from": "messages",
+                "to": "conversations",
+                "label": "消息顺序",
+                "collectionIndex": 13,
+                "artifactIndex": 14
+              },
+              "otherRelationship": {
+                "id": "view_doc",
+                "from": "retrievable_chunks",
+                "to": "documents",
+                "label": "当前发布指针（非FK）",
+                "collectionIndex": 23,
+                "artifactIndex": 24
+              },
+              "point": [
+                1122,
+                251
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/proper-crossing",
+              "relationship": {
+                "id": "r16",
+                "from": "generation_runs",
+                "to": "conversations",
+                "label": "生成执行",
+                "collectionIndex": 14,
+                "artifactIndex": 15
+              },
+              "otherRelationship": {
+                "id": "view_doc",
+                "from": "retrievable_chunks",
+                "to": "documents",
+                "label": "当前发布指针（非FK）",
+                "collectionIndex": 23,
+                "artifactIndex": 24
+              },
+              "point": [
+                1333,
+                977.5
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/proper-crossing",
+              "relationship": {
+                "id": "r16",
+                "from": "generation_runs",
+                "to": "conversations",
+                "label": "生成执行",
+                "collectionIndex": 14,
+                "artifactIndex": 15
+              },
+              "otherRelationship": {
+                "id": "view_kb",
+                "from": "retrievable_chunks",
+                "to": "knowledge_bases",
+                "label": "ACTIVE（非FK）",
+                "collectionIndex": 24,
+                "artifactIndex": 25
+              },
+              "point": [
+                1333,
+                1001.5
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/proper-crossing",
+              "relationship": {
+                "id": "r17",
+                "from": "generation_runs",
+                "to": "messages",
+                "label": "问题与回答",
+                "collectionIndex": 15,
+                "artifactIndex": 16
+              },
+              "otherRelationship": {
+                "id": "view_kb",
+                "from": "retrievable_chunks",
+                "to": "knowledge_bases",
+                "label": "ACTIVE（非FK）",
+                "collectionIndex": 24,
+                "artifactIndex": 25
+              },
+              "point": [
+                1146,
+                719
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/proper-crossing",
+              "relationship": {
+                "id": "r18",
+                "from": "citations",
+                "to": "generation_runs",
+                "label": "引用编号",
+                "collectionIndex": 16,
+                "artifactIndex": 17
+              },
+              "otherRelationship": {
+                "id": "view_doc",
+                "from": "retrievable_chunks",
+                "to": "documents",
+                "label": "当前发布指针（非FK）",
+                "collectionIndex": 23,
+                "artifactIndex": 24
+              },
+              "point": [
+                1364.5,
+                977.5
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/proper-crossing",
+              "relationship": {
+                "id": "r18",
+                "from": "citations",
+                "to": "generation_runs",
+                "label": "引用编号",
+                "collectionIndex": 16,
+                "artifactIndex": 17
+              },
+              "otherRelationship": {
+                "id": "view_kb",
+                "from": "retrievable_chunks",
+                "to": "knowledge_bases",
+                "label": "ACTIVE（非FK）",
+                "collectionIndex": 24,
+                "artifactIndex": 25
+              },
+              "point": [
+                1364.5,
+                1001.5
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/proper-crossing",
+              "relationship": {
+                "id": "r21",
+                "from": "documents",
+                "to": "processing_attempts",
+                "label": "当前发布指针",
+                "collectionIndex": 19,
+                "artifactIndex": 20
+              },
+              "otherRelationship": {
+                "id": "view_kb",
+                "from": "retrievable_chunks",
+                "to": "knowledge_bases",
+                "label": "ACTIVE（非FK）",
+                "collectionIndex": 24,
+                "artifactIndex": 25
+              },
+              "point": [
+                878,
+                719
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/proper-crossing",
+              "relationship": {
+                "id": "current_run",
+                "from": "messages",
+                "to": "generation_runs",
+                "label": "当前 run（联合FK）",
+                "collectionIndex": 20,
+                "artifactIndex": 21
+              },
+              "otherRelationship": {
+                "id": "view_kb",
+                "from": "retrievable_chunks",
+                "to": "knowledge_bases",
+                "label": "ACTIVE（非FK）",
+                "collectionIndex": 24,
+                "artifactIndex": 25
+              },
+              "point": [
+                1122,
+                719
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/short-interior-segment",
+              "relationship": {
+                "id": "r17",
+                "from": "generation_runs",
+                "to": "messages",
+                "label": "问题与回答",
+                "collectionIndex": 15,
+                "artifactIndex": 16
+              },
+              "segmentIndex": 1,
+              "position": "interior",
+              "length": 12,
+              "from": [
+                1158,
+                730.5
+              ],
+              "to": [
+                1146,
+                730.5
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/short-interior-segment",
+              "relationship": {
+                "id": "current_run",
+                "from": "messages",
+                "to": "generation_runs",
+                "label": "当前 run（联合FK）",
+                "collectionIndex": 20,
+                "artifactIndex": 21
+              },
+              "segmentIndex": 1,
+              "position": "interior",
+              "length": 12,
+              "from": [
+                1122,
+                742.5
+              ],
+              "to": [
+                1110,
+                742.5
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/desktop-readability",
+              "nodeId": "users",
+              "owner": {
+                "kind": "node",
+                "id": "users"
+              },
+              "viewportWidth": 1440,
+              "viewportHeight": 900,
+              "availableDiagramWidth": 930,
+              "budgetBasis": "legacy-930",
+              "readerContract": "declared-wide-v1",
+              "requestedTargetPx": 7.5,
+              "requestedTargetMet": false,
+              "budgetLimit": "legacy",
+              "viewBoxWidth": 1794,
+              "scale": 0.5183946488294314,
+              "text": "PK",
+              "detail": "context",
+              "sourceFontPx": 9,
+              "projectedFontPx": 4.665551839464883,
+              "minimumProjectedFontPx": 6
+            }
+          ]
+        },
+        "update": {
+          "status": "unavailable",
+          "installedVersion": null,
+          "availableVersion": null,
+          "releaseNotes": null,
+          "checkedAt": null,
+          "source": null,
+          "noticeRequired": false,
+          "noticeText": null,
+          "reason": "disabled"
+        }
+      }
+    },
+    "check": {
+      "status": "pass",
+      "exitCode": 0,
+      "durationMs": 203,
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\ASUS\\.codex\\skills\\archify\\bin\\archify.mjs",
+        "check",
+        "D:\\Codex workplace\\enterprise-knowledge-agent\\docs\\diagrams\\er-diagram.html",
+        "--require-provenance"
+      ],
+      "receipt": {
+        "ok": true,
+        "file": "D:\\Codex workplace\\enterprise-knowledge-agent\\docs\\diagrams\\er-diagram.html",
+        "artifact": {
+          "sha256": "1c3ef7f400e86207618a79474b16544b0119ffc863fc114e90af33a609edfd40",
+          "bytes": 932886
+        },
+        "checks": [
+          {
+            "name": "single_svg",
+            "ok": true,
+            "details": [
+              "found 1 <svg> block(s)"
+            ]
+          },
+          {
+            "name": "finite_svg",
+            "ok": true,
+            "details": []
+          },
+          {
+            "name": "orthogonal_arrows",
+            "ok": true,
+            "details": []
+          },
+          {
+            "name": "label_route_clearance",
+            "ok": true,
+            "details": []
+          },
+          {
+            "name": "relationship_crossings",
+            "ok": true,
+            "details": [
+              "[composition/proper-crossing] standard relationship id \"r4\" (\"documents\" -> \"knowledge_bases\") crosses relationship id \"r7\" (\"document_versions\" -> \"users\") at [443, 208]",
+              "[composition/proper-crossing] standard relationship id \"r4\" (\"documents\" -> \"knowledge_bases\") crosses relationship id \"r9\" (\"processing_jobs\" -> \"users\") at [443, 208]",
+              "[composition/proper-crossing] standard relationship id \"r4\" (\"documents\" -> \"knowledge_bases\") crosses relationship id \"r11\" (\"processing_attempts\" -> \"users\") at [443, 208]",
+              "[composition/proper-crossing] standard relationship id \"r6\" (\"document_versions\" -> \"documents\") crosses relationship id \"r13\" (\"conversations\" -> \"knowledge_bases\") at [691, 429]",
+              "[composition/proper-crossing] standard relationship id \"r7\" (\"document_versions\" -> \"users\") crosses relationship id \"r13\" (\"conversations\" -> \"knowledge_bases\") at [443, 429]",
+              "[composition/proper-crossing] standard relationship id \"r8\" (\"processing_jobs\" -> \"document_versions\") crosses relationship id \"view_kb\" (\"retrievable_chunks\" -> \"knowledge_bases\") at [679, 719]",
+              "[composition/proper-crossing] standard relationship id \"r9\" (\"processing_jobs\" -> \"users\") crosses relationship id \"r13\" (\"conversations\" -> \"knowledge_bases\") at [443, 429]",
+              "[composition/proper-crossing] standard relationship id \"r9\" (\"processing_jobs\" -> \"users\") crosses relationship id \"view_kb\" (\"retrievable_chunks\" -> \"knowledge_bases\") at [443, 719]",
+              "[composition/proper-crossing] standard relationship id \"r11\" (\"processing_attempts\" -> \"users\") crosses relationship id \"r13\" (\"conversations\" -> \"knowledge_bases\") at [443, 429]",
+              "[composition/proper-crossing] standard relationship id \"r11\" (\"processing_attempts\" -> \"users\") crosses relationship id \"view_kb\" (\"retrievable_chunks\" -> \"knowledge_bases\") at [443, 719]",
+              "[composition/proper-crossing] standard relationship id \"r13\" (\"conversations\" -> \"knowledge_bases\") crosses relationship id \"r21\" (\"documents\" -> \"processing_attempts\") at [857, 196]",
+              "[composition/proper-crossing] standard relationship id \"r13\" (\"conversations\" -> \"knowledge_bases\") crosses relationship id \"view_doc\" (\"retrievable_chunks\" -> \"documents\") at [857, 196]",
+              "[composition/proper-crossing] standard relationship id \"r14\" (\"messages\" -> \"conversations\") crosses relationship id \"view_doc\" (\"retrievable_chunks\" -> \"documents\") at [1122, 251]",
+              "[composition/proper-crossing] standard relationship id \"r16\" (\"generation_runs\" -> \"conversations\") crosses relationship id \"view_doc\" (\"retrievable_chunks\" -> \"documents\") at [1333, 977.5]",
+              "[composition/proper-crossing] standard relationship id \"r16\" (\"generation_runs\" -> \"conversations\") crosses relationship id \"view_kb\" (\"retrievable_chunks\" -> \"knowledge_bases\") at [1333, 1001.5]",
+              "[composition/proper-crossing] standard relationship id \"r17\" (\"generation_runs\" -> \"messages\") crosses relationship id \"view_kb\" (\"retrievable_chunks\" -> \"knowledge_bases\") at [1146, 719]",
+              "[composition/proper-crossing] standard relationship id \"r18\" (\"citations\" -> \"generation_runs\") crosses relationship id \"view_doc\" (\"retrievable_chunks\" -> \"documents\") at [1364.5, 977.5]",
+              "[composition/proper-crossing] standard relationship id \"r18\" (\"citations\" -> \"generation_runs\") crosses relationship id \"view_kb\" (\"retrievable_chunks\" -> \"knowledge_bases\") at [1364.5, 1001.5]",
+              "[composition/proper-crossing] standard relationship id \"r21\" (\"documents\" -> \"processing_attempts\") crosses relationship id \"view_kb\" (\"retrievable_chunks\" -> \"knowledge_bases\") at [878, 719]",
+              "[composition/proper-crossing] standard relationship id \"current_run\" (\"messages\" -> \"generation_runs\") crosses relationship id \"view_kb\" (\"retrievable_chunks\" -> \"knowledge_bases\") at [1122, 719]"
+            ]
+          },
+          {
+            "name": "relationship_corridors",
+            "ok": true,
+            "details": []
+          },
+          {
+            "name": "container_border_runs",
+            "ok": true,
+            "details": []
+          },
+          {
+            "name": "route_rhythm",
+            "ok": true,
+            "details": [
+              "[composition/short-interior-segment] standard relationship id \"r17\" (\"generation_runs\" -> \"messages\") has a 12px interior segment 1 [1158, 730.5] -> [1146, 730.5]",
+              "[composition/short-interior-segment] standard relationship id \"current_run\" (\"messages\" -> \"generation_runs\") has a 12px interior segment 1 [1122, 742.5] -> [1110, 742.5]"
+            ]
+          },
+          {
+            "name": "legend_clearance",
+            "ok": true,
+            "details": []
+          }
+        ],
+        "composition": {
+          "schemaVersion": 1,
+          "profile": "standard",
+          "status": "pass",
+          "summary": {
+            "errors": 0,
+            "warnings": 23
+          },
+          "metrics": {
+            "properCrossings": 20,
+            "resolvedCrossovers": 0,
+            "ambiguousCorridors": 0,
+            "arrowheadCollisions": 0,
+            "containerBorderRuns": 0,
+            "labelRouteClearanceIssues": 0,
+            "labelCanvasOverflowIssues": 0,
+            "minLabelRouteClearance": 4,
+            "desktopReadabilityIssues": 1,
+            "viewportHeightIssues": 0,
+            "minProjectedNodeTextPx": 4.665551839464883,
+            "maxBends": 6,
+            "routesOverSuggestedBends": 7,
+            "maxStretch": 2.083,
+            "routesOverSuggestedStretch": 3,
+            "minSegmentPx": 12,
+            "minInteriorSegmentPx": 12,
+            "shortSegmentCount": 2,
+            "shortEndpointSegmentCount": 0,
+            "shortInteriorSegmentCount": 2,
+            "microSegmentCount": 0
+          },
+          "suggestedLimits": {
+            "bendsPerRelationship": 2,
+            "stretch": 1.35,
+            "segmentPx": 16,
+            "microSegmentPx": 8
+          },
+          "routeReview": {
+            "crossings": [],
+            "detours": [
+              {
+                "relationship": {
+                  "id": "r3",
+                  "from": "kb_members",
+                  "to": "users",
+                  "label": "成员与授权人",
+                  "collectionIndex": 2,
+                  "artifactIndex": 3
+                },
+                "bends": 4,
+                "stretch": 1.661,
+                "directCorridorBlockers": [
+                  {
+                    "id": "knowledge_bases",
+                    "label": "core.knowledge_bases",
+                    "box": [
+                      32,
+                      432,
+                      350,
+                      255
+                    ]
+                  }
+                ]
+              },
+              {
+                "relationship": {
+                  "id": "r12",
+                  "from": "conversations",
+                  "to": "users",
+                  "label": "个人会话",
+                  "collectionIndex": 11,
+                  "artifactIndex": 12
+                },
+                "bends": 4,
+                "stretch": 1.175
+              },
+              {
+                "relationship": {
+                  "id": "r13",
+                  "from": "conversations",
+                  "to": "knowledge_bases",
+                  "label": "固定单知识库",
+                  "collectionIndex": 12,
+                  "artifactIndex": 13
+                },
+                "bends": 4,
+                "stretch": 1
+              },
+              {
+                "relationship": {
+                  "id": "r19",
+                  "from": "citations",
+                  "to": "processing_attempts",
+                  "label": "绑定来源尝试",
+                  "collectionIndex": 17,
+                  "artifactIndex": 18
+                },
+                "bends": 6,
+                "stretch": 2.083
+              },
+              {
+                "relationship": {
+                  "id": "r20",
+                  "from": "document_chunks",
+                  "to": "processing_attempts",
+                  "label": "待发布或已发布切片",
+                  "collectionIndex": 18,
+                  "artifactIndex": 19
+                },
+                "bends": 4,
+                "stretch": 1.508
+              },
+              {
+                "relationship": {
+                  "id": "view_doc",
+                  "from": "retrievable_chunks",
+                  "to": "documents",
+                  "label": "当前发布指针（非FK）",
+                  "collectionIndex": 23,
+                  "artifactIndex": 24
+                },
+                "bends": 4,
+                "stretch": 1
+              },
+              {
+                "relationship": {
+                  "id": "view_kb",
+                  "from": "retrievable_chunks",
+                  "to": "knowledge_bases",
+                  "label": "ACTIVE（非FK）",
+                  "collectionIndex": 24,
+                  "artifactIndex": 25
+                },
+                "bends": 4,
+                "stretch": 1
+              }
+            ]
+          },
+          "leadingSpace": {
+            "measured": false,
+            "reviewSuggested": false
+          },
+          "desktopReadability": {
+            "budgetBasis": "legacy-930",
+            "readerContract": "declared-wide-v1",
+            "availableDiagramWidth": 930,
+            "actualBudgetPx": 930,
+            "limit": "legacy",
+            "requestedTargetPx": 7.5,
+            "requestedTargetMet": false,
+            "hardFloorPx": 6,
+            "hardFloorMet": false,
+            "minimumOwner": {
+              "kind": "node",
+              "id": "users"
+            },
+            "minimumSourceTextPx": 9,
+            "minimumProjectedTextPx": 4.665551839464883,
+            "semanticTextCount": 395
+          },
+          "issues": [
+            {
+              "severity": "warning",
+              "code": "composition/proper-crossing",
+              "relationship": {
+                "id": "r4",
+                "from": "documents",
+                "to": "knowledge_bases",
+                "label": "包含",
+                "collectionIndex": 3,
+                "artifactIndex": 4
+              },
+              "otherRelationship": {
+                "id": "r7",
+                "from": "document_versions",
+                "to": "users",
+                "label": "版本上传人",
+                "collectionIndex": 6,
+                "artifactIndex": 7
+              },
+              "point": [
+                443,
+                208
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/proper-crossing",
+              "relationship": {
+                "id": "r4",
+                "from": "documents",
+                "to": "knowledge_bases",
+                "label": "包含",
+                "collectionIndex": 3,
+                "artifactIndex": 4
+              },
+              "otherRelationship": {
+                "id": "r9",
+                "from": "processing_jobs",
+                "to": "users",
+                "label": "任务创建人",
+                "collectionIndex": 8,
+                "artifactIndex": 9
+              },
+              "point": [
+                443,
+                208
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/proper-crossing",
+              "relationship": {
+                "id": "r4",
+                "from": "documents",
+                "to": "knowledge_bases",
+                "label": "包含",
+                "collectionIndex": 3,
+                "artifactIndex": 4
+              },
+              "otherRelationship": {
+                "id": "r11",
+                "from": "processing_attempts",
+                "to": "users",
+                "label": "尝试发起人",
+                "collectionIndex": 10,
+                "artifactIndex": 11
+              },
+              "point": [
+                443,
+                208
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/proper-crossing",
+              "relationship": {
+                "id": "r6",
+                "from": "document_versions",
+                "to": "documents",
+                "label": "内部文件版本",
+                "collectionIndex": 5,
+                "artifactIndex": 6
+              },
+              "otherRelationship": {
+                "id": "r13",
+                "from": "conversations",
+                "to": "knowledge_bases",
+                "label": "固定单知识库",
+                "collectionIndex": 12,
+                "artifactIndex": 13
+              },
+              "point": [
+                691,
+                429
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/proper-crossing",
+              "relationship": {
+                "id": "r7",
+                "from": "document_versions",
+                "to": "users",
+                "label": "版本上传人",
+                "collectionIndex": 6,
+                "artifactIndex": 7
+              },
+              "otherRelationship": {
+                "id": "r13",
+                "from": "conversations",
+                "to": "knowledge_bases",
+                "label": "固定单知识库",
+                "collectionIndex": 12,
+                "artifactIndex": 13
+              },
+              "point": [
+                443,
+                429
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/proper-crossing",
+              "relationship": {
+                "id": "r8",
+                "from": "processing_jobs",
+                "to": "document_versions",
+                "label": "每版本一个任务",
+                "collectionIndex": 7,
+                "artifactIndex": 8
+              },
+              "otherRelationship": {
+                "id": "view_kb",
+                "from": "retrievable_chunks",
+                "to": "knowledge_bases",
+                "label": "ACTIVE（非FK）",
+                "collectionIndex": 24,
+                "artifactIndex": 25
+              },
+              "point": [
+                679,
+                719
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/proper-crossing",
+              "relationship": {
+                "id": "r9",
+                "from": "processing_jobs",
+                "to": "users",
+                "label": "任务创建人",
+                "collectionIndex": 8,
+                "artifactIndex": 9
+              },
+              "otherRelationship": {
+                "id": "r13",
+                "from": "conversations",
+                "to": "knowledge_bases",
+                "label": "固定单知识库",
+                "collectionIndex": 12,
+                "artifactIndex": 13
+              },
+              "point": [
+                443,
+                429
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/proper-crossing",
+              "relationship": {
+                "id": "r9",
+                "from": "processing_jobs",
+                "to": "users",
+                "label": "任务创建人",
+                "collectionIndex": 8,
+                "artifactIndex": 9
+              },
+              "otherRelationship": {
+                "id": "view_kb",
+                "from": "retrievable_chunks",
+                "to": "knowledge_bases",
+                "label": "ACTIVE（非FK）",
+                "collectionIndex": 24,
+                "artifactIndex": 25
+              },
+              "point": [
+                443,
+                719
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/proper-crossing",
+              "relationship": {
+                "id": "r11",
+                "from": "processing_attempts",
+                "to": "users",
+                "label": "尝试发起人",
+                "collectionIndex": 10,
+                "artifactIndex": 11
+              },
+              "otherRelationship": {
+                "id": "r13",
+                "from": "conversations",
+                "to": "knowledge_bases",
+                "label": "固定单知识库",
+                "collectionIndex": 12,
+                "artifactIndex": 13
+              },
+              "point": [
+                443,
+                429
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/proper-crossing",
+              "relationship": {
+                "id": "r11",
+                "from": "processing_attempts",
+                "to": "users",
+                "label": "尝试发起人",
+                "collectionIndex": 10,
+                "artifactIndex": 11
+              },
+              "otherRelationship": {
+                "id": "view_kb",
+                "from": "retrievable_chunks",
+                "to": "knowledge_bases",
+                "label": "ACTIVE（非FK）",
+                "collectionIndex": 24,
+                "artifactIndex": 25
+              },
+              "point": [
+                443,
+                719
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/proper-crossing",
+              "relationship": {
+                "id": "r13",
+                "from": "conversations",
+                "to": "knowledge_bases",
+                "label": "固定单知识库",
+                "collectionIndex": 12,
+                "artifactIndex": 13
+              },
+              "otherRelationship": {
+                "id": "r21",
+                "from": "documents",
+                "to": "processing_attempts",
+                "label": "当前发布指针",
+                "collectionIndex": 19,
+                "artifactIndex": 20
+              },
+              "point": [
+                857,
+                196
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/proper-crossing",
+              "relationship": {
+                "id": "r13",
+                "from": "conversations",
+                "to": "knowledge_bases",
+                "label": "固定单知识库",
+                "collectionIndex": 12,
+                "artifactIndex": 13
+              },
+              "otherRelationship": {
+                "id": "view_doc",
+                "from": "retrievable_chunks",
+                "to": "documents",
+                "label": "当前发布指针（非FK）",
+                "collectionIndex": 23,
+                "artifactIndex": 24
+              },
+              "point": [
+                857,
+                196
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/proper-crossing",
+              "relationship": {
+                "id": "r14",
+                "from": "messages",
+                "to": "conversations",
+                "label": "消息顺序",
+                "collectionIndex": 13,
+                "artifactIndex": 14
+              },
+              "otherRelationship": {
+                "id": "view_doc",
+                "from": "retrievable_chunks",
+                "to": "documents",
+                "label": "当前发布指针（非FK）",
+                "collectionIndex": 23,
+                "artifactIndex": 24
+              },
+              "point": [
+                1122,
+                251
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/proper-crossing",
+              "relationship": {
+                "id": "r16",
+                "from": "generation_runs",
+                "to": "conversations",
+                "label": "生成执行",
+                "collectionIndex": 14,
+                "artifactIndex": 15
+              },
+              "otherRelationship": {
+                "id": "view_doc",
+                "from": "retrievable_chunks",
+                "to": "documents",
+                "label": "当前发布指针（非FK）",
+                "collectionIndex": 23,
+                "artifactIndex": 24
+              },
+              "point": [
+                1333,
+                977.5
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/proper-crossing",
+              "relationship": {
+                "id": "r16",
+                "from": "generation_runs",
+                "to": "conversations",
+                "label": "生成执行",
+                "collectionIndex": 14,
+                "artifactIndex": 15
+              },
+              "otherRelationship": {
+                "id": "view_kb",
+                "from": "retrievable_chunks",
+                "to": "knowledge_bases",
+                "label": "ACTIVE（非FK）",
+                "collectionIndex": 24,
+                "artifactIndex": 25
+              },
+              "point": [
+                1333,
+                1001.5
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/proper-crossing",
+              "relationship": {
+                "id": "r17",
+                "from": "generation_runs",
+                "to": "messages",
+                "label": "问题与回答",
+                "collectionIndex": 15,
+                "artifactIndex": 16
+              },
+              "otherRelationship": {
+                "id": "view_kb",
+                "from": "retrievable_chunks",
+                "to": "knowledge_bases",
+                "label": "ACTIVE（非FK）",
+                "collectionIndex": 24,
+                "artifactIndex": 25
+              },
+              "point": [
+                1146,
+                719
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/proper-crossing",
+              "relationship": {
+                "id": "r18",
+                "from": "citations",
+                "to": "generation_runs",
+                "label": "引用编号",
+                "collectionIndex": 16,
+                "artifactIndex": 17
+              },
+              "otherRelationship": {
+                "id": "view_doc",
+                "from": "retrievable_chunks",
+                "to": "documents",
+                "label": "当前发布指针（非FK）",
+                "collectionIndex": 23,
+                "artifactIndex": 24
+              },
+              "point": [
+                1364.5,
+                977.5
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/proper-crossing",
+              "relationship": {
+                "id": "r18",
+                "from": "citations",
+                "to": "generation_runs",
+                "label": "引用编号",
+                "collectionIndex": 16,
+                "artifactIndex": 17
+              },
+              "otherRelationship": {
+                "id": "view_kb",
+                "from": "retrievable_chunks",
+                "to": "knowledge_bases",
+                "label": "ACTIVE（非FK）",
+                "collectionIndex": 24,
+                "artifactIndex": 25
+              },
+              "point": [
+                1364.5,
+                1001.5
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/proper-crossing",
+              "relationship": {
+                "id": "r21",
+                "from": "documents",
+                "to": "processing_attempts",
+                "label": "当前发布指针",
+                "collectionIndex": 19,
+                "artifactIndex": 20
+              },
+              "otherRelationship": {
+                "id": "view_kb",
+                "from": "retrievable_chunks",
+                "to": "knowledge_bases",
+                "label": "ACTIVE（非FK）",
+                "collectionIndex": 24,
+                "artifactIndex": 25
+              },
+              "point": [
+                878,
+                719
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/proper-crossing",
+              "relationship": {
+                "id": "current_run",
+                "from": "messages",
+                "to": "generation_runs",
+                "label": "当前 run（联合FK）",
+                "collectionIndex": 20,
+                "artifactIndex": 21
+              },
+              "otherRelationship": {
+                "id": "view_kb",
+                "from": "retrievable_chunks",
+                "to": "knowledge_bases",
+                "label": "ACTIVE（非FK）",
+                "collectionIndex": 24,
+                "artifactIndex": 25
+              },
+              "point": [
+                1122,
+                719
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/short-interior-segment",
+              "relationship": {
+                "id": "r17",
+                "from": "generation_runs",
+                "to": "messages",
+                "label": "问题与回答",
+                "collectionIndex": 15,
+                "artifactIndex": 16
+              },
+              "segmentIndex": 1,
+              "position": "interior",
+              "length": 12,
+              "from": [
+                1158,
+                730.5
+              ],
+              "to": [
+                1146,
+                730.5
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/short-interior-segment",
+              "relationship": {
+                "id": "current_run",
+                "from": "messages",
+                "to": "generation_runs",
+                "label": "当前 run（联合FK）",
+                "collectionIndex": 20,
+                "artifactIndex": 21
+              },
+              "segmentIndex": 1,
+              "position": "interior",
+              "length": 12,
+              "from": [
+                1122,
+                742.5
+              ],
+              "to": [
+                1110,
+                742.5
+              ]
+            },
+            {
+              "severity": "warning",
+              "code": "composition/desktop-readability",
+              "nodeId": "users",
+              "owner": {
+                "kind": "node",
+                "id": "users"
+              },
+              "viewportWidth": 1440,
+              "viewportHeight": 900,
+              "availableDiagramWidth": 930,
+              "budgetBasis": "legacy-930",
+              "readerContract": "declared-wide-v1",
+              "requestedTargetPx": 7.5,
+              "requestedTargetMet": false,
+              "budgetLimit": "legacy",
+              "viewBoxWidth": 1794,
+              "scale": 0.5183946488294314,
+              "text": "PK",
+              "detail": "context",
+              "sourceFontPx": 9,
+              "projectedFontPx": 4.665551839464883,
+              "minimumProjectedFontPx": 6
+            }
+          ]
+        },
+        "provenance": "current",
+        "deliveryReceiptId": "18dd8cde-0bfc-43bd-b8c3-b2ff96226f83"
+      }
+    },
+    "browser-check": {
+      "status": "pass",
+      "exitCode": 0,
+      "durationMs": 3246,
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\ASUS\\.codex\\skills\\archify\\bin\\archify.mjs",
+        "browser-check",
+        "D:\\Codex workplace\\enterprise-knowledge-agent\\docs\\diagrams\\er-diagram.html",
+        "--json",
+        "--require-provenance",
+        "--out-dir",
+        "D:\\Codex workplace\\enterprise-knowledge-agent\\docs\\diagrams\\review-day4-final"
+      ],
+      "execution": "in-process",
+      "receipt": {
+        "schemaVersion": 1,
+        "ok": true,
+        "command": "browser-check",
+        "evidenceKind": "automated-browser",
+        "status": "pass",
+        "visualReview": "not-requested",
+        "provenance": "current",
+        "deliveryReceiptId": "18dd8cde-0bfc-43bd-b8c3-b2ff96226f83",
+        "artifact": {
+          "path": "D:\\Codex workplace\\enterprise-knowledge-agent\\docs\\diagrams\\er-diagram.html",
+          "sha256": "1c3ef7f400e86207618a79474b16544b0119ffc863fc114e90af33a609edfd40",
+          "bytes": 932886
+        },
+        "state": {
+          "detail": "read",
+          "motion": "still"
+        },
+        "chrome": {
+          "status": "available",
+          "executable": "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe"
+        },
+        "diagnostics": [],
+        "containment": {
+          "status": "pass",
+          "policy": "fit-or-reader-declared-readable-vertical-scroll",
+          "viewports": [
+            {
+              "width": 1440,
+              "height": 900,
+              "theme": "light",
+              "innerWidth": 1440,
+              "innerHeight": 900,
+              "scrollWidth": 1440,
+              "scrollHeight": 1460,
+              "overflowX": false,
+              "overflowY": true,
+              "verticalScrollAccepted": true,
+              "overflowDisposition": "readable-vertical-scroll",
+              "readerLayout": "adaptive",
+              "readerOverflow": "authored",
+              "readerFit": "intrinsic-height",
+              "ok": true,
+              "readerWidth": 1376,
+              "diagramWidth": 1346,
+              "pageComposition": {
+                "bodyPaddingPx": 12,
+                "headerPx": 52,
+                "diagramChromePx": 78,
+                "svgPx": 1318,
+                "cardsPx": 0,
+                "viewBoxHeight": 1757
+              },
+              "viewBoxWidth": 1794,
+              "minimumProjectedNodeTextPx": 6.752508361204013,
+              "minimumProjectedNonEdgeTextPx": 6.752508361204013,
+              "minimumProjectedEdgeTextPx": 6.752508361204013,
+              "minimumProjectedNodeText": "PK",
+              "minimumProjectedNodeTextDetail": "context",
+              "minimumProjectedNodeTextOwner": {
+                "kind": "node",
+                "id": "users"
+              },
+              "minimumRequiredNodeTextPx": 6,
+              "readabilityOk": true,
+              "hasLegend": true,
+              "hasNavigationDock": true,
+              "legendDockIntersectionArea": 0,
+              "dockStageIntersectionArea": 0,
+              "dockStageGap": 10,
+              "requiredDockStageGap": 10,
+              "viewerChromeStageOk": true,
+              "viewerChromeReserve": 54,
+              "viewerChromeActive": true,
+              "viewerChromeOk": true,
+              "resolvedTheme": "light"
+            },
+            {
+              "width": 1600,
+              "height": 1000,
+              "theme": "light",
+              "innerWidth": 1600,
+              "innerHeight": 1000,
+              "scrollWidth": 1600,
+              "scrollHeight": 1673,
+              "overflowX": false,
+              "overflowY": true,
+              "verticalScrollAccepted": true,
+              "overflowDisposition": "readable-vertical-scroll",
+              "readerLayout": "adaptive",
+              "readerOverflow": "authored",
+              "readerFit": "intrinsic-height",
+              "ok": true,
+              "readerWidth": 1525,
+              "diagramWidth": 1495,
+              "pageComposition": {
+                "bodyPaddingPx": 64,
+                "headerPx": 60,
+                "diagramChromePx": 84,
+                "svgPx": 1464,
+                "cardsPx": 0,
+                "viewBoxHeight": 1757
+              },
+              "viewBoxWidth": 1794,
+              "minimumProjectedNodeTextPx": 7.5,
+              "minimumProjectedNonEdgeTextPx": 7.5,
+              "minimumProjectedEdgeTextPx": 7.5,
+              "minimumProjectedNodeText": "PK",
+              "minimumProjectedNodeTextDetail": "context",
+              "minimumProjectedNodeTextOwner": {
+                "kind": "node",
+                "id": "users"
+              },
+              "minimumRequiredNodeTextPx": 6,
+              "readabilityOk": true,
+              "hasLegend": true,
+              "hasNavigationDock": true,
+              "legendDockIntersectionArea": 0,
+              "dockStageIntersectionArea": 0,
+              "dockStageGap": 10,
+              "requiredDockStageGap": 10,
+              "viewerChromeStageOk": true,
+              "viewerChromeReserve": 54,
+              "viewerChromeActive": true,
+              "viewerChromeOk": true,
+              "resolvedTheme": "light"
+            },
+            {
+              "width": 1920,
+              "height": 1080,
+              "theme": "light",
+              "innerWidth": 1920,
+              "innerHeight": 1080,
+              "scrollWidth": 1920,
+              "scrollHeight": 1673,
+              "overflowX": false,
+              "overflowY": true,
+              "verticalScrollAccepted": true,
+              "overflowDisposition": "readable-vertical-scroll",
+              "readerLayout": "adaptive",
+              "readerOverflow": "authored",
+              "readerFit": "intrinsic-height",
+              "ok": true,
+              "readerWidth": 1525,
+              "diagramWidth": 1495,
+              "pageComposition": {
+                "bodyPaddingPx": 64,
+                "headerPx": 60,
+                "diagramChromePx": 84,
+                "svgPx": 1464,
+                "cardsPx": 0,
+                "viewBoxHeight": 1757
+              },
+              "viewBoxWidth": 1794,
+              "minimumProjectedNodeTextPx": 7.5,
+              "minimumProjectedNonEdgeTextPx": 7.5,
+              "minimumProjectedEdgeTextPx": 7.5,
+              "minimumProjectedNodeText": "PK",
+              "minimumProjectedNodeTextDetail": "context",
+              "minimumProjectedNodeTextOwner": {
+                "kind": "node",
+                "id": "users"
+              },
+              "minimumRequiredNodeTextPx": 6,
+              "readabilityOk": true,
+              "hasLegend": true,
+              "hasNavigationDock": true,
+              "legendDockIntersectionArea": 0,
+              "dockStageIntersectionArea": 0,
+              "dockStageGap": 10,
+              "requiredDockStageGap": 10,
+              "viewerChromeStageOk": true,
+              "viewerChromeReserve": 54,
+              "viewerChromeActive": true,
+              "viewerChromeOk": true,
+              "resolvedTheme": "light"
+            },
+            {
+              "width": 2048,
+              "height": 1320,
+              "theme": "light",
+              "innerWidth": 2048,
+              "innerHeight": 1320,
+              "scrollWidth": 2048,
+              "scrollHeight": 1691,
+              "overflowX": false,
+              "overflowY": true,
+              "verticalScrollAccepted": true,
+              "overflowDisposition": "readable-vertical-scroll",
+              "readerLayout": "adaptive",
+              "readerOverflow": "authored",
+              "readerFit": "intrinsic-height",
+              "ok": true,
+              "readerWidth": 1545,
+              "diagramWidth": 1495,
+              "pageComposition": {
+                "bodyPaddingPx": 64,
+                "headerPx": 68,
+                "diagramChromePx": 94,
+                "svgPx": 1464,
+                "cardsPx": 0,
+                "viewBoxHeight": 1757
+              },
+              "viewBoxWidth": 1794,
+              "minimumProjectedNodeTextPx": 7.5,
+              "minimumProjectedNonEdgeTextPx": 7.5,
+              "minimumProjectedEdgeTextPx": 7.5,
+              "minimumProjectedNodeText": "PK",
+              "minimumProjectedNodeTextDetail": "context",
+              "minimumProjectedNodeTextOwner": {
+                "kind": "node",
+                "id": "users"
+              },
+              "minimumRequiredNodeTextPx": 6,
+              "readabilityOk": true,
+              "hasLegend": true,
+              "hasNavigationDock": true,
+              "legendDockIntersectionArea": 0,
+              "dockStageIntersectionArea": 0,
+              "dockStageGap": 10,
+              "requiredDockStageGap": 10,
+              "viewerChromeStageOk": true,
+              "viewerChromeReserve": 44,
+              "viewerChromeActive": true,
+              "viewerChromeOk": true,
+              "resolvedTheme": "light"
+            }
+          ]
+        },
+        "themeStates": {
+          "status": "pass",
+          "viewports": [
+            {
+              "width": 1440,
+              "height": 900,
+              "requestedTheme": "light",
+              "resolvedTheme": "light",
+              "ok": true
+            },
+            {
+              "width": 1600,
+              "height": 1000,
+              "requestedTheme": "light",
+              "resolvedTheme": "light",
+              "ok": true
+            },
+            {
+              "width": 1920,
+              "height": 1080,
+              "requestedTheme": "light",
+              "resolvedTheme": "light",
+              "ok": true
+            },
+            {
+              "width": 2048,
+              "height": 1320,
+              "requestedTheme": "light",
+              "resolvedTheme": "light",
+              "ok": true
+            },
+            {
+              "width": 1440,
+              "height": 900,
+              "requestedTheme": "dark",
+              "resolvedTheme": "dark",
+              "ok": true
+            },
+            {
+              "width": 2048,
+              "height": 1320,
+              "requestedTheme": "dark",
+              "resolvedTheme": "dark",
+              "ok": true
+            }
+          ]
+        },
+        "readability": {
+          "status": "pass",
+          "minimumProjectedNodeTextPx": 6,
+          "viewports": [
+            {
+              "width": 1440,
+              "height": 900,
+              "theme": "light",
+              "innerWidth": 1440,
+              "innerHeight": 900,
+              "scrollWidth": 1440,
+              "scrollHeight": 1460,
+              "overflowX": false,
+              "overflowY": true,
+              "verticalScrollAccepted": true,
+              "overflowDisposition": "readable-vertical-scroll",
+              "readerLayout": "adaptive",
+              "readerOverflow": "authored",
+              "readerFit": "intrinsic-height",
+              "ok": true,
+              "readerWidth": 1376,
+              "diagramWidth": 1346,
+              "pageComposition": {
+                "bodyPaddingPx": 12,
+                "headerPx": 52,
+                "diagramChromePx": 78,
+                "svgPx": 1318,
+                "cardsPx": 0,
+                "viewBoxHeight": 1757
+              },
+              "viewBoxWidth": 1794,
+              "minimumProjectedNodeTextPx": 6.752508361204013,
+              "minimumProjectedNonEdgeTextPx": 6.752508361204013,
+              "minimumProjectedEdgeTextPx": 6.752508361204013,
+              "minimumProjectedNodeText": "PK",
+              "minimumProjectedNodeTextDetail": "context",
+              "minimumProjectedNodeTextOwner": {
+                "kind": "node",
+                "id": "users"
+              },
+              "minimumRequiredNodeTextPx": 6,
+              "readabilityOk": true,
+              "hasLegend": true,
+              "hasNavigationDock": true,
+              "legendDockIntersectionArea": 0,
+              "dockStageIntersectionArea": 0,
+              "dockStageGap": 10,
+              "requiredDockStageGap": 10,
+              "viewerChromeStageOk": true,
+              "viewerChromeReserve": 54,
+              "viewerChromeActive": true,
+              "viewerChromeOk": true,
+              "resolvedTheme": "light"
+            },
+            {
+              "width": 1600,
+              "height": 1000,
+              "theme": "light",
+              "innerWidth": 1600,
+              "innerHeight": 1000,
+              "scrollWidth": 1600,
+              "scrollHeight": 1673,
+              "overflowX": false,
+              "overflowY": true,
+              "verticalScrollAccepted": true,
+              "overflowDisposition": "readable-vertical-scroll",
+              "readerLayout": "adaptive",
+              "readerOverflow": "authored",
+              "readerFit": "intrinsic-height",
+              "ok": true,
+              "readerWidth": 1525,
+              "diagramWidth": 1495,
+              "pageComposition": {
+                "bodyPaddingPx": 64,
+                "headerPx": 60,
+                "diagramChromePx": 84,
+                "svgPx": 1464,
+                "cardsPx": 0,
+                "viewBoxHeight": 1757
+              },
+              "viewBoxWidth": 1794,
+              "minimumProjectedNodeTextPx": 7.5,
+              "minimumProjectedNonEdgeTextPx": 7.5,
+              "minimumProjectedEdgeTextPx": 7.5,
+              "minimumProjectedNodeText": "PK",
+              "minimumProjectedNodeTextDetail": "context",
+              "minimumProjectedNodeTextOwner": {
+                "kind": "node",
+                "id": "users"
+              },
+              "minimumRequiredNodeTextPx": 6,
+              "readabilityOk": true,
+              "hasLegend": true,
+              "hasNavigationDock": true,
+              "legendDockIntersectionArea": 0,
+              "dockStageIntersectionArea": 0,
+              "dockStageGap": 10,
+              "requiredDockStageGap": 10,
+              "viewerChromeStageOk": true,
+              "viewerChromeReserve": 54,
+              "viewerChromeActive": true,
+              "viewerChromeOk": true,
+              "resolvedTheme": "light"
+            },
+            {
+              "width": 1920,
+              "height": 1080,
+              "theme": "light",
+              "innerWidth": 1920,
+              "innerHeight": 1080,
+              "scrollWidth": 1920,
+              "scrollHeight": 1673,
+              "overflowX": false,
+              "overflowY": true,
+              "verticalScrollAccepted": true,
+              "overflowDisposition": "readable-vertical-scroll",
+              "readerLayout": "adaptive",
+              "readerOverflow": "authored",
+              "readerFit": "intrinsic-height",
+              "ok": true,
+              "readerWidth": 1525,
+              "diagramWidth": 1495,
+              "pageComposition": {
+                "bodyPaddingPx": 64,
+                "headerPx": 60,
+                "diagramChromePx": 84,
+                "svgPx": 1464,
+                "cardsPx": 0,
+                "viewBoxHeight": 1757
+              },
+              "viewBoxWidth": 1794,
+              "minimumProjectedNodeTextPx": 7.5,
+              "minimumProjectedNonEdgeTextPx": 7.5,
+              "minimumProjectedEdgeTextPx": 7.5,
+              "minimumProjectedNodeText": "PK",
+              "minimumProjectedNodeTextDetail": "context",
+              "minimumProjectedNodeTextOwner": {
+                "kind": "node",
+                "id": "users"
+              },
+              "minimumRequiredNodeTextPx": 6,
+              "readabilityOk": true,
+              "hasLegend": true,
+              "hasNavigationDock": true,
+              "legendDockIntersectionArea": 0,
+              "dockStageIntersectionArea": 0,
+              "dockStageGap": 10,
+              "requiredDockStageGap": 10,
+              "viewerChromeStageOk": true,
+              "viewerChromeReserve": 54,
+              "viewerChromeActive": true,
+              "viewerChromeOk": true,
+              "resolvedTheme": "light"
+            },
+            {
+              "width": 2048,
+              "height": 1320,
+              "theme": "light",
+              "innerWidth": 2048,
+              "innerHeight": 1320,
+              "scrollWidth": 2048,
+              "scrollHeight": 1691,
+              "overflowX": false,
+              "overflowY": true,
+              "verticalScrollAccepted": true,
+              "overflowDisposition": "readable-vertical-scroll",
+              "readerLayout": "adaptive",
+              "readerOverflow": "authored",
+              "readerFit": "intrinsic-height",
+              "ok": true,
+              "readerWidth": 1545,
+              "diagramWidth": 1495,
+              "pageComposition": {
+                "bodyPaddingPx": 64,
+                "headerPx": 68,
+                "diagramChromePx": 94,
+                "svgPx": 1464,
+                "cardsPx": 0,
+                "viewBoxHeight": 1757
+              },
+              "viewBoxWidth": 1794,
+              "minimumProjectedNodeTextPx": 7.5,
+              "minimumProjectedNonEdgeTextPx": 7.5,
+              "minimumProjectedEdgeTextPx": 7.5,
+              "minimumProjectedNodeText": "PK",
+              "minimumProjectedNodeTextDetail": "context",
+              "minimumProjectedNodeTextOwner": {
+                "kind": "node",
+                "id": "users"
+              },
+              "minimumRequiredNodeTextPx": 6,
+              "readabilityOk": true,
+              "hasLegend": true,
+              "hasNavigationDock": true,
+              "legendDockIntersectionArea": 0,
+              "dockStageIntersectionArea": 0,
+              "dockStageGap": 10,
+              "requiredDockStageGap": 10,
+              "viewerChromeStageOk": true,
+              "viewerChromeReserve": 44,
+              "viewerChromeActive": true,
+              "viewerChromeOk": true,
+              "resolvedTheme": "light"
+            }
+          ]
+        },
+        "viewerChrome": {
+          "status": "pass",
+          "viewports": [
+            {
+              "width": 1440,
+              "height": 900,
+              "theme": "light",
+              "innerWidth": 1440,
+              "innerHeight": 900,
+              "scrollWidth": 1440,
+              "scrollHeight": 1460,
+              "overflowX": false,
+              "overflowY": true,
+              "verticalScrollAccepted": true,
+              "overflowDisposition": "readable-vertical-scroll",
+              "readerLayout": "adaptive",
+              "readerOverflow": "authored",
+              "readerFit": "intrinsic-height",
+              "ok": true,
+              "readerWidth": 1376,
+              "diagramWidth": 1346,
+              "pageComposition": {
+                "bodyPaddingPx": 12,
+                "headerPx": 52,
+                "diagramChromePx": 78,
+                "svgPx": 1318,
+                "cardsPx": 0,
+                "viewBoxHeight": 1757
+              },
+              "viewBoxWidth": 1794,
+              "minimumProjectedNodeTextPx": 6.752508361204013,
+              "minimumProjectedNonEdgeTextPx": 6.752508361204013,
+              "minimumProjectedEdgeTextPx": 6.752508361204013,
+              "minimumProjectedNodeText": "PK",
+              "minimumProjectedNodeTextDetail": "context",
+              "minimumProjectedNodeTextOwner": {
+                "kind": "node",
+                "id": "users"
+              },
+              "minimumRequiredNodeTextPx": 6,
+              "readabilityOk": true,
+              "hasLegend": true,
+              "hasNavigationDock": true,
+              "legendDockIntersectionArea": 0,
+              "dockStageIntersectionArea": 0,
+              "dockStageGap": 10,
+              "requiredDockStageGap": 10,
+              "viewerChromeStageOk": true,
+              "viewerChromeReserve": 54,
+              "viewerChromeActive": true,
+              "viewerChromeOk": true,
+              "resolvedTheme": "light"
+            },
+            {
+              "width": 1600,
+              "height": 1000,
+              "theme": "light",
+              "innerWidth": 1600,
+              "innerHeight": 1000,
+              "scrollWidth": 1600,
+              "scrollHeight": 1673,
+              "overflowX": false,
+              "overflowY": true,
+              "verticalScrollAccepted": true,
+              "overflowDisposition": "readable-vertical-scroll",
+              "readerLayout": "adaptive",
+              "readerOverflow": "authored",
+              "readerFit": "intrinsic-height",
+              "ok": true,
+              "readerWidth": 1525,
+              "diagramWidth": 1495,
+              "pageComposition": {
+                "bodyPaddingPx": 64,
+                "headerPx": 60,
+                "diagramChromePx": 84,
+                "svgPx": 1464,
+                "cardsPx": 0,
+                "viewBoxHeight": 1757
+              },
+              "viewBoxWidth": 1794,
+              "minimumProjectedNodeTextPx": 7.5,
+              "minimumProjectedNonEdgeTextPx": 7.5,
+              "minimumProjectedEdgeTextPx": 7.5,
+              "minimumProjectedNodeText": "PK",
+              "minimumProjectedNodeTextDetail": "context",
+              "minimumProjectedNodeTextOwner": {
+                "kind": "node",
+                "id": "users"
+              },
+              "minimumRequiredNodeTextPx": 6,
+              "readabilityOk": true,
+              "hasLegend": true,
+              "hasNavigationDock": true,
+              "legendDockIntersectionArea": 0,
+              "dockStageIntersectionArea": 0,
+              "dockStageGap": 10,
+              "requiredDockStageGap": 10,
+              "viewerChromeStageOk": true,
+              "viewerChromeReserve": 54,
+              "viewerChromeActive": true,
+              "viewerChromeOk": true,
+              "resolvedTheme": "light"
+            },
+            {
+              "width": 1920,
+              "height": 1080,
+              "theme": "light",
+              "innerWidth": 1920,
+              "innerHeight": 1080,
+              "scrollWidth": 1920,
+              "scrollHeight": 1673,
+              "overflowX": false,
+              "overflowY": true,
+              "verticalScrollAccepted": true,
+              "overflowDisposition": "readable-vertical-scroll",
+              "readerLayout": "adaptive",
+              "readerOverflow": "authored",
+              "readerFit": "intrinsic-height",
+              "ok": true,
+              "readerWidth": 1525,
+              "diagramWidth": 1495,
+              "pageComposition": {
+                "bodyPaddingPx": 64,
+                "headerPx": 60,
+                "diagramChromePx": 84,
+                "svgPx": 1464,
+                "cardsPx": 0,
+                "viewBoxHeight": 1757
+              },
+              "viewBoxWidth": 1794,
+              "minimumProjectedNodeTextPx": 7.5,
+              "minimumProjectedNonEdgeTextPx": 7.5,
+              "minimumProjectedEdgeTextPx": 7.5,
+              "minimumProjectedNodeText": "PK",
+              "minimumProjectedNodeTextDetail": "context",
+              "minimumProjectedNodeTextOwner": {
+                "kind": "node",
+                "id": "users"
+              },
+              "minimumRequiredNodeTextPx": 6,
+              "readabilityOk": true,
+              "hasLegend": true,
+              "hasNavigationDock": true,
+              "legendDockIntersectionArea": 0,
+              "dockStageIntersectionArea": 0,
+              "dockStageGap": 10,
+              "requiredDockStageGap": 10,
+              "viewerChromeStageOk": true,
+              "viewerChromeReserve": 54,
+              "viewerChromeActive": true,
+              "viewerChromeOk": true,
+              "resolvedTheme": "light"
+            },
+            {
+              "width": 2048,
+              "height": 1320,
+              "theme": "light",
+              "innerWidth": 2048,
+              "innerHeight": 1320,
+              "scrollWidth": 2048,
+              "scrollHeight": 1691,
+              "overflowX": false,
+              "overflowY": true,
+              "verticalScrollAccepted": true,
+              "overflowDisposition": "readable-vertical-scroll",
+              "readerLayout": "adaptive",
+              "readerOverflow": "authored",
+              "readerFit": "intrinsic-height",
+              "ok": true,
+              "readerWidth": 1545,
+              "diagramWidth": 1495,
+              "pageComposition": {
+                "bodyPaddingPx": 64,
+                "headerPx": 68,
+                "diagramChromePx": 94,
+                "svgPx": 1464,
+                "cardsPx": 0,
+                "viewBoxHeight": 1757
+              },
+              "viewBoxWidth": 1794,
+              "minimumProjectedNodeTextPx": 7.5,
+              "minimumProjectedNonEdgeTextPx": 7.5,
+              "minimumProjectedEdgeTextPx": 7.5,
+              "minimumProjectedNodeText": "PK",
+              "minimumProjectedNodeTextDetail": "context",
+              "minimumProjectedNodeTextOwner": {
+                "kind": "node",
+                "id": "users"
+              },
+              "minimumRequiredNodeTextPx": 6,
+              "readabilityOk": true,
+              "hasLegend": true,
+              "hasNavigationDock": true,
+              "legendDockIntersectionArea": 0,
+              "dockStageIntersectionArea": 0,
+              "dockStageGap": 10,
+              "requiredDockStageGap": 10,
+              "viewerChromeStageOk": true,
+              "viewerChromeReserve": 44,
+              "viewerChromeActive": true,
+              "viewerChromeOk": true,
+              "resolvedTheme": "light"
+            }
+          ]
+        },
+        "captures": {
+          "status": "not-requested",
+          "screenshots": [],
+          "contactSheet": null
+        },
+        "sidecars": {
+          "directory": "D:\\Codex workplace\\enterprise-knowledge-agent\\docs\\diagrams\\review-day4-final",
+          "receipt": "er-diagram.browser-check.json",
+          "files": []
+        }
+      }
+    }
+  },
+  "browserCheck": {
+    "requested": true,
+    "ran": true
+  },
+  "diagnostics": [],
+  "evidence": {
+    "receipt": "D:\\Codex workplace\\enterprise-knowledge-agent\\docs\\diagrams\\review-day4-final\\er-diagram.finalize.json",
+    "summaryReceipt": "D:\\Codex workplace\\enterprise-knowledge-agent\\docs\\diagrams\\review-day4-final\\er-diagram.finalize-summary.json",
+    "browserCheckReceipt": "D:\\Codex workplace\\enterprise-knowledge-agent\\docs\\diagrams\\review-day4-final\\er-diagram.browser-check.json"
+  },
+  "visualReview": "not-requested",
+  "finishedAt": "2026-11-18T13:17:00.059Z",
+  "durationMs": 4565,
+  "update": {
+    "status": "unavailable",
+    "installedVersion": null,
+    "availableVersion": null,
+    "releaseNotes": null,
+    "checkedAt": null,
+    "source": null,
+    "noticeRequired": false,
+    "noticeText": null,
+    "reason": "cache-unavailable"
+  }
+}

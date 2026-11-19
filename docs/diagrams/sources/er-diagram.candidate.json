@@ -1,0 +1,1159 @@
+{
+  "schema_version": 1,
+  "diagram_type": "erd",
+  "meta": {
+    "title": "企业知识平台 · 数据库 ER 图",
+    "locale": "zh-CN",
+    "output": "docs/diagrams/er-diagram.html",
+    "quality_profile": "standard",
+    "views": [
+      {
+        "id": "access",
+        "label": "账号与知识库",
+        "focus": [
+          "users",
+          "knowledge_bases",
+          "kb_members",
+          "documents",
+          "conversations"
+        ],
+        "note": "创建关系与成员授权不同；kb_members 形成多对多。"
+      },
+      {
+        "id": "publish",
+        "label": "文件版本与条件发布",
+        "focus": [
+          "documents",
+          "document_versions",
+          "processing_jobs",
+          "processing_attempts",
+          "document_chunks",
+          "retrievable_chunks"
+        ],
+        "note": "当前版本与发布 attempt 必须同时匹配；View 不替代请求授权。"
+      },
+      {
+        "id": "chat",
+        "label": "消息、执行与引用",
+        "focus": [
+          "conversations",
+          "messages",
+          "generation_runs",
+          "citations",
+          "document_chunks"
+        ],
+        "note": "重试保留消息对并新建 run；旧事件不能覆盖 current_run。"
+      }
+    ]
+  },
+  "layout": {
+    "mode": "grid",
+    "entityW": 350,
+    "headerH": 40,
+    "rowH": 19,
+    "gapX": 105,
+    "gapY": 80
+  },
+  "entities": [
+    {
+      "id": "users",
+      "label": "core.users",
+      "sublabel": "用户",
+      "tag": "账号与授权",
+      "row": 0,
+      "col": 0,
+      "attributes": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "key": "pk"
+        },
+        {
+          "name": "username",
+          "type": "varchar(32)"
+        },
+        {
+          "name": "username_key",
+          "type": "text",
+          "key": "uk"
+        },
+        {
+          "name": "password_hash",
+          "type": "text"
+        },
+        {
+          "name": "role",
+          "type": "varchar(16)"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamptz"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamptz"
+        }
+      ]
+    },
+    {
+      "id": "knowledge_bases",
+      "label": "core.knowledge_bases",
+      "sublabel": "知识库",
+      "tag": "账号与授权",
+      "row": 1,
+      "col": 0,
+      "attributes": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "key": "pk"
+        },
+        {
+          "name": "name",
+          "type": "varchar(50)"
+        },
+        {
+          "name": "name_key",
+          "type": "text",
+          "key": "uk"
+        },
+        {
+          "name": "description",
+          "type": "varchar(500)"
+        },
+        {
+          "name": "created_by",
+          "type": "uuid",
+          "key": "fk",
+          "references": "users.id"
+        },
+        {
+          "name": "lifecycle",
+          "type": "varchar(20)"
+        },
+        {
+          "name": "delete_error_code",
+          "type": "text"
+        },
+        {
+          "name": "delete_error_detail",
+          "type": "text"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamptz"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamptz"
+        },
+        {
+          "name": "deleted_at",
+          "type": "timestamptz"
+        }
+      ]
+    },
+    {
+      "id": "kb_members",
+      "label": "core.kb_members",
+      "sublabel": "知识库成员授权",
+      "tag": "账号与授权",
+      "row": 2,
+      "col": 0,
+      "attributes": [
+        {
+          "name": "kb_id",
+          "type": "uuid",
+          "key": [
+            "pk",
+            "fk"
+          ],
+          "references": "knowledge_bases.id"
+        },
+        {
+          "name": "user_id",
+          "type": "uuid",
+          "key": [
+            "pk",
+            "fk"
+          ],
+          "references": "users.id"
+        },
+        {
+          "name": "granted_by",
+          "type": "uuid",
+          "key": "fk",
+          "references": "users.id"
+        },
+        {
+          "name": "granted_at",
+          "type": "timestamptz"
+        }
+      ]
+    },
+    {
+      "id": "documents",
+      "label": "core.documents",
+      "sublabel": "文档当前业务状态",
+      "tag": "文档与处理",
+      "row": 0,
+      "col": 1,
+      "attributes": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "key": [
+            "pk",
+            "fk"
+          ],
+          "references": "document_versions.document_id"
+        },
+        {
+          "name": "kb_id",
+          "type": "uuid",
+          "key": "fk",
+          "references": "knowledge_bases.id"
+        },
+        {
+          "name": "file_name",
+          "type": "text"
+        },
+        {
+          "name": "file_name_key",
+          "type": "text",
+          "key": "uk"
+        },
+        {
+          "name": "current_version",
+          "type": "integer",
+          "key": "fk",
+          "references": "document_versions.document_version"
+        },
+        {
+          "name": "status",
+          "type": "varchar(16)"
+        },
+        {
+          "name": "lifecycle",
+          "type": "varchar(20)"
+        },
+        {
+          "name": "published_attempt_id",
+          "type": "uuid",
+          "key": "fk",
+          "references": "processing_attempts.id"
+        },
+        {
+          "name": "created_by",
+          "type": "uuid",
+          "key": "fk",
+          "references": "users.id"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamptz"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamptz"
+        },
+        {
+          "name": "delete_error_code",
+          "type": "text"
+        },
+        {
+          "name": "delete_error_detail",
+          "type": "text"
+        },
+        {
+          "name": "deleted_at",
+          "type": "timestamptz"
+        }
+      ]
+    },
+    {
+      "id": "document_versions",
+      "label": "core.document_versions",
+      "sublabel": "文件版本与物理清理",
+      "tag": "文档与处理",
+      "row": 1,
+      "col": 1,
+      "attributes": [
+        {
+          "name": "document_id",
+          "type": "uuid",
+          "key": [
+            "pk",
+            "fk"
+          ],
+          "references": "documents.id"
+        },
+        {
+          "name": "document_version",
+          "type": "integer",
+          "key": "pk"
+        },
+        {
+          "name": "original_file_name",
+          "type": "text"
+        },
+        {
+          "name": "storage_key",
+          "type": "text",
+          "key": "uk"
+        },
+        {
+          "name": "media_type",
+          "type": "text"
+        },
+        {
+          "name": "size_bytes",
+          "type": "bigint"
+        },
+        {
+          "name": "file_sha256",
+          "type": "char(64)"
+        },
+        {
+          "name": "file_state",
+          "type": "varchar(20)"
+        },
+        {
+          "name": "cleanup_error",
+          "type": "text"
+        },
+        {
+          "name": "uploaded_by",
+          "type": "uuid",
+          "key": "fk",
+          "references": "users.id"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamptz"
+        },
+        {
+          "name": "file_deleted_at",
+          "type": "timestamptz"
+        }
+      ]
+    },
+    {
+      "id": "processing_jobs",
+      "label": "core.processing_jobs",
+      "sublabel": "文档处理逻辑任务",
+      "tag": "文档与处理",
+      "row": 2,
+      "col": 1,
+      "attributes": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "key": "pk"
+        },
+        {
+          "name": "document_id",
+          "type": "uuid",
+          "key": [
+            "fk",
+            "uk"
+          ],
+          "references": "document_versions.document_id"
+        },
+        {
+          "name": "document_version",
+          "type": "integer",
+          "key": [
+            "fk",
+            "uk"
+          ],
+          "references": "document_versions.document_version"
+        },
+        {
+          "name": "created_by",
+          "type": "uuid",
+          "key": "fk",
+          "references": "users.id"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamptz"
+        }
+      ]
+    },
+    {
+      "id": "processing_attempts",
+      "label": "core.processing_attempts",
+      "sublabel": "文档处理执行记录",
+      "tag": "文档与处理",
+      "row": 3,
+      "col": 1,
+      "attributes": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "key": "pk"
+        },
+        {
+          "name": "job_id",
+          "type": "uuid",
+          "key": [
+            "fk",
+            "uk"
+          ],
+          "references": "processing_jobs.id"
+        },
+        {
+          "name": "document_id",
+          "type": "uuid",
+          "key": "fk",
+          "references": "processing_jobs.document_id"
+        },
+        {
+          "name": "document_version",
+          "type": "integer",
+          "key": "fk",
+          "references": "processing_jobs.document_version"
+        },
+        {
+          "name": "attempt_no",
+          "type": "integer",
+          "key": "uk"
+        },
+        {
+          "name": "status",
+          "type": "varchar(20)"
+        },
+        {
+          "name": "embedding_model_id",
+          "type": "text"
+        },
+        {
+          "name": "embedding_dimensions",
+          "type": "integer"
+        },
+        {
+          "name": "dispatch_count",
+          "type": "integer"
+        },
+        {
+          "name": "requested_by",
+          "type": "uuid",
+          "key": "fk",
+          "references": "users.id"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamptz"
+        },
+        {
+          "name": "deadline_at",
+          "type": "timestamptz"
+        },
+        {
+          "name": "last_dispatched_at",
+          "type": "timestamptz"
+        },
+        {
+          "name": "started_at",
+          "type": "timestamptz"
+        },
+        {
+          "name": "finished_at",
+          "type": "timestamptz"
+        },
+        {
+          "name": "chunk_count",
+          "type": "integer"
+        },
+        {
+          "name": "manifest_sha256",
+          "type": "char(64)"
+        },
+        {
+          "name": "error_code",
+          "type": "text"
+        },
+        {
+          "name": "error_detail",
+          "type": "text"
+        }
+      ]
+    },
+    {
+      "id": "conversations",
+      "label": "core.conversations",
+      "sublabel": "对话会话",
+      "tag": "会话与生成",
+      "row": 0,
+      "col": 2,
+      "attributes": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "key": "pk"
+        },
+        {
+          "name": "owner_id",
+          "type": "uuid",
+          "key": "fk",
+          "references": "users.id"
+        },
+        {
+          "name": "kb_id",
+          "type": "uuid",
+          "key": "fk",
+          "references": "knowledge_bases.id"
+        },
+        {
+          "name": "title",
+          "type": "text"
+        },
+        {
+          "name": "next_message_ordinal",
+          "type": "bigint"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamptz"
+        },
+        {
+          "name": "last_message_at",
+          "type": "timestamptz"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamptz"
+        }
+      ]
+    },
+    {
+      "id": "messages",
+      "label": "core.messages",
+      "sublabel": "当前可见消息",
+      "tag": "会话与生成",
+      "row": 1,
+      "col": 2,
+      "attributes": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "key": "pk"
+        },
+        {
+          "name": "conversation_id",
+          "type": "uuid",
+          "key": [
+            "fk",
+            "uk"
+          ],
+          "references": "conversations.id"
+        },
+        {
+          "name": "ordinal",
+          "type": "bigint",
+          "key": "uk"
+        },
+        {
+          "name": "role",
+          "type": "varchar(16)"
+        },
+        {
+          "name": "reply_to_message_id",
+          "type": "uuid",
+          "key": [
+            "fk",
+            "uk"
+          ],
+          "references": "messages.id"
+        },
+        {
+          "name": "content",
+          "type": "text"
+        },
+        {
+          "name": "current_run_id",
+          "type": "uuid",
+          "key": "fk",
+          "references": "generation_runs.id"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamptz"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamptz"
+        }
+      ]
+    },
+    {
+      "id": "generation_runs",
+      "label": "core.generation_runs",
+      "sublabel": "AI 生成执行记录",
+      "tag": "会话与生成",
+      "row": 2,
+      "col": 2,
+      "attributes": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "key": "pk"
+        },
+        {
+          "name": "conversation_id",
+          "type": "uuid",
+          "key": "fk",
+          "references": "conversations.id"
+        },
+        {
+          "name": "user_message_id",
+          "type": "uuid",
+          "key": "fk",
+          "references": "messages.id"
+        },
+        {
+          "name": "assistant_message_id",
+          "type": "uuid",
+          "key": "fk",
+          "references": "messages.id"
+        },
+        {
+          "name": "trigger_kind",
+          "type": "varchar(16)"
+        },
+        {
+          "name": "status",
+          "type": "varchar(16)"
+        },
+        {
+          "name": "client_request_id",
+          "type": "uuid",
+          "key": "uk"
+        },
+        {
+          "name": "request_sha256",
+          "type": "char(64)"
+        },
+        {
+          "name": "llm_model_id",
+          "type": "text"
+        },
+        {
+          "name": "evidence_manifest",
+          "type": "jsonb"
+        },
+        {
+          "name": "last_seq",
+          "type": "bigint"
+        },
+        {
+          "name": "requested_at",
+          "type": "timestamptz"
+        },
+        {
+          "name": "first_text_deadline_at",
+          "type": "timestamptz"
+        },
+        {
+          "name": "deadline_at",
+          "type": "timestamptz"
+        },
+        {
+          "name": "first_text_at",
+          "type": "timestamptz"
+        },
+        {
+          "name": "finished_at",
+          "type": "timestamptz"
+        },
+        {
+          "name": "error_code",
+          "type": "text"
+        },
+        {
+          "name": "error_detail",
+          "type": "text"
+        }
+      ]
+    },
+    {
+      "id": "citations",
+      "label": "core.citations",
+      "sublabel": "AI 回答引用",
+      "tag": "证据与向量",
+      "row": 0,
+      "col": 3,
+      "attributes": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "key": "pk"
+        },
+        {
+          "name": "generation_run_id",
+          "type": "uuid",
+          "key": [
+            "fk",
+            "uk"
+          ],
+          "references": "generation_runs.id"
+        },
+        {
+          "name": "assistant_message_id",
+          "type": "uuid",
+          "key": "fk",
+          "references": "generation_runs.assistant_message_id"
+        },
+        {
+          "name": "citation_no",
+          "type": "integer",
+          "key": "uk"
+        },
+        {
+          "name": "evidence_id",
+          "type": "text",
+          "key": "uk"
+        },
+        {
+          "name": "document_id",
+          "type": "uuid",
+          "key": "fk",
+          "references": "processing_attempts.document_id"
+        },
+        {
+          "name": "document_version",
+          "type": "integer",
+          "key": "fk",
+          "references": "processing_attempts.document_version"
+        },
+        {
+          "name": "attempt_id",
+          "type": "uuid",
+          "key": "fk",
+          "references": "processing_attempts.id"
+        },
+        {
+          "name": "source_chunk_id",
+          "type": "uuid"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamptz"
+        }
+      ]
+    },
+    {
+      "id": "document_chunks",
+      "label": "ai.document_chunks",
+      "sublabel": "解析切片与向量",
+      "tag": "证据与向量",
+      "row": 1,
+      "col": 3,
+      "attributes": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "key": "pk"
+        },
+        {
+          "name": "document_id",
+          "type": "uuid",
+          "key": "fk",
+          "references": "processing_attempts.document_id"
+        },
+        {
+          "name": "document_version",
+          "type": "integer",
+          "key": "fk",
+          "references": "processing_attempts.document_version"
+        },
+        {
+          "name": "attempt_id",
+          "type": "uuid",
+          "key": [
+            "fk",
+            "uk"
+          ],
+          "references": "processing_attempts.id"
+        },
+        {
+          "name": "chunk_index",
+          "type": "integer",
+          "key": "uk"
+        },
+        {
+          "name": "content",
+          "type": "text"
+        },
+        {
+          "name": "token_count",
+          "type": "integer"
+        },
+        {
+          "name": "page_start",
+          "type": "integer"
+        },
+        {
+          "name": "page_end",
+          "type": "integer"
+        },
+        {
+          "name": "locator",
+          "type": "jsonb"
+        },
+        {
+          "name": "embedding_model_id",
+          "type": "text"
+        },
+        {
+          "name": "embedding_dimensions",
+          "type": "integer"
+        },
+        {
+          "name": "embedding",
+          "type": "vector"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamptz"
+        }
+      ]
+    },
+    {
+      "id": "retrievable_chunks",
+      "label": "ai.retrievable_chunks · VIEW",
+      "sublabel": "VIEW · 发布过滤，不决定用户权限",
+      "tag": "证据与向量",
+      "row": 2,
+      "col": 3,
+      "attributes": [
+        {
+          "name": "chunk_id",
+          "type": "uuid"
+        },
+        {
+          "name": "kb_id",
+          "type": "uuid"
+        },
+        {
+          "name": "document_id",
+          "type": "uuid"
+        },
+        {
+          "name": "document_version",
+          "type": "integer"
+        },
+        {
+          "name": "attempt_id",
+          "type": "uuid"
+        },
+        {
+          "name": "file_name",
+          "type": "text"
+        },
+        {
+          "name": "media_type",
+          "type": "text"
+        },
+        {
+          "name": "chunk_index",
+          "type": "integer"
+        },
+        {
+          "name": "content",
+          "type": "text"
+        },
+        {
+          "name": "page_start",
+          "type": "integer"
+        },
+        {
+          "name": "page_end",
+          "type": "integer"
+        },
+        {
+          "name": "locator",
+          "type": "jsonb"
+        },
+        {
+          "name": "embedding_model_id",
+          "type": "text"
+        },
+        {
+          "name": "embedding_dimensions",
+          "type": "integer"
+        },
+        {
+          "name": "embedding",
+          "type": "vector"
+        }
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "id": "r1",
+      "from": "knowledge_bases",
+      "to": "users",
+      "label": "创建人",
+      "fromCardinality": "many",
+      "toCardinality": "one",
+      "fromOptional": true
+    },
+    {
+      "id": "r2",
+      "from": "kb_members",
+      "to": "knowledge_bases",
+      "label": "知识库授权",
+      "fromCardinality": "many",
+      "toCardinality": "one",
+      "fromOptional": true
+    },
+    {
+      "id": "r3",
+      "from": "kb_members",
+      "to": "users",
+      "label": "成员与授权人",
+      "fromCardinality": "many",
+      "toCardinality": "one",
+      "fromOptional": true
+    },
+    {
+      "id": "r4",
+      "from": "documents",
+      "to": "knowledge_bases",
+      "label": "包含",
+      "fromCardinality": "many",
+      "toCardinality": "one",
+      "fromOptional": true
+    },
+    {
+      "id": "r5",
+      "from": "documents",
+      "to": "users",
+      "label": "上传人",
+      "fromCardinality": "many",
+      "toCardinality": "one",
+      "fromOptional": true
+    },
+    {
+      "id": "r6",
+      "from": "document_versions",
+      "to": "documents",
+      "label": "内部文件版本",
+      "fromCardinality": "many",
+      "toCardinality": "one",
+      "fromOptional": true
+    },
+    {
+      "id": "r7",
+      "from": "document_versions",
+      "to": "users",
+      "label": "版本上传人",
+      "fromCardinality": "many",
+      "toCardinality": "one",
+      "fromOptional": true
+    },
+    {
+      "id": "r8",
+      "from": "processing_jobs",
+      "to": "document_versions",
+      "label": "每版本一个任务",
+      "fromCardinality": "one",
+      "toCardinality": "one",
+      "fromOptional": true
+    },
+    {
+      "id": "r9",
+      "from": "processing_jobs",
+      "to": "users",
+      "label": "任务创建人",
+      "fromCardinality": "many",
+      "toCardinality": "one",
+      "fromOptional": true
+    },
+    {
+      "id": "r10",
+      "from": "processing_attempts",
+      "to": "processing_jobs",
+      "label": "手动重试新增尝试",
+      "fromCardinality": "many",
+      "toCardinality": "one",
+      "fromOptional": true
+    },
+    {
+      "id": "r11",
+      "from": "processing_attempts",
+      "to": "users",
+      "label": "尝试发起人",
+      "fromCardinality": "many",
+      "toCardinality": "one",
+      "fromOptional": true
+    },
+    {
+      "id": "r12",
+      "from": "conversations",
+      "to": "users",
+      "label": "个人会话",
+      "fromCardinality": "many",
+      "toCardinality": "one",
+      "fromOptional": true
+    },
+    {
+      "id": "r13",
+      "from": "conversations",
+      "to": "knowledge_bases",
+      "label": "固定单知识库",
+      "fromCardinality": "many",
+      "toCardinality": "one",
+      "fromOptional": true
+    },
+    {
+      "id": "r14",
+      "from": "messages",
+      "to": "conversations",
+      "label": "消息顺序",
+      "fromCardinality": "many",
+      "toCardinality": "one",
+      "fromOptional": true
+    },
+    {
+      "id": "r16",
+      "from": "generation_runs",
+      "to": "conversations",
+      "label": "生成执行",
+      "fromCardinality": "many",
+      "toCardinality": "one",
+      "fromOptional": true
+    },
+    {
+      "id": "r17",
+      "from": "generation_runs",
+      "to": "messages",
+      "label": "问题与回答",
+      "fromCardinality": "many",
+      "toCardinality": "one",
+      "fromOptional": true
+    },
+    {
+      "id": "r18",
+      "from": "citations",
+      "to": "generation_runs",
+      "label": "引用编号",
+      "fromCardinality": "many",
+      "toCardinality": "one",
+      "fromOptional": true
+    },
+    {
+      "id": "r19",
+      "from": "citations",
+      "to": "processing_attempts",
+      "label": "绑定来源尝试",
+      "fromCardinality": "many",
+      "toCardinality": "one",
+      "fromOptional": true
+    },
+    {
+      "id": "r20",
+      "from": "document_chunks",
+      "to": "processing_attempts",
+      "label": "待发布或已发布切片",
+      "fromCardinality": "many",
+      "toCardinality": "one",
+      "fromOptional": true
+    },
+    {
+      "id": "r21",
+      "from": "documents",
+      "to": "processing_attempts",
+      "label": "当前发布指针",
+      "fromCardinality": "one",
+      "toCardinality": "one",
+      "fromOptional": true,
+      "toOptional": true
+    },
+    {
+      "id": "current_run",
+      "from": "messages",
+      "to": "generation_runs",
+      "label": "当前 run（联合FK）",
+      "fromCardinality": "one",
+      "toCardinality": "one",
+      "fromOptional": true,
+      "toOptional": true
+    },
+    {
+      "id": "historical_chunk",
+      "from": "citations",
+      "to": "document_chunks",
+      "label": "历史逻辑来源（无FK）",
+      "fromCardinality": "many",
+      "toCardinality": "one",
+      "fromOptional": true,
+      "toOptional": true,
+      "variant": "dashed"
+    },
+    {
+      "id": "view_chunks",
+      "from": "retrievable_chunks",
+      "to": "document_chunks",
+      "label": "派生（非FK）",
+      "fromCardinality": "one",
+      "toCardinality": "one",
+      "fromOptional": true,
+      "variant": "dashed"
+    },
+    {
+      "id": "view_doc",
+      "from": "retrievable_chunks",
+      "to": "documents",
+      "label": "当前发布指针（非FK）",
+      "fromCardinality": "many",
+      "toCardinality": "one",
+      "fromOptional": true,
+      "variant": "dashed"
+    },
+    {
+      "id": "view_kb",
+      "from": "retrievable_chunks",
+      "to": "knowledge_bases",
+      "label": "ACTIVE（非FK）",
+      "fromCardinality": "many",
+      "toCardinality": "one",
+      "fromOptional": true,
+      "variant": "dashed"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "先读关系，再看字段",
+      "items": [
+        "11张 core 表 + 1张 ai 表；View 是派生对象。",
+        "PK/UK 可为联合键或部分索引，各标记列不必单独唯一。",
+        "图按表对合并同类 FK；完整联合键与 NULL 规则见 database-design.md。",
+        "messages.reply_to_message_id 自关联同会话 USER，最多一个 ASSISTANT；HTML 以字段标记说明，Mermaid 保留自关联线。"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "两组执行身份",
+      "items": [
+        "文件替换增加 document_version；手动重试增加 attempt_id。",
+        "消息保存当前展示；generation_runs 记录每次执行。",
+        "发布/当前执行指针的循环 FK 延迟到事务提交检查。"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "检索和删除边界",
+      "items": [
+        "View 过滤 ACTIVE + PUBLISHED + 当前版本 + published_attempt。",
+        "用户权限仍由 Spring 校验，FastAPI SQL 必须限定签名 kb_id。",
+        "切片写入触发器拒绝过期/取消/删除后的旧执行；物理清理后不能复活。",
+        "虚线是逻辑来源或 View 派生，不表示实际外键；向量维度不预先固定。"
+      ]
+    }
+  ]
+}

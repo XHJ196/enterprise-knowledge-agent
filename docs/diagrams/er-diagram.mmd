@@ -1,0 +1,202 @@
+erDiagram
+    %% Day 4 proposed schema; PK/UK may be composite or partial.
+    %% FK roles are simplified to table-level lines. See database-design.md.
+    %% source_chunk_id is a logical reference, deliberately not a physical FK.
+    core_users {
+        uuid id PK "NOT NULL; 应用生成 UUID；账号稳定标识"
+        varchar username "NOT NULL; 去除首尾空白后的显示名；仅英文字母、数字、下划线"
+        text username_key UK "NOT NULL; 生成列：lower(username COLLATE 'C')；按英文字母大小写归一"
+        text password_hash "NOT NULL; 自适应密码哈希；不存明文或确认密码"
+        varchar role "NOT NULL; ADMIN / EMPLOYEE；注册接口只能创建 EMPLOYEE"
+        timestamptz created_at "NOT NULL; 创建时间；默认 now()"
+        timestamptz updated_at "NOT NULL; 由 Spring 在业务更新时维护"
+    }
+    core_knowledge_bases {
+        uuid id PK "NOT NULL; 稳定知识库 ID"
+        varchar name "NULL; 已 trim 的名称；删除完成后置 NULL"
+        text name_key UK "NULL; 生成列：lower(name COLLATE 'C')；仅非 DELETED 记录参与唯一性"
+        varchar description "NULL; 可选简介；删除完成后清空"
+        uuid created_by FK "NOT NULL; 创建管理员；角色由 Spring 校验"
+        varchar lifecycle "NOT NULL; ACTIVE / DELETING / DELETE_FAILED / DELETED"
+        text delete_error_code "NULL; 最近删除失败码；不记录密钥或文件正文"
+        text delete_error_detail "NULL; 可展示的失败说明"
+        timestamptz created_at "NOT NULL; 创建时间"
+        timestamptz updated_at "NOT NULL; 更新时间"
+        timestamptz deleted_at "NULL; 全部文件/索引及授权清理完成时间"
+    }
+    core_kb_members {
+        uuid kb_id PK,FK "NOT NULL; 联合主键的一部分"
+        uuid user_id PK,FK "NOT NULL; 联合主键的一部分"
+        uuid granted_by FK "NOT NULL; 执行授权的管理员"
+        timestamptz granted_at "NOT NULL; 授权时间"
+    }
+    core_documents {
+        uuid id PK,FK "NOT NULL; 替换和重试均不改变 document ID；也是当前版本联合 FK 的一部分"
+        uuid kb_id FK "NOT NULL; 文档所属知识库；第一版不可移动"
+        text file_name "NULL; 当前显示文件名（含扩展名）；删除完成后清空"
+        text file_name_key UK "NULL; 生成列：lower(file_name COLLATE 'C')；非 DELETED 时参与同库唯一性"
+        integer current_version FK "NOT NULL; 从 1 开始；只在替换接收成功时递增；联合 FK 见下文"
+        varchar status "NOT NULL; PROCESSING / FAILED / PUBLISHED；三种用户处理状态"
+        varchar lifecycle "NOT NULL; ACTIVE / DELETING / DELETE_FAILED / DELETED；内部状态"
+        uuid published_attempt_id FK "NULL; 仅 PUBLISHED 时非空；联合 FK 绑定本 document/current_version"
+        uuid created_by FK "NOT NULL; 首次上传管理员"
+        timestamptz created_at "NOT NULL; 首次上传时间"
+        timestamptz updated_at "NOT NULL; 状态或版本变更时间"
+        text delete_error_code "NULL; 删除进度失败码"
+        text delete_error_detail "NULL; 删除失败说明；成功后清空"
+        timestamptz deleted_at "NULL; 全部清理完成时间"
+    }
+    core_document_versions {
+        uuid document_id PK,FK "NOT NULL; 联合主键"
+        integer document_version PK "NOT NULL; 联合主键；相同文档递增"
+        text original_file_name "NULL; 接收时文件名；物理清理完成后清空"
+        text storage_key UK "NULL; 服务端生成的相对存储键；不是用户给定路径；清理完成后 NULL"
+        text media_type "NULL; 校验后的实际格式；清理完成后清空"
+        bigint size_bytes "NULL; 有效原文件为 1～10,000,000 字节；清理完成后清空"
+        char file_sha256 "NULL; 文件完整性校验；不用于内容去重；清理后清空"
+        varchar file_state "NOT NULL; PRESENT / DELETE_PENDING / DELETE_FAILED / DELETED"
+        text cleanup_error "NULL; 最近物理清理失败原因；成功后清空"
+        uuid uploaded_by FK "NOT NULL; 上传此版本的管理员"
+        timestamptz created_at "NOT NULL; 文件接收并通过校验的时间"
+        timestamptz file_deleted_at "NULL; 确认文件已不存在的时间"
+    }
+    core_processing_jobs {
+        uuid id PK "NOT NULL; 跨服务 jobId"
+        uuid document_id FK,UK "NOT NULL; 联合 FK 指向版本"
+        integer document_version FK,UK "NOT NULL; 与 document_id 组成版本 FK 及唯一键"
+        uuid created_by FK "NOT NULL; 创建该版本任务的管理员"
+        timestamptz created_at "NOT NULL; 逻辑任务创建时间"
+    }
+    core_processing_attempts {
+        uuid id PK "NOT NULL; 跨服务 attemptId；不是 HTTP 请求次数"
+        uuid job_id FK,UK "NOT NULL; 联合 FK 的任务 ID"
+        uuid document_id FK "NOT NULL; 联合 FK 约束任务所属文档"
+        integer document_version FK "NOT NULL; 联合 FK 约束任务所属版本"
+        integer attempt_no UK "NOT NULL; 同一 job 从 1 递增；由锁定 job 后分配"
+        varchar status "NOT NULL; QUEUED / DISPATCHED / RUNNING / SUCCEEDED / FAILED / TIMED_OUT / CANCELLED / INTERRUPTED"
+        text embedding_model_id "NOT NULL; 包含供应商、模型与配置版本的稳定标识，不只用可变昵称"
+        integer embedding_dimensions "NOT NULL; 本次预期维度；选定模型后从配置确认；无预设数值"
+        integer dispatch_count "NOT NULL; 同一尝试的命令投递次数；默认 0"
+        uuid requested_by FK "NOT NULL; 触发上传或本次手动重试的管理员"
+        timestamptz created_at "NOT NULL; 进入 PROCESSING 的时间；排队从此计时"
+        timestamptz deadline_at "NOT NULL; 默认由配置计算 created_at+300秒；存实际截止点"
+        timestamptz last_dispatched_at "NULL; 最近命令投递时间"
+        timestamptz started_at "NULL; 执行器确认开始的时间；不可把排队时间排除"
+        timestamptz finished_at "NULL; Spring 接纳终态的时间"
+        integer chunk_count "NULL; 接纳成功 manifest 的切片数，成功必须 >0"
+        char manifest_sha256 "NULL; 已提交切片清单的规范化摘要；成功必填"
+        text error_code "NULL; PARSER_FAILED / PROCESSING_TIMEOUT / INTERRUPTED 等"
+        text error_detail "NULL; 不含密钥、正文和任意绝对路径的说明"
+    }
+    core_conversations {
+        uuid id PK "NOT NULL; 会话 ID"
+        uuid owner_id FK "NOT NULL; 会话所属用户"
+        uuid kb_id FK "NOT NULL; 固定绑定知识库；切库创建新会话"
+        text title "NULL; 首问前20个字符及省略号的派生缓存；新空会话可 NULL"
+        bigint next_message_ordinal "NOT NULL; 下次可分配的消息序号；默认1；行锁内递增"
+        timestamptz created_at "NOT NULL; 创建时间"
+        timestamptz last_message_at "NULL; 最后一条消息创建或替换的时间；空会话 NULL"
+        timestamptz updated_at "NOT NULL; 会话变更时间；不是每个 token 的排序依据"
+    }
+    core_messages {
+        uuid id PK "NOT NULL; 消息 ID；重试复用同一 assistant message"
+        uuid conversation_id FK,UK "NOT NULL; 所属会话"
+        bigint ordinal UK "NOT NULL; 在会话内稳定排序；并发下由会话行锁分配"
+        varchar role "NOT NULL; USER / ASSISTANT"
+        uuid reply_to_message_id FK,UK "NULL; ASSISTANT 指向同会话的 USER；USER 为 NULL"
+        text content "NOT NULL; USER 是已 trim 问题；ASSISTANT 初始空串、流式累计保存"
+        uuid current_run_id FK "NULL; ASSISTANT 当前执行指针；USER 为 NULL；循环 FK 延迟校验"
+        timestamptz created_at "NOT NULL; 首次创建时间"
+        timestamptz updated_at "NOT NULL; 内容替换或片段保存时间"
+    }
+    core_generation_runs {
+        uuid id PK "NOT NULL; runId；每次重试或编辑重发都新建"
+        uuid conversation_id FK "NOT NULL; 所属会话；同会话只允许一个 GENERATING"
+        uuid user_message_id FK "NOT NULL; 本轮问题；联合 FK 限定会话"
+        uuid assistant_message_id FK "NOT NULL; 本轮当前可见回答；联合 FK 还限定 reply_to"
+        varchar trigger_kind "NOT NULL; INITIAL / RETRY / EDIT"
+        varchar status "NOT NULL; GENERATING / COMPLETED / INCOMPLETE / STOPPED"
+        uuid client_request_id UK "NOT NULL; 前端命令去重键；同会话唯一"
+        char request_sha256 "NOT NULL; 绑定命令类型、目标和当次问题；相同去重键不同载荷返回冲突"
+        text llm_model_id "NOT NULL; 实际选用生成模型的供应商/模型配置标识"
+        jsonb evidence_manifest "NOT NULL; 本次检索证据 ID/版本/attempt/chunk 的受校验清单；默认 []，不含原文或密钥"
+        bigint last_seq "NOT NULL; 已成功持久化的最大流事件序号；默认0"
+        timestamptz requested_at "NOT NULL; 服务端接收本次命令的起点；包含检索和网络"
+        timestamptz first_text_deadline_at "NOT NULL; requested_at + 配置30秒；不能由心跳刷新"
+        timestamptz deadline_at "NOT NULL; requested_at + 配置120秒"
+        timestamptz first_text_at "NULL; 首批正文落库时间；不把等待提示算正文"
+        timestamptz finished_at "NULL; 接纳最终状态的时间"
+        text error_code "NULL; 超时、撤权、来源变化、中断等原因；COMPLETED 时 NULL"
+        text error_detail "NULL; 系统异常说明；不伪装成资料不足"
+    }
+    core_citations {
+        uuid id PK "NOT NULL; 引用 API 的稳定 ID"
+        uuid generation_run_id FK,UK "NOT NULL; 与 assistant_message_id 组成联合 FK"
+        uuid assistant_message_id FK "NOT NULL; 通过联合 FK 确保引用属于该 run 的回答"
+        integer citation_no UK "NOT NULL; 回答中的〔1〕、〔2〕，同一 run 唯一"
+        text evidence_id UK "NOT NULL; 本次证据标记，如 e1；由检索清单提供"
+        uuid document_id FK "NOT NULL; 与 version/attempt 组成联合来源 FK"
+        integer document_version FK "NOT NULL; 引用时的版本；不会自动跟随 current_version"
+        uuid attempt_id FK "NOT NULL; 引用时的处理尝试；不能用别的尝试冒充"
+        uuid source_chunk_id "NOT NULL; 历史来源定位；刻意不设到 ai 切片的物理 FK，可在来源删除后保留引用身份"
+        timestamptz created_at "NOT NULL; 引用与完整回答原子提交的时间"
+    }
+    ai_document_chunks {
+        uuid id PK "NOT NULL; 切片 ID；由执行器生成，作为 evidence 的真实身份"
+        uuid document_id FK "NOT NULL; 与 version/attempt 组成联合 FK"
+        integer document_version FK "NOT NULL; 原文件版本"
+        uuid attempt_id FK,UK "NOT NULL; 此次处理执行 ID"
+        integer chunk_index UK "NOT NULL; 尝试内从0开始的有序切片编号"
+        text content "NOT NULL; 解析器产生的真实文字；不得由模型重写"
+        integer token_count "NULL; 可选 tokenizer 计数，非字符数"
+        integer page_start "NULL; PDF 实际页序，从1开始；其他格式 NULL"
+        integer page_end "NULL; PDF 结束页；第一版 PDF 切片不跨页，等于 page_start"
+        jsonb locator "NOT NULL; 段落/标题/行范围等格式相关位置；默认 {}；不放正文副本"
+        text embedding_model_id "NOT NULL; 必须匹配处理尝试的预期模型配置标识"
+        integer embedding_dimensions "NOT NULL; 实际向量维度；大于0，无默认常量"
+        vector embedding "NOT NULL; 不固定长度的 pgvector 类型；用行级 CHECK 验证实际维度"
+        timestamptz created_at "NOT NULL; 本批切片提交时间"
+    }
+    core_users ||--o{ core_knowledge_bases : "创建人"
+    core_knowledge_bases ||--o{ core_kb_members : "知识库授权"
+    core_users ||--o{ core_kb_members : "成员与授权人"
+    core_knowledge_bases ||--o{ core_documents : "包含"
+    core_users ||--o{ core_documents : "上传人"
+    core_documents ||--o{ core_document_versions : "内部文件版本"
+    core_users ||--o{ core_document_versions : "版本上传人"
+    core_document_versions ||--o| core_processing_jobs : "每版本一个任务"
+    core_users ||--o{ core_processing_jobs : "任务创建人"
+    core_processing_jobs ||--o{ core_processing_attempts : "手动重试新增尝试"
+    core_users ||--o{ core_processing_attempts : "尝试发起人"
+    core_users ||--o{ core_conversations : "个人会话"
+    core_knowledge_bases ||--o{ core_conversations : "固定单知识库"
+    core_conversations ||--o{ core_messages : "消息顺序"
+    core_messages |o--o| core_messages : "USER到ASSISTANT（角色受限）"
+    core_conversations ||--o{ core_generation_runs : "生成执行"
+    core_messages ||--o{ core_generation_runs : "问题与回答"
+    core_generation_runs ||--o{ core_citations : "引用编号"
+    core_processing_attempts ||--o{ core_citations : "绑定来源尝试"
+    core_processing_attempts ||--o{ ai_document_chunks : "待发布或已发布切片"
+    core_processing_attempts |o..o| core_documents : "当前发布指针（可空联合FK）"
+    core_generation_runs |o..o| core_messages : "current_run联合FK；每回答一个当前执行"
+    ai_document_chunks |o..o{ core_citations : "逻辑来源；切片删除不删除历史引用"
+    ai_retrievable_chunks {
+        uuid chunk_id "VIEW输出；不是独立表的PK"
+        uuid kb_id "请求必须显式限定授权库"
+        uuid document_id
+        int document_version
+        uuid attempt_id
+        text file_name
+        text media_type
+        int chunk_index
+        text content
+        int page_start
+        int page_end
+        jsonb locator
+        text embedding_model_id
+        int embedding_dimensions
+        vector embedding
+    }
+    ai_document_chunks ||..o| ai_retrievable_chunks : "派生过滤；非FK"
+    core_documents ||..o{ ai_retrievable_chunks : "当前发布版本与attempt；非FK"
+    core_knowledge_bases ||..o{ ai_retrievable_chunks : "ACTIVE；非用户授权；非FK"
