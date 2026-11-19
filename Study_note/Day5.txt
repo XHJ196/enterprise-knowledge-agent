@@ -1,0 +1,231 @@
+Day 5：API 契约、OpenAPI 与 Swagger
+项目：Enterprise Knowledge & Agent Platform
+日期：2026-11-19
+主文档：docs/api-design.md
+
+一、API 设计是在约定什么？
+
+API 不只是给某个函数起一个网址。
+它是调用方与服务端之间的契约：谁可以调用、参数放在哪里、如何校验、
+成功返回什么、错误怎么判断、请求超时后能不能重发、响应是否已经持久化。
+
+本项目有两段通信：
+React -> Spring：业务请求，Spring检查Session、角色、KB权限和会话归属。
+Spring -> FastAPI：内部AI计算，携带服务密钥和Spring签发的受限作用域。
+FastAPI -> Spring：也有内部文件读取与处理结果回调，不是所有internal都在Fast。
+
+接口设计要与数据库对应，但不等于把每个表都公开成CRUD。
+React不需要直接修改processing_attempts、ai.document_chunks或published_attempt_id。
+它请求上传/重试/提问，由Spring应用层在事务里维护这些表。
+
+二、先区分 HTTP 与业务语义
+
+Method 表达动作：GET读取、POST创建或启动非幂等操作、PATCH部分修改、
+PUT整体设置、DELETE删除。URL尽量围绕资源组织，不以一个/all-actions承载全部功能。
+
+参数位置：
+Path：识别资源，例如 /knowledge-bases/{kbId}。
+Query：列表分页、筛选和可选读取条件，例如 page=1&pageSize=20。
+Body：创建/修改内容，例如 {"name":"HR Policy"}。
+Header：认证、内容类型、CSRF、请求追踪等，不把密码塞进URL。
+
+状态码和业务code不是一回事：
+401：未登录或认证失效。
+403：已经认证但没有权限，例如员工没有某KB授权。
+404：资源不存在。
+409：状态或唯一性冲突，比如同库文件名重复、已有正在生成的回答。
+422：请求字段不符合契约。
+202：受理了异步操作，不等于文档已发布或文件已经删完。
+
+JSON envelope 用统一code/message/data/requestId，错误data=null。
+前端按HTTP状态和code判断行为，不能依赖可能翻译的message文案。
+下载文件和SSE流不强行套JSON envelope；握手之前的错误仍返回普通JSON。
+
+三、OpenAPI 是什么？
+
+OpenAPI Specification（OAS）是一套描述HTTP API的标准格式。
+通常用YAML或JSON写成“机器可以理解的接口说明书”。
+它可以描述：
+servers：服务地址。
+paths：路径、GET/POST等操作。
+parameters：Path和Query等参数。
+requestBody：JSON、multipart等输入内容。
+responses：各HTTP状态对应的内容类型、结构和示例。
+components/schemas：可复用对象和字段约束。
+components/securitySchemes：Cookie、Header等认证方式。
+security：每个操作实际要求哪些凭证。
+
+本阶段以api-design.md作为契约，未生成完整OpenAPI文件。
+后续代码落地后，再让Spring和FastAPI分别导出OpenAPI并对照此契约。
+两份文档分开：公开接口与内部接口的调用方、凭证和字段边界不一样。
+不需要先采购API平台或设计统一网关。
+
+一个很小的OpenAPI 3.1示意（只描述/me，不是本项目完整接口定义）：
+
+openapi: 3.1.0
+info:
+  title: Knowledge Platform Public API
+  version: 1.0.0
+servers:
+  - url: http://127.0.0.1:8080
+paths:
+  /api/v1/auth/me:
+    get:
+      summary: 获取当前用户
+      security:
+        - sessionCookie: []
+      responses:
+        '200':
+          description: 当前用户
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [code, message, data, requestId]
+                properties:
+                  code:
+                    const: SUCCESS
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    required: [id, username, role, createdAt]
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                      username:
+                        type: string
+                      role:
+                        type: string
+                        enum: [ADMIN, EMPLOYEE]
+                      createdAt:
+                        type: string
+                        format: date-time
+                  requestId:
+                    type: string
+        '401':
+          description: 未登录，返回统一错误envelope
+components:
+  securitySchemes:
+    sessionCookie:
+      type: apiKey
+      in: cookie
+      name: SESSION
+
+这段只是学习用途，完整规范仍需定义401的响应体、所有错误、全部API和复用Schema。
+示例是帮助理解，不会自动实现服务端逻辑，也不意味着已经有可调用接口。
+
+四、Swagger 是什么？它与 OpenAPI 的关系是什么？
+
+OpenAPI 是规范，Swagger 是一组围绕这个规范的工具名称。
+早期Swagger规范后来发展为OpenAPI；现在讨论时应区分“标准”与“工具”。
+
+Swagger UI：把OpenAPI文件渲染为可阅读、可展开参数和Try it out的网页。
+Swagger Editor：编辑规范文件并提供语法/结构提示。
+Swagger Codegen 等工具：可依据规范生成部分客户端或服务端框架代码。
+
+Swagger UI不等于后端，也不会自动创建数据库、授权规则和事务。
+页面显示“需要认证”不代表代码真的检查了权限；注释写required也不能替代服务端校验。
+能在UI里成功调用一次，也不代表重试、撤权、并发和SSE全部正确。
+
+五、本项目后续如何使用它们？
+
+Spring Boot：选择与实际Spring Boot版本兼容的springdoc-openapi，
+从Controller、DTO和相应注解导出OpenAPI，并提供Swagger UI。
+常见默认地址是 /v3/api-docs 和 /swagger-ui/index.html，但可配置，当前尚未启动。
+
+FastAPI：通常基于路由和Pydantic模型自动生成 /openapi.json，
+默认 /docs 展示Swagger UI；也能配置或关闭。当前没有实现路由，不能当作现成服务。
+
+两边都要检查生成规范是否确实描述：
+1. 请求字段类型、格式、必填、可空和最大长度。
+2. 成功状态与错误状态，尤其202不等于最终成功。
+3. Session/CSRF与内部服务密钥/作用域。
+4. multipart文件和二进制下载。
+5. text/event-stream而不是application/json。
+6. 自定义统一envelope，而不是框架默认异常格式。
+
+对FastAPI的默认422异常、Spring的默认错误页，都要做异常处理适配，
+否则实际响应会与api-design.md不一致。
+生成式文档不能只加一个200示例就算完成契约。
+
+六、Swagger UI 认证和 SSE 的实际限制
+
+Session Cookie是浏览器管理的，HttpOnly不能让JavaScript随意读写。
+不能假设Swagger UI的Authorize按钮会替你设置任意Cookie请求头。
+本地应在同源环境按正常登录流程建立Session，再取得CSRF token。
+变更接口需要X-CSRF-TOKEN，可在OpenAPI用header apiKey方案表达并让调用者填写。
+同一个security对象中的sessionCookie和csrfHeader表示两者都需要；
+多个security对象是“或”的关系，写错会误描述安全契约。
+匿名注册/登录只要求CSRF，不要求已经登录；不能机械给全部路由加相同security。
+
+内部文档中的服务key和scope要用环境变量或运行时有效值，
+不要为了方便演示把真实凭证写进OpenAPI示例或提交到仓库。
+本稿的demo-*都是无效占位值。
+
+Swagger UI对SSE的流式交互与展示能力依工具版本而异，不能作为唯一验证方式。
+用React fetch reader或curl -N观察帧、空行、runId和seq；
+例如curl已带有效Session/CSRF时POST消息，-N关闭curl自己的输出缓冲。
+请求真实运行前仍要实现两端接口和登录，复制文档中的UUID并不会自动产生样例数据。
+
+OpenAPI可以把200的Content-Type写为text/event-stream，并以string和示例说明帧，
+但仅靠常规JSON Schema不能完整表达“evidence必须先于token”“只有一次终态”
+“Spring落库后才通知完成”等时间关系。这些还要保留协议说明和集成测试。
+
+七、幂等、requestId、clientRequestId、runId、seq分别做什么？
+
+requestId：追踪一次HTTP请求的日志链路，不阻止重复业务。
+clientRequestId：标识用户这一次明确的生成命令，网络重投保持不变。
+runId：Spring给这一次AI执行分配的身份，人工重试或编辑重发创建新run。
+seq：一个run在一段SSE连接里的有序事件编号，不是跨run的全局ID。
+
+数据库以(conversation_id,client_request_id)唯一键和request_sha256去重。
+相同命令返回409和指向原run的Location，不建立第二条模型流；
+同一个key改发不同问题也是409，不覆盖原命令。
+不能把每次网络重试都换一个clientRequestId，那会失去去重作用。
+
+文档处理使用jobId + attemptId。
+FastAPI的内存registry无法独自抵御重启后的重复执行，
+因此它先用result的STARTED报告向Spring原子取得一次执行许可，
+实际许可仍写入Day4的processing_attempts。
+许可响应丢失时不自行继续算；不能确认时等待失败/人工新尝试。
+这是在不新增持久队列的前提下对MVP正确性与可恢复性做的保守取舍。
+
+八、两段 SSE 不应原字节透传
+
+Spring先保存run并给React发message_start。
+Fast再给Spring发自己的message_start、候选evidence、正文token及计算完成。
+Spring核验候选并保存manifest，逐批保存正文后才转给React；
+最终引用和COMPLETED事务提交后才给React发最终evidence和message_complete。
+
+因此内部seq与公开seq是两套计数，不保证数值相同。
+Spring的公开seq保存在run.last_seq；Fast的seq用于检查其单次上游流是否连续。
+React同时检查“这是当前run”与“seq连续”，旧run即使seq很大也不能写入新回答。
+
+SSE的一个网络chunk可能只有半个中文字符，也可能包含多条事件。
+应使用流式UTF-8解码器、按空行解析完整帧，而不是把每次reader.read()当作一条token。
+HTTP200只表示连接建立；EOF没有message_complete不表示生成成功。
+停止先改变Spring数据库状态，再尽力取消Fast和模型，不能只关闭React的reader。
+
+九、断线之后为什么先读历史，而不是自动重发问题？
+
+可能出现：模型和数据库都已完成，只是最后的完成帧没到浏览器。
+自动重发可能产生第二次计算、重复消息和额外费用。
+因此先GET已保存会话/执行记录，按实际状态恢复UI。
+如果只是INCOMPLETE，保留已保存片段，用户明确点击重试再创建新run。
+本版没有SSE断点续传或Last-Event-ID重放，不需要提前创建事件日志平台。
+
+十、以后评审自己接口时的顺序
+
+先问“谁可以调这个资源”，再问“请求是否完整可校验”，
+然后问“成功到底是已受理还是已持久化完成”，最后问“超时/重复/停止怎么办”。
+一个好的接口文档能让React、Java、Python三方不依赖猜测协作。
+OpenAPI帮助把约定交给工具读取，Swagger帮助阅读和试调用；
+真正的权限、事务、流顺序与错误恢复仍要在代码和测试中实现。
+
+官方学习入口：
+OpenAPI Specification：https://spec.openapis.org/oas/latest.html
+Swagger UI：https://swagger.io/tools/swagger-ui/
+springdoc-openapi：https://springdoc.org/
+FastAPI OpenAPI文档：https://fastapi.tiangolo.com/tutorial/first-steps/
