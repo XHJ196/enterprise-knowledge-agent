@@ -1,0 +1,46 @@
+
+.app {
+  min-height: 100vh;
+  background: #f5f7fb;
+  color: #1f2937;
+  font-family: Arial, sans-serif;
+}
+
+.header {
+  padding: 28px 48px;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.header p {
+  color: #6b7280;
+}
+
+.main {
+  max-width: 1000px;
+  margin: 48px auto;
+  padding: 0 24px;
+}
+
+.welcome-card,
+.service-card {
+  padding: 28px;
+  margin-bottom: 24px;
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+}
+
+button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  background: #2563eb;
+  color: white;
+  cursor: pointer;
+}

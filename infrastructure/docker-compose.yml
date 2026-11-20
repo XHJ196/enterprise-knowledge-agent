@@ -1,0 +1,21 @@
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: enterprise-postgres
+
+    environment:
+      POSTGRES_DB: enterprise_knowledge
+      POSTGRES_USER: MicroJason
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+
+    ports:
+      - "127.0.0.1:5332:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
