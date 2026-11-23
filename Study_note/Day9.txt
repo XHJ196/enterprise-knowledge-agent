@@ -1,0 +1,81 @@
+Day 9：统一异常处理与 API 错误契约
+项目：Enterprise Knowledge & Agent Platform
+日期：2026-11-23
+状态：已验收；下一步 Day 10。
+
+一、HTTP 状态与业务错误码
+
+HTTP 状态表达请求结果类别，code 表达具体业务原因。
+201 / SUCCESS：知识库创建成功。
+409 / KNOWLEDGE_BASE_NAME_CONFLICT：知识库名称冲突。
+422 / VALIDATION_ERROR：名称或简介不符合规则。
+500 / INTERNAL_ERROR：服务端未预期错误。
+
+统一 JSON 结构为 {code, message, data, requestId}。
+错误 data 为 null；message 是说明文字，调用方应按状态和 code 判断行为。
+创建成功的 Location 指向 /api/v1/knowledge-bases/{id}。
+
+二、异常应该在哪一层处理
+
+Domain 检查核心业务规则，声明出了什么问题，不决定 HTTP 状态。
+Application 编排创建用例、查询重名并保存。
+Controller 接收 HTTP 请求，调用用例并构造成功响应。
+@RestControllerAdvice 将已知异常统一转换为 HTTP 错误响应。
+这样每个 Controller 可以专注于接口职责，错误契约由一处维护。
+
+KnowledgeBaseValidationException extends IllegalArgumentException。
+它用于名称和简介的输入规则；普通 IllegalArgumentException 仍可能来自内部错误。
+createdBy 由服务端提供，其缺失不能归咎于客户端填写错误。
+Spring 优先选择更具体的 @ExceptionHandler，匹配不取决于方法书写顺序。
+未预期异常只返回固定通用消息，不返回 exception.getMessage() 中的内部细节。
+
+三、requestId 和过滤器
+
+RequestIdFilter 为请求设置属性，并给响应设置 X-Request-Id。
+Controller 和异常处理器读取请求属性，将相同 ID 放进 JSON。
+filterChain.doFilter(request, response) 将请求传递给后续处理链。
+遗漏此调用时，Controller 不会执行，可能看到默认 200 和空响应，不能据此判断业务成功。
+当前实现会沿用非空客户端请求头，否则生成 UUID；来源与格式限制仍列为技术债。
+requestId 用于追踪请求，不是用户身份，也不提供业务幂等性。
+
+四、代码风格
+
+ResponseEntity.status(int) 和 status(HttpStatusCode) 都可设置 HTTP 状态。
+项目统一使用 HttpStatus 枚举：CONFLICT、UNPROCESSABLE_CONTENT、INTERNAL_SERVER_ERROR。
+当前依赖为 Spring Boot 4.1.2、Spring Framework 7.0.10；UNPROCESSABLE_CONTENT 对应 422。
+
+五、验证结果
+
+完整 Maven 回归：14 tests，0 failures，0 errors，0 skipped，BUILD SUCCESS。
+组成：Domain 5、Application 4、异常处理 Web 测试 4、应用上下文测试 1。
+Postman：用户确认真实创建接口的 201、409、422 均符合预期，Location 和 requestId 检查通过。
+异常处理 Web 测试使用测试 Controller；真实业务路径本次通过手动请求验证。
+
+六、Git Bash 常用命令
+
+进入 Spring Boot 项目并运行全部测试：
+
+cd "/c/Users/ASUS/Desktop/enterprise-knowledge-agent/backend/spring-boot"
+./mvnw test
+
+启动服务：
+
+./mvnw spring-boot:run
+
+检查待提交内容，在仓库根目录执行：
+
+cd "/c/Users/ASUS/Desktop/enterprise-knowledge-agent"
+git status --short
+git diff
+git diff --cached
+
+当前 Day 8–9 代码尚待提交，部分文件已暂存但之后仍有修改。
+选定文件需要重新 git add，再检查 git diff --cached，最后执行 git commit。
+本记录不表示已经创建 Git 提交。
+
+七、Day 10 接续
+
+学习 Bean Validation 与请求边界，理解 DTO 校验和 Domain invariant 的区别。
+从 CreateKnowledgeBaseRequest 和 KnowledgeBaseController 开始，逐步接入约束、@Valid 和校验异常转换。
+先核对 trim 后长度、Unicode 码点计数与原始输入长度的区别，再确定注解和校验方式。
+保留领域校验；完整技术债和验收证据见 docs/daily-log.md。

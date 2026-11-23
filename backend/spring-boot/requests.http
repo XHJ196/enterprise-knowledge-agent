@@ -1,3 +1,34 @@
 ### GET request to example server
 GET http://localhost:8080/api/v1/health
 ###
+POST http://localhost:8080/api/v1/knowledge-bases
+Content-Type: application/json
+
+{
+  "name": "HR Policy",
+  "description": "企业人力资源制度知识库"
+}
+###
+POST http://localhost:8080/api/v1/knowledge-bases
+Content-Type: application/json
+
+{
+  "name": "hr policy",
+  "description": "重复名称测试"
+}
+###
+POST http://localhost:8080/api/v1/knowledge-bases
+Content-Type: application/json
+
+{
+  "name": "Finance Policy",
+  "description": "财务制度知识库"
+}
+###
+POST http://localhost:8080/api/v1/knowledge-bases
+Content-Type: application/json
+
+{
+  "name": "   ",
+  "description": "空白名称测试"
+}
