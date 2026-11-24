@@ -1,6 +1,6 @@
 # 项目学习日志
 
-当前进度：Day 10 已验收，下一步为 Day 11：GET 查询与分页。
+当前进度：Day 12 已验收，下一步为 Day 13：数据库 Repository 实现。
 原始交接手册记录的是 Day 8 快照；接续时先核对本日志与实际代码。
 
 ## Day 9 — 统一异常处理与 API 错误契约
@@ -158,10 +158,214 @@ Git commit：f62c7e2（异常处理更新），在 Day 10 开始时已核对，D
 
 ### Git、学习状态与下一步
 
-Git commit：Day 10 待提交。两个新增测试文件的暂存内容仍是早期版本，提交前重新 git add 选定文件并检查 git diff --cached。
+Git commit：6e23448（Complete Day 10 request validation and Unicode length checks）。Day 11 收尾时已核对，Day 10 的实现和验收记录已提交。
 
 用户能否解释关键代码：部分已验证；本日各小步测试与真实请求验收均成功，DTO/Domain 分层及码点计数尚未单独口述验收，不据此声称已能独立实现。
 
 协作约定：终端指令使用 Git Bash；Java 使用 IntelliJ IDEA；手动接口验收优先使用 IDEA HTTP Client 的 .http 文件。
 
 下一天前置条件：从当前 Repository、Service 和 Controller 核对 GET 列表起点，按既有 API 实现 page/pageSize 默认值、边界、稳定排序和响应 DTO。认证尚未实现时，仅明确标注为管理员演示范围；保留 Day 10 的校验和测试，不重复完成内容。
+
+## Day 11 — GET 查询与分页
+
+日期：2026-11-24（Asia/Shanghai）。状态：已验收。
+
+### 完成的任务
+
+- 实现 GET /api/v1/knowledge-bases，沿用 ApiResponse<T> 成功信封，HTTP 200。
+- KnowledgeBaseListRequest 使用 Integer 接收可省略的查询参数；构造器提供 page=1、pageSize=20，@Min / @Max 限制 page>=1、1<=pageSize<=100。
+- Controller 使用 @Valid @ModelAttribute 绑定、校验 URL 查询参数。越界数值、非整数文本及超过 Integer 范围的文本返回 422 / VALIDATION_ERROR，非法请求不调用 Service。
+- Service 新增 findAllForAdminDemo()，明确为管理员演示范围，排除 DELETED，保留 ACTIVE、DELETING、DELETE_FAILED；尚未实现认证和员工授权过滤。
+- 结果按 createdAt DESC、id ASC 稳定排序。UUID 使用规范字符串比较，避免 Java UUID.compareTo 的有符号比较与 PostgreSQL UUID 排序在高位跨界时出现差异。
+- Service 新增 findPageForAdminDemo()，过滤和排序后再分页；total 统计演示可见范围，超出最后一页返回空 items，保留 total，hasNext=false。
+- offset 使用 (page - 1L) * pageSize，避免 int 乘法溢出。Service 对非法分页参数保留 IllegalArgumentException 防御，不将所有此类异常统一映射为客户端 422。
+- 应用层 KnowledgeBasePage 承载领域对象，并用 List.copyOf 复制为不可修改列表；HTTP 层 KnowledgeBasePageResponse 通过已有 KnowledgeBaseResponse.from 映射每一项，保持 Domain 与响应 DTO 分离。
+- 列表接口仅允许 page、pageSize 两个查询参数；未知参数抛出 RequestValidationException，统一为 422 / VALIDATION_ERROR。
+- 列表接口检查请求流的首字节，发现非空请求体时抛出 UnexpectedRequestBodyException，统一为 400 / INVALID_REQUEST_BODY。JSON、普通文本和空格均覆盖测试。
+- docs/api-design.md 补齐该 400 错误码，并明确未知查询参数的 422 语义。
+- 新增 backend/spring-boot/day11-pagination.http，含 12 条真实请求与响应断言，覆盖创建、列表、翻页、排序和错误边界。
+
+### 新增或修改文件
+
+以下路径均相对仓库根目录。
+
+- backend/spring-boot/src/main/java/com/enterprise/knowledge/knowledgebase/interfaces/rest/KnowledgeBaseListRequest.java
+- backend/spring-boot/src/main/java/com/enterprise/knowledge/knowledgebase/application/KnowledgeBasePage.java
+- backend/spring-boot/src/main/java/com/enterprise/knowledge/knowledgebase/application/KnowledgeBaseService.java
+- backend/spring-boot/src/main/java/com/enterprise/knowledge/knowledgebase/interfaces/rest/KnowledgeBasePageResponse.java
+- backend/spring-boot/src/main/java/com/enterprise/knowledge/knowledgebase/interfaces/rest/KnowledgeBaseController.java
+- backend/spring-boot/src/main/java/com/enterprise/knowledge/common/exception/RequestValidationException.java
+- backend/spring-boot/src/main/java/com/enterprise/knowledge/common/exception/UnexpectedRequestBodyException.java
+- backend/spring-boot/src/main/java/com/enterprise/knowledge/common/exception/GlobalExceptionHandler.java
+- backend/spring-boot/src/test/java/com/enterprise/knowledge/knowledgebase/interfaces/rest/KnowledgeBaseListRequestTest.java
+- backend/spring-boot/src/test/java/com/enterprise/knowledge/knowledgebase/application/KnowledgeBaseServiceTest.java
+- backend/spring-boot/src/test/java/com/enterprise/knowledge/knowledgebase/interfaces/rest/KnowledgeBaseControllerTest.java
+- backend/spring-boot/day11-pagination.http、docs/api-design.md
+- README.md、docs/daily-log.md、Study_note/Day11.txt；Study_note/Day10.txt 补正提交记录。
+
+### 测试结果与验收证据
+
+导师在本次收尾通过 Git Bash 运行 ./mvnw test，结果为 BUILD SUCCESS：71 tests，0 failures，0 errors，0 skipped。
+
+| 测试类 | 数量 | 验证内容 |
+| --- | --- | --- |
+| ApplicationTests | 1 | Spring 应用上下文加载 |
+| GlobalExceptionHandlerTest | 4 | 已有领域校验、重名和内部错误转换 |
+| KnowledgeBaseTest | 9 | 已有领域规则与 Unicode 码点边界 |
+| CreateKnowledgeBaseRequestTest | 9 | 已有创建请求校验 |
+| KnowledgeBaseListRequestTest | 9 | 默认分页值、合法边界、越界拒绝 |
+| KnowledgeBaseServiceTest | 15 | 已有创建用例，状态过滤、排序、分页、空页和大页码 |
+| KnowledgeBaseControllerTest | 24 | 已有 POST，GET 默认/显式分页、响应映射、非法参数、未知参数和请求体拒绝 |
+| 合计 | 71 | 全部通过 |
+
+Service 测试通过固定时间和 UUID 的夹具验证同时间的 ID 排序，覆盖 UUID 高位跨界；DELETED 不进入 items 或 total。Controller 测试使用 mock Service，验证 HTTP 绑定、响应和拒绝请求时不调用业务用例，不能据此单独证明实际存储链路正确。
+
+用户在 IDEA HTTP Client 中按顺序执行 day11-pagination.http，并确认全部 12 条请求及响应断言通过：
+
+| 请求编号 | 场景 | HTTP / 核心结果 |
+| --- | --- | --- |
+| 1 | 重启服务后的空列表，省略查询参数 | 200；page=1、pageSize=20、items=[]、total=0、hasNext=false |
+| 2–4 | 创建三条验收数据 | 各 201；记录 ID、Location 和 requestId |
+| 5 | 默认分页查询三条记录 | 200；检查三个 ID、createdAt DESC / id ASC 顺序及字段 |
+| 6 | page=1、pageSize=2 | 200；前两条、total=3、hasNext=true |
+| 7 | page=2、pageSize=2 | 200；剩余一条、total=3、hasNext=false，与第一页不重复 |
+| 8 | page=3、pageSize=2 | 200；items=[]，total 仍为 3，hasNext=false |
+| 9 | pageSize=101 | 422 / VALIDATION_ERROR |
+| 10 | page=abc | 422 / VALIDATION_ERROR |
+| 11 | 多出未知参数 size | 422 / VALIDATION_ERROR |
+| 12 | GET 携带非空 JSON 请求体 | 400 / INVALID_REQUEST_BODY |
+
+每条请求均检查 JSON requestId 非空且与 X-Request-Id 响应头一致。真实 HTTP 结果依据用户执行反馈记录，未保存 IDEA 响应导出；请求与断言脚本保存在仓库。真实 Controller → Service → Domain / 内存仓库的衔接由本次 HTTP 验收补充验证；手动验收没有构造相同时间戳或 DELETED 状态，这些场景由 Service 自动化测试覆盖。
+
+### 问题与设计取舍
+
+1. @ModelAttribute 绑定 URL Query，@RequestBody 处理请求体，两者职责不同。本项目当前 Spring Framework 7 的绑定或 Bean Validation 失败由已有 MethodArgumentNotValidException 处理器归一为 422，实际测试已验证。
+2. @Valid 不会自动拒绝未知查询参数：在当前列表接口中显式检查允许的参数名，避免拼错 pageSize 后静默使用默认值。
+3. 接口不声明 @RequestBody 不代表 Spring 自动拒绝请求体：显式读取一个字节判断是否非空，不只依赖 Content-Length，因此不要求客户端提供已知长度；当前真实 HTTP 验收使用 JSON 请求体。
+4. 分页响应的 total 是过滤后总数，不是本页 items.size()。越过最后一页是合法查询，返回 200 和空数组。
+5. 当前在内存中过滤、排序、分页，便于验证业务契约；后续 PostgreSQL adapter 应将这些操作下推数据库，并保持同样的可见范围、排序和分页语义。
+
+### 未解决技术债与范围
+
+- 认证与授权尚未接入，创建接口仍使用固定演示用户 ID。管理员演示范围不是 ADMIN 角色校验，不能声称已实现员工知识库过滤。
+- 仍为内存仓库，重启丢失数据；查重与保存不具备原子唯一性保障。Flyway / 表结构按 Day 12 推进，PostgreSQL adapter、事务和唯一约束冲突转换按 Day 13 推进。
+- 分页参数空字符串、重复参数的策略与测试尚未补齐；本次验收不表示所有输入组合均已严格拒绝。绑定/校验先于 Controller 方法体执行，多个错误同时存在时的响应优先级尚未专门验证。
+- 损坏 JSON、字段类型不匹配、未知 JSON 请求字段的专门处理仍是既有待办；本日完成的是列表未知 Query 参数检查。
+- requestId 仍接受非空客户端值，其来源和格式限制与契约的统一、公开响应 Cache-Control: no-store 仍未完成。
+- 尚无自动化的真实 HTTP / 数据库整链路回归；MockMvc 使用 mock Service，真实内存链路本次由用户操作 HTTP Client 验证。
+- Maven 测试输出包含 Mockito 动态附加 Java agent 的已有提示；本次测试通过，将来 JDK 禁止动态加载时需按 Mockito 配置调整测试启动参数。
+
+### Git、学习状态与下一步
+
+最近已提交基线为 6e23448（Day 10）。本次 Day 11 实现、HTTP 验收文件和收尾文档尚未提交。部分新增 Java 文件的暂存内容仍为 IDEA 初建的空类，提交前需要重新 git add 选定文件，并检查 git diff --cached；当前测试针对工作区实际代码，不等于早期暂存版本已通过测试。
+
+用户按小步完成代码和测试，并确认全部真实请求与断言通过。用户曾询问未知参数检查在 list() 中的具体位置，已定位到 Service 调用前。尚未单独口述验收分页公式、排序和分层职责，不因测试通过就声称能独立实现。
+
+协作约定继续保持：Java 用 IntelliJ IDEA；终端命令用 Git Bash；手动 API 验收用 .http；一次一个可验证小步骤，先核对实际代码，不重复 Day 1–11。
+
+下一步按原手册进入 Day 12：先核对现有 Docker PostgreSQL、数据库设计、pom.xml 与 datasource 配置，解释 JDBC / JPA / Hibernate / Spring Data JPA 的关系，保持 Flyway 为唯一 schema migration 工具，逐步建立最小 migration、知识库表和唯一约束。区分 Domain record 与 JPA Entity；数据库 adapter 的完整替换属于 Day 13，不提前批量实现。
+
+## Day 12 — PostgreSQL 持久化基础与 Flyway
+
+日期：2026-11-24（Asia/Shanghai）。状态：已验收。
+
+### 最终环境与配置
+
+| 项目 | 实际值 |
+| --- | --- |
+| Docker Compose 服务 / 容器 | postgres / enterprise-postgres |
+| 数据库 / 本地数据库账号 | enterprise_knowledge / MicroJason |
+| Windows 连接入口 | 127.0.0.1:5333 |
+| PostgreSQL 容器内端口 | 5432 |
+| PostgreSQL / pgvector | 16.16 / 0.8.7 |
+| JDBC URL | jdbc:postgresql://127.0.0.1:5333/enterprise_knowledge |
+| Spring Boot / Java | 4.1.2 / 25.0.2 |
+| 业务 schema / 迁移历史表 | core / core.flyway_schema_history |
+
+原交接手册中的账号 app_user、端口 5432 不代表当前本机配置。Day 12 开始时 Compose 使用 MicroJason 和本机端口 5332，后因本机另一容器占用 5332，统一调整本项目 Compose 和 Spring 的默认地址为 5333。保留命名卷中的数据。
+
+### 完成的任务与文件
+
+- pom.xml 添加 spring-boot-starter-data-jpa、spring-boot-starter-flyway、flyway-database-postgresql、PostgreSQL JDBC 驱动；版本交由现有 Spring Boot BOM 管理，没有手动固定另一套版本。
+- application.yaml 配置 datasource，URL/账号允许由环境变量覆盖，密码使用 ${DB_PASSWORD}；没有将真实密码写入配置或日志。
+- JPA 使用 open-in-view=false、ddl-auto=validate、hibernate.default_schema=core。当前没有 JPA Entity，validate 不能据此证明字段映射已经完成。
+- Flyway 使用 core 为默认 schema，扫描 classpath:db/migration，允许创建 schema，并保持 clean-disabled=true；Spring SQL 初始化关闭，Flyway 是唯一 schema migration 工具。
+- V1__create_users.sql 按已有设计创建 core.users，包含 UUID 主键、username_key 生成列、账号唯一约束、用户名格式与角色 CHECK。没有实现注册、登录或插入真实用户。
+- V2__create_knowledge_bases.sql 按已有设计创建 core.knowledge_bases，包含名称生成列、创建人外键、生命周期和删除元数据 CHECK，以及名称部分唯一索引和 created_by 普通索引。
+- uq_live_kb_name 只对非 DELETED 记录约束 name_key 唯一；DELETING / DELETE_FAILED 继续占名。角色是否合法由 users CHECK 约束，某个创建人是否 ADMIN 仍需应用校验。
+- 名称首尾控制字符/空格检查与现有 Java trim 规则对应；varchar(50/500) 与 char_length 按 PostgreSQL 字符计数。未通过修改 Domain 或 API 长度规则来迎合数据库。
+- 新增 backend/spring-boot/day12-constraints.sql 作为手动验收脚本，放在迁移目录之外。事务内插入临时用户和知识库，验证指定唯一索引、外键，再回滚并检查剩余测试行。
+- 解释 JDBC、JPA、Hibernate、Spring Data JPA、Flyway 的关系；说明 Domain record 与 JPA Entity 的职责、依赖和映射边界。本日未新增 Entity 或数据库 adapter。
+- 收尾更新 README.md、docs/ARD.md 的本机数据库端口、docs/database-design.md 的实际实施状态，以及本日志和 Study_note/Day12.txt；已执行迁移文件内容保持原样。
+
+主要新增或修改路径：
+
+- backend/spring-boot/pom.xml
+- backend/spring-boot/src/main/resources/application.yaml
+- backend/spring-boot/src/main/resources/db/migration/V1__create_users.sql
+- backend/spring-boot/src/main/resources/db/migration/V2__create_knowledge_bases.sql
+- backend/spring-boot/day12-constraints.sql
+- infrastructure/docker-compose.yml
+- README.md、docs/ARD.md、docs/database-design.md、docs/daily-log.md、Study_note/Day12.txt
+
+### 验收证据与边界
+
+用户完成 ./mvnw test 后请求收尾。导师核对当前七份 Surefire 报告：71 tests，0 failures，0 errors，0 skipped。应用和测试代码在核对后未修改，收尾仅更新文档，没有为相同代码重复运行全量测试。
+
+| 测试类 | 数量 | 本次含义 |
+| --- | --- | --- |
+| ApplicationTests | 1 | 真实数据库连接、Flyway 初始化和 JPA 上下文加载 |
+| GlobalExceptionHandlerTest | 4 | 已有异常转换 |
+| KnowledgeBaseTest | 9 | 已有领域规则和码点边界 |
+| CreateKnowledgeBaseRequestTest | 9 | 已有创建请求校验 |
+| KnowledgeBaseListRequestTest | 9 | 已有分页 DTO 校验 |
+| KnowledgeBaseServiceTest | 15 | 创建与演示查询用例，仍基于内存/Mock Repository |
+| KnowledgeBaseControllerTest | 24 | POST/GET 参数、响应与拒绝分支，Service 为 mock |
+| 合计 | 71 | 全部通过；SQL 验收不计入这 71 项 |
+
+数据库收尾查询确认 core 中只有 users、knowledge_bases、flyway_schema_history 三张表。迁移历史包含一条 SCHEMA 创建记录，以及下面两条成功的 SQL 记录：
+
+| version | description | checksum | success |
+| --- | --- | --- | --- |
+| 1 | create users | 460812723 | t |
+| 2 | create knowledge bases | -949879651 | t |
+
+重复上下文启动后，SQL 迁移仍只有两条，校验和及 installed_on 与前次核对保持一致。实际表结构包含 fk_kb_created_by、ck_kb_lifecycle、ck_kb_live_name、ck_kb_deletion_metadata、uq_live_kb_name、idx_kb_created_by，与 V2 一致。
+
+导师实际执行 day12-constraints.sql，用户随后也执行并反馈 PASS。脚本检查重名被指定的 uq_live_kb_name 拒绝、缺失创建人被指定的 fk_kb_created_by 拒绝；如果未拒绝或由其他约束拒绝，会执行失败。显示名称保留原大小写，name_key 自动生成小写。事务以 ROLLBACK 结束，脚本剩余测试行为 0/0；收尾时再查询，两张业务表总行数也均为 0。
+
+已检查其余 CHECK 的实际定义，但本日 SQL 脚本没有逐一触发所有 CHECK、生命周期转换、Unicode 长度边界、删除后名称复用或并发冲突；不把结构核对描述为这些分支已完成行为验收。POST/GET 仍调用内存 Repository，尚未证明 API 写入 PostgreSQL 或重启后 API 数据仍存在。
+
+### 遇到的问题与定位方式
+
+1. Docker Desktop 引擎未运行：先启动 Docker Desktop，再使用现有 Compose 服务，无需重装环境。
+2. 错误摘要只有 Failed to load ApplicationContext：读取 Surefire 报告的最底层 Caused by，并对照目标容器日志，不依赖 Maven 最后的通用汇总猜原因。
+3. 5332 被另一容器 postgres-spring-boot 占用：其日志出现 Role "MicroJason" does not exist。项目容器没有正确发布该端口，将本项目 Windows 入口改为 5333 后，请求到达 enterprise-postgres。端口能建立 TCP 连接不代表连接到了正确实例。
+4. 改端口后仍密码认证失败：配置中的密码经容器 TCP 认证可用，Compose 与项目容器的配置密码一致；将本地解析出的密码注入测试后，ApplicationTests 通过。采用从 Compose 解析配置的 Git Bash 加载方式，避免手动输入差异；没有重置数据库密码。
+5. V1 最初位于 resources/dp/migration，测试通过但迁移历史没有 version=1：将目录改为 db/migration，与配置一致后执行成功。BUILD SUCCESS 不单独证明迁移被扫描和执行。
+
+### 密码与启动约定
+
+infrastructure/.env 存在且被 Git 忽略。Compose 读取该文件，但 Spring 不自动读取；Git Bash 的 export 只传给当前终端的子进程，已经打开的 IDEA 不会自动继承。IDEA 直接启动时需要在本地 Run Configuration 中提供连接环境变量。
+
+README 与 Day12 笔记保留已验证的加载命令：先 unset DB_PASSWORD，避免旧终端值覆盖 .env，再用 docker compose config --format json 经 Python 提取 POSTGRES_PASSWORD，将输出接收到变量并 export，成功后才执行 Maven。命令不将密码输出到终端，也不把密码字面值写入 Bash 历史。不要把完整 Compose 配置或密码粘贴进聊天；修改 .env 不会修改已初始化数据库卷里的账号密码。
+
+### 尚未实现与 Day 13 接入点
+
+- KnowledgeBase 的 Domain record 保持原样；没有 @Entity / JpaRepository / PostgreSQL adapter，实际知识库 API 仍使用 InMemoryKnowledgeBaseRepository，接口创建的数据重启会丢失。
+- Day 13 新增 Persistence Entity 并映射 Domain。读库时保留原始 ID、状态和时间，不能调用生成新 ID/时间的 KnowledgeBase.create() 来还原已有记录。
+- 当前 users 表为空，而 Controller 使用固定演示创建人 UUID。替换数据库 adapter 前需明确演示用户初始化方式，使 created_by 外键可满足；不能将约束验收中的临时密码标记当作真实可登录账号，也不能用移除外键绕过这个依赖。
+- adapter 中需要处理 generated name_key、deleted_at/删除元数据、非 DELETED 重名范围和 createdAt DESC / id ASC 排序。现有 Java equalsIgnoreCase 与数据库 lower(... COLLATE "C") 对非 ASCII 字符的行为可能不同，查询与最终唯一性应服从既有数据库契约。
+- 数据库唯一约束只证明拒绝冲突；事务边界、并发时的唯一约束冲突转换为 KnowledgeBaseNameConflictException / HTTP 409、重启后 API 仍可查询，属于 Day 13。
+- 迁移连接仍使用现有本地初始化账号；完整设计中的迁移账号与 Spring/FastAPI 最小权限运行账号、其他 core/ai 表、View、触发器和 Session 表尚未实施。
+- vector 扩展已在此前本地环境启用；V1/V2 没有建立完整 pgvector/AI 迁移流程，本日不代表向量检索已接入。
+- ApplicationTests 现在依赖运行中的本地 PostgreSQL 和环境变量，尚未建立隔离测试数据库或测试容器配置。
+- Day 11 已记录的 JSON 协议分支、分页空值/重复值、requestId 来源和格式、Cache-Control: no-store 等待办继续保留。
+
+### Git 与学习状态
+
+当前最近提交仍为 6e23448（Day 10），Day 11 与 Day 12 的实现、验收文件和收尾文档尚未提交。部分新文件暂存内容仍为早期空类或早期版本，提交前重新 git add 并审阅 git diff --cached；完整回归针对实际工作区文件。已执行 V1/V2 不为排版或重命名去修改内容。
+
+用户逐步完成依赖、连接配置、迁移与验收，曾询问密码的安全查看方式，已讲解本地 .env 与环境变量。JDBC/JPA 分工、外键、部分唯一索引、事务回滚、Flyway 校验和、Domain/Entity 区别均已解释，但未独立口述验收，不根据 PASS 直接认定已能独立实现。
+
+下一步按原路线进入 Day 13：从实际 Entity / Repository 起点核对，先做最小映射与测试，再逐步接入数据库 adapter、事务、冲突转换和真实 HTTP 持久化验收。继续使用 IDEA、Git Bash 和 .http，一次推进一个可验证步骤。

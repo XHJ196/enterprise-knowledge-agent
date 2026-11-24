@@ -84,4 +84,32 @@ public class GlobalExceptionHandler {
 
         return (String) request.getAttribute("X-Request-Id");
     }
+    @ExceptionHandler(RequestValidationException.class)
+    public ResponseEntity<ApiResponse<Void>> handleRequestBoundaryValidation(
+            RequestValidationException exception
+    ) {
+        ApiResponse<Void> body = ApiResponse.error(
+                "VALIDATION_ERROR",
+                exception.getMessage(),
+                getRequestId()
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.UNPROCESSABLE_CONTENT)
+                .body(body);
+    }
+    @ExceptionHandler(UnexpectedRequestBodyException.class)
+    public ResponseEntity<ApiResponse<Void>> handleUnexpectedRequestBody(
+            UnexpectedRequestBodyException exception
+    ) {
+        ApiResponse<Void> body = ApiResponse.error(
+                "INVALID_REQUEST_BODY",
+                exception.getMessage(),
+                getRequestId()
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(body);
+    }
 }

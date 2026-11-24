@@ -3,7 +3,7 @@
 **版本：** v1.0（Day 4 设计稿）  
 **日期：** 2026-11-18  
 **依据：** [PRD](PRD.md)、[ARD](ARD.md)。适用个人作品集、本地运行、Spring Boot + FastAPI + PostgreSQL/pgvector。  
-**状态：** 设计产物；没有创建数据库或执行迁移。下列 SQL 是重点契约片段，完整迁移仍须补齐类型 CHECK、权限和框架 Session 表。
+**状态：** Day 4 设计稿；Day 12 已通过 Flyway V1/V2 在 PostgreSQL 16.16 中创建 core.users、core.knowledge_bases 及对应约束，重名与创建人外键已有真实数据库验收。其余业务表、View、触发器、数据库角色权限和框架 Session 表仍待逐步迁移；下列 SQL 是完整设计的重点契约片段，不能作为全部已实施的证明。已执行结构以 backend/spring-boot/src/main/resources/db/migration 和 [学习日志](daily-log.md) 为准。
 
 - [HTML ER 图](diagrams/er-diagram.html)：完整字段、键及主要关系，可缩放查看。
 - [Mermaid ER 源文件](diagrams/er-diagram.mmd)：保留可编辑关系图。
@@ -620,4 +620,4 @@ Spring 重启时将旧 QUEUED/DISPATCHED/RUNNING 尝试标为 INTERRUPTED、文�
 | 会话删除时模型仍在输出 | 会话/消息/引用保持删除，回调找不到目标直接拒绝 |
 | Spring在解析、生成或批量删除期间关闭 | 重启保留资料和部分结果，未完成显式失败；不自动恢复执行 |
 
-本阶段完成的是表、关系、约束、View 和事务契约。ER 与数据字典使用同一份字段定义生成并做一致性核对；HTML 另做结构及浏览器检查。当前环境没有 PostgreSQL 服务或 psql，因此没有声称 SQL 已执行、FK 已在真实数据库生效或 pgvector 检索已联调。后续完整迁移必须在选定 PostgreSQL/pgvector 版本上执行，并覆盖上述集成场景。
+Day 4 阶段完成的是表、关系、约束、View 和事务契约；当时未执行 SQL。ER 与数据字典使用同一份字段定义生成并做一致性核对；HTML 另做结构及浏览器检查。Day 12 已在 PostgreSQL 16.16 / pgvector 0.8.7 环境执行 users 和 knowledge_bases 的 Flyway 迁移，核对实际结构，并验证名称唯一性与创建人外键。该验收不覆盖其余表、并发事务、权限 View、处理状态机或向量检索；这些仍需后续迁移和对应集成场景验证。

@@ -21,7 +21,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import com.enterprise.knowledge.knowledgebase.application.KnowledgeBasePage;
+import java.util.List;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.mockito.Mockito.mock;
@@ -142,5 +145,129 @@ class KnowledgeBaseControllerTest {
                 ));
 
         verify(service).create(name, description, creatorId);
+    }
+    @Test
+    void shouldListWithDefaultPagination() throws Exception {
+        KnowledgeBasePage page = new KnowledgeBasePage(
+                List.of(), 1, 20, 0, false
+        );
+
+        when(service.findPageForAdminDemo(1, 20))
+                .thenReturn(page);
+
+        mockMvc.perform(get("/api/v1/knowledge-bases"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value("SUCCESS"))
+                .andExpect(jsonPath("$.data.items").isEmpty())
+                .andExpect(jsonPath("$.data.page").value(1))
+                .andExpect(jsonPath("$.data.pageSize").value(20))
+                .andExpect(jsonPath("$.data.total").value(0))
+                .andExpect(jsonPath("$.data.hasNext").value(false))
+                .andExpect(jsonPath("$.requestId").isNotEmpty());
+
+        verify(service).findPageForAdminDemo(1, 20);
+    }
+    @Test
+    void shouldListWithExplicitPaginationAndMapItems() throws Exception {
+        UUID creatorId = UUID.fromString(
+                "10000000-0000-4000-8000-000000000002"
+        );
+
+        KnowledgeBase knowledgeBase = KnowledgeBase.create(
+                "HR Policy",
+                "企业制度演示库",
+                creatorId
+        );
+
+        KnowledgeBasePage page = new KnowledgeBasePage(
+                List.of(knowledgeBase), 2, 2, 3, false
+        );
+
+        when(service.findPageForAdminDemo(2, 2))
+                .thenReturn(page);
+
+        mockMvc.perform(get("/api/v1/knowledge-bases")
+                        .param("page", "2")
+                        .param("pageSize", "2"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value("SUCCESS"))
+                .andExpect(jsonPath("$.data.items.length()").value(1))
+                .andExpect(jsonPath("$.data.items[0].id")
+                        .value(knowledgeBase.id().toString()))
+                .andExpect(jsonPath("$.data.items[0].name")
+                        .value("HR Policy"))
+                .andExpect(jsonPath("$.data.items[0].description")
+                        .value("企业制度演示库"))
+                .andExpect(jsonPath("$.data.items[0].lifecycle")
+                        .value("ACTIVE"))
+                .andExpect(jsonPath("$.data.items[0].createdBy")
+                        .value(creatorId.toString()))
+                .andExpect(jsonPath("$.data.items[0].createdAt").isNotEmpty())
+                .andExpect(jsonPath("$.data.items[0].updatedAt").isNotEmpty())
+                .andExpect(jsonPath("$.data.page").value(2))
+                .andExpect(jsonPath("$.data.pageSize").value(2))
+                .andExpect(jsonPath("$.data.total").value(3))
+                .andExpect(jsonPath("$.data.hasNext").value(false))
+                .andExpect(jsonPath("$.requestId").isNotEmpty());
+
+        verify(service).findPageForAdminDemo(2, 2);
+    }
+    @ParameterizedTest
+    @CsvSource({
+            "0, 20",
+            "-1, 20",
+            "1, 0",
+            "1, -1",
+            "1, 101",
+            "abc, 20",
+            "1, abc",
+            "2147483648, 20",
+            "1, 2147483648"
+    })
+    void shouldRejectInvalidPaginationBeforeCallingService(
+            String page,
+            String pageSize
+    ) throws Exception {
+        mockMvc.perform(get("/api/v1/knowledge-bases")
+                        .param("page", page)
+                        .param("pageSize", pageSize))
+                .andExpect(status().is(422))
+                .andExpect(jsonPath("$.code").value("VALIDATION_ERROR"))
+                .andExpect(jsonPath("$.message").value("请求参数校验失败"))
+                .andExpect(jsonPath("$.data").value(nullValue()))
+                .andExpect(jsonPath("$.requestId").isNotEmpty());
+
+        verifyNoInteractions(service);
+    }
+    @ParameterizedTest
+    @ValueSource(strings = {"size", "sort", "lifecycle"})
+    void shouldRejectUnknownListQueryParameter(String parameter)
+            throws Exception {
+
+        mockMvc.perform(get("/api/v1/knowledge-bases")
+                        .param("page", "1")
+                        .param("pageSize", "20")
+                        .param(parameter, "unexpected"))
+                .andExpect(status().is(422))
+                .andExpect(jsonPath("$.code").value("VALIDATION_ERROR"))
+                .andExpect(jsonPath("$.message")
+                        .value("请求包含未知查询参数"))
+                .andExpect(jsonPath("$.data").value(nullValue()))
+                .andExpect(jsonPath("$.requestId").isNotEmpty());
+
+        verifyNoInteractions(service);
+    }
+    @ParameterizedTest
+    @ValueSource(strings = {"{}", "plain text", " "})
+    void shouldRejectNonEmptyListRequestBody(String body) throws Exception {
+        mockMvc.perform(get("/api/v1/knowledge-bases")
+                        .content(body))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("INVALID_REQUEST_BODY"))
+                .andExpect(jsonPath("$.message").value("该接口不接受请求体"))
+                .andExpect(jsonPath("$.data").value(nullValue()))
+                .andExpect(jsonPath("$.requestId").isNotEmpty());
+
+        verifyNoInteractions(service);
     }
 }

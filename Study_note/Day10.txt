@@ -73,7 +73,8 @@ cd "/c/Users/ASUS/Desktop/enterprise-knowledge-agent/backend/spring-boot"
 ./mvnw spring-boot:run
 
 以上是分开执行的测试与启动命令；服务启动后终端保持运行。
-本日代码尚待提交，已有测试文件暂存后又修改过，需重新暂存并审阅最新 diff。
+Day 11 收尾时核对：本日代码已提交，commit 为 6e23448
+（Complete Day 10 request validation and Unicode length checks）。
 具体验收证据、技术债与 Git 状态见 docs/daily-log.md。
 
 八、下一步

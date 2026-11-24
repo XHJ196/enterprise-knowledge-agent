@@ -1,0 +1,264 @@
+# Day 11：知识库 GET 列表与分页手动验收。
+# 在 IDEA 中先停止并重新启动最新 Spring Boot，清空当前内存仓库。
+# 从 1 到 12 依次运行；所有请求须在同一次服务运行期间完成。
+# 不要在中途执行其他创建请求，否则 total=3 的断言会失败。
+# 重新验收时重启服务并从第 1 条开始，不要仅重复执行创建请求。
+# 当前为管理员演示范围，尚未实现认证与员工权限过滤。
+# 响应脚本会显示测试结果；不要只看 HTTP 状态码。
+
+@baseUrl = http://localhost:8080
+
+### 1. 空仓库，不传分页参数：200，默认 page=1、pageSize=20
+GET {{baseUrl}}/api/v1/knowledge-bases
+Accept: application/json
+
+> {%
+    client.test("空列表使用默认分页，total=0、hasNext=false", function () {
+        client.assert(response.status === 200, "应返回 200");
+        client.assert(response.body.code === "SUCCESS", "成功码应为 SUCCESS");
+        const data = response.body.data;
+        client.assert(Array.isArray(data.items) && data.items.length === 0, "应为空列表；请先重启服务清空内存数据");
+        client.assert(data.page === 1 && data.pageSize === 20, "默认分页应为 1/20");
+        client.assert(data.total === 0 && data.hasNext === false, "空列表应无下一页");
+        const requestId = response.body.requestId;
+        client.assert(typeof requestId === "string" && requestId.length > 0, "requestId 应非空");
+        client.assert(requestId === response.headers.valueOf("X-Request-Id"), "requestId 应与响应头一致");
+        client.global.set("day11OrderedIds", "[]");
+        client.global.set("day11FirstId", "");
+        client.global.set("day11SecondId", "");
+        client.global.set("day11ThirdId", "");
+    });
+%}
+
+### 2. 创建第一条验收数据：201
+POST {{baseUrl}}/api/v1/knowledge-bases
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "Day11 HR Policy",
+  "description": "Day 11 分页验收数据一"
+}
+
+> {%
+    client.test("创建第一条知识库并保存 ID", function () {
+        client.assert(response.status === 201, "应返回 201；重复执行前请重启服务");
+        client.assert(response.body.code === "SUCCESS", "成功码应为 SUCCESS");
+        client.assert(response.body.data.name === "Day11 HR Policy", "名称应正确");
+        client.assert(typeof response.body.data.id === "string" && response.body.data.id.length > 0, "应返回 ID");
+        client.assert(response.headers.valueOf("Location") === "/api/v1/knowledge-bases/" + response.body.data.id, "Location 应对应新建 ID");
+        const requestId = response.body.requestId;
+        client.assert(typeof requestId === "string" && requestId.length > 0, "requestId 应非空");
+        client.assert(requestId === response.headers.valueOf("X-Request-Id"), "requestId 应与响应头一致");
+        client.global.set("day11FirstId", response.body.data.id);
+    });
+%}
+
+### 3. 创建第二条验收数据：201
+POST {{baseUrl}}/api/v1/knowledge-bases
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "Day11 Engineering Guide",
+  "description": "Day 11 分页验收数据二"
+}
+
+> {%
+    client.test("创建第二条知识库并保存 ID", function () {
+        client.assert(response.status === 201, "应返回 201；重复执行前请重启服务");
+        client.assert(response.body.code === "SUCCESS", "成功码应为 SUCCESS");
+        client.assert(response.body.data.name === "Day11 Engineering Guide", "名称应正确");
+        client.assert(typeof response.body.data.id === "string" && response.body.data.id.length > 0, "应返回 ID");
+        client.assert(response.headers.valueOf("Location") === "/api/v1/knowledge-bases/" + response.body.data.id, "Location 应对应新建 ID");
+        const requestId = response.body.requestId;
+        client.assert(typeof requestId === "string" && requestId.length > 0, "requestId 应非空");
+        client.assert(requestId === response.headers.valueOf("X-Request-Id"), "requestId 应与响应头一致");
+        client.global.set("day11SecondId", response.body.data.id);
+    });
+%}
+
+### 4. 创建第三条验收数据：201
+POST {{baseUrl}}/api/v1/knowledge-bases
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "Day11 Onboarding",
+  "description": "Day 11 分页验收数据三"
+}
+
+> {%
+    client.test("创建第三条知识库并保存 ID", function () {
+        client.assert(response.status === 201, "应返回 201；重复执行前请重启服务");
+        client.assert(response.body.code === "SUCCESS", "成功码应为 SUCCESS");
+        client.assert(response.body.data.name === "Day11 Onboarding", "名称应正确");
+        client.assert(typeof response.body.data.id === "string" && response.body.data.id.length > 0, "应返回 ID");
+        client.assert(response.headers.valueOf("Location") === "/api/v1/knowledge-bases/" + response.body.data.id, "Location 应对应新建 ID");
+        const requestId = response.body.requestId;
+        client.assert(typeof requestId === "string" && requestId.length > 0, "requestId 应非空");
+        client.assert(requestId === response.headers.valueOf("X-Request-Id"), "requestId 应与响应头一致");
+        client.global.set("day11ThirdId", response.body.data.id);
+    });
+%}
+
+### 5. 不传参数查询三条数据：200，验证默认值与排序
+GET {{baseUrl}}/api/v1/knowledge-bases
+Accept: application/json
+
+> {%
+    client.test("默认分页包含三条数据，按 createdAt DESC、id ASC 排序", function () {
+        client.assert(response.status === 200, "应返回 200");
+        client.assert(response.body.code === "SUCCESS", "成功码应为 SUCCESS");
+        const data = response.body.data;
+        client.assert(data.page === 1 && data.pageSize === 20, "默认分页应为 1/20");
+        client.assert(data.total === 3 && data.items.length === 3 && data.hasNext === false, "应返回全部三条数据");
+        const expectedIds = [client.global.get("day11FirstId"), client.global.get("day11SecondId"), client.global.get("day11ThirdId")];
+        const ids = data.items.map(item => item.id);
+        client.assert(new Set(ids).size === 3 && expectedIds.every(id => ids.includes(id)), "列表应恰好包含第 2～4 条请求创建的知识库");
+        // 统一补齐小数秒至 9 位，保留 Instant 精度；不使用会截断至毫秒的 Date 比较。
+        const timeKey = value => value.replace(/(?:\.(\d+))?Z$/, (_, fraction) => "." + (fraction || "").padEnd(9, "0") + "Z");
+        for (const item of data.items) {
+            client.assert(item.lifecycle === "ACTIVE", "新建知识库应为 ACTIVE");
+            client.assert(item.createdBy === "10000000-0000-4000-8000-000000000002", "应保留演示创建人 ID");
+            client.assert(typeof item.createdAt === "string" && item.createdAt.endsWith("Z"), "创建时间应为 UTC");
+            client.assert(typeof item.updatedAt === "string" && item.updatedAt.endsWith("Z"), "更新时间应为 UTC");
+        }
+        for (let index = 1; index < data.items.length; index++) {
+            const previous = data.items[index - 1];
+            const current = data.items[index];
+            const previousTime = timeKey(previous.createdAt);
+            const currentTime = timeKey(current.createdAt);
+            client.assert(previousTime > currentTime || (previousTime === currentTime && previous.id < current.id), "应按创建时间降序，同时间按 ID 升序");
+        }
+        const requestId = response.body.requestId;
+        client.assert(typeof requestId === "string" && requestId.length > 0, "requestId 应非空");
+        client.assert(requestId === response.headers.valueOf("X-Request-Id"), "requestId 应与响应头一致");
+        client.global.set("day11OrderedIds", JSON.stringify(ids));
+    });
+%}
+
+### 6. 第一页，每页两条：200，items=2、total=3、hasNext=true
+GET {{baseUrl}}/api/v1/knowledge-bases?page=1&pageSize=2
+Accept: application/json
+
+> {%
+    client.test("第一页包含排序后的前两条，还有下一页", function () {
+        client.assert(response.status === 200, "应返回 200");
+        client.assert(response.body.code === "SUCCESS", "成功码应为 SUCCESS");
+        const data = response.body.data;
+        const orderedIds = JSON.parse(client.global.get("day11OrderedIds"));
+        client.assert(orderedIds.length === 3, "请先成功执行第 5 条请求");
+        client.assert(data.page === 1 && data.pageSize === 2, "分页应为 1/2");
+        client.assert(data.total === 3 && data.items.length === 2 && data.hasNext === true, "第一页应有两条且有下一页");
+        client.assert(JSON.stringify(data.items.map(item => item.id)) === JSON.stringify(orderedIds.slice(0, 2)), "第一页应对应完整列表的前两条");
+        const requestId = response.body.requestId;
+        client.assert(typeof requestId === "string" && requestId.length > 0, "requestId 应非空");
+        client.assert(requestId === response.headers.valueOf("X-Request-Id"), "requestId 应与响应头一致");
+    });
+%}
+
+### 7. 第二页，每页两条：200，items=1、total=3、hasNext=false
+GET {{baseUrl}}/api/v1/knowledge-bases?page=2&pageSize=2
+Accept: application/json
+
+> {%
+    client.test("第二页仅包含剩余一条，无下一页", function () {
+        client.assert(response.status === 200, "应返回 200");
+        client.assert(response.body.code === "SUCCESS", "成功码应为 SUCCESS");
+        const data = response.body.data;
+        const orderedIds = JSON.parse(client.global.get("day11OrderedIds"));
+        client.assert(orderedIds.length === 3, "请先成功执行第 5 条请求");
+        client.assert(data.page === 2 && data.pageSize === 2, "分页应为 2/2");
+        client.assert(data.total === 3 && data.items.length === 1 && data.hasNext === false, "第二页应有一条且无下一页");
+        client.assert(data.items[0].id === orderedIds[2], "第二页应对应完整列表的第三条，与第一页不重复");
+        const requestId = response.body.requestId;
+        client.assert(typeof requestId === "string" && requestId.length > 0, "requestId 应非空");
+        client.assert(requestId === response.headers.valueOf("X-Request-Id"), "requestId 应与响应头一致");
+    });
+%}
+
+### 8. 超出最后一页：200，items=[]、total 仍为 3
+GET {{baseUrl}}/api/v1/knowledge-bases?page=3&pageSize=2
+Accept: application/json
+
+> {%
+    client.test("超出最后一页返回空列表，并保留总数", function () {
+        client.assert(response.status === 200, "应返回 200");
+        client.assert(response.body.code === "SUCCESS", "成功码应为 SUCCESS");
+        const data = response.body.data;
+        client.assert(data.page === 3 && data.pageSize === 2, "应保留请求的分页参数");
+        client.assert(Array.isArray(data.items) && data.items.length === 0, "应为空列表");
+        client.assert(data.total === 3 && data.hasNext === false, "总数仍为 3，且无下一页");
+        const requestId = response.body.requestId;
+        client.assert(typeof requestId === "string" && requestId.length > 0, "requestId 应非空");
+        client.assert(requestId === response.headers.valueOf("X-Request-Id"), "requestId 应与响应头一致");
+    });
+%}
+
+### 9. pageSize 超过 100：422
+GET {{baseUrl}}/api/v1/knowledge-bases?page=1&pageSize=101
+Accept: application/json
+
+> {%
+    client.test("每页数量超限返回统一 422 响应", function () {
+        client.assert(response.status === 422, "应返回 422");
+        client.assert(response.body.code === "VALIDATION_ERROR", "错误码应为 VALIDATION_ERROR");
+        client.assert(response.body.message === "请求参数校验失败", "应返回稳定的校验文案");
+        client.assert(response.body.data === null, "错误响应 data 应为 null");
+        const requestId = response.body.requestId;
+        client.assert(typeof requestId === "string" && requestId.length > 0, "requestId 应非空");
+        client.assert(requestId === response.headers.valueOf("X-Request-Id"), "requestId 应与响应头一致");
+    });
+%}
+
+### 10. page 无法转换为整数：422
+GET {{baseUrl}}/api/v1/knowledge-bases?page=abc&pageSize=20
+Accept: application/json
+
+> {%
+    client.test("非法页码文本返回统一 422 响应", function () {
+        client.assert(response.status === 422, "应返回 422");
+        client.assert(response.body.code === "VALIDATION_ERROR", "错误码应为 VALIDATION_ERROR");
+        client.assert(response.body.message === "请求参数校验失败", "应返回稳定的校验文案");
+        client.assert(response.body.data === null, "错误响应 data 应为 null");
+        const requestId = response.body.requestId;
+        client.assert(typeof requestId === "string" && requestId.length > 0, "requestId 应非空");
+        client.assert(requestId === response.headers.valueOf("X-Request-Id"), "requestId 应与响应头一致");
+    });
+%}
+
+### 11. 包含未知查询参数 size：422
+GET {{baseUrl}}/api/v1/knowledge-bases?page=1&pageSize=20&size=10
+Accept: application/json
+
+> {%
+    client.test("未知查询参数返回统一 422 响应", function () {
+        client.assert(response.status === 422, "应返回 422");
+        client.assert(response.body.code === "VALIDATION_ERROR", "错误码应为 VALIDATION_ERROR");
+        client.assert(response.body.message === "请求包含未知查询参数", "应明确拒绝未知参数");
+        client.assert(response.body.data === null, "错误响应 data 应为 null");
+        const requestId = response.body.requestId;
+        client.assert(typeof requestId === "string" && requestId.length > 0, "requestId 应非空");
+        client.assert(requestId === response.headers.valueOf("X-Request-Id"), "requestId 应与响应头一致");
+    });
+%}
+
+### 12. GET 携带非空 JSON 请求体：400
+GET {{baseUrl}}/api/v1/knowledge-bases?page=1&pageSize=20
+Content-Type: application/json
+Accept: application/json
+
+{}
+
+> {%
+    client.test("GET 非空请求体返回统一 400 响应", function () {
+        client.assert(response.status === 400, "应返回 400");
+        client.assert(response.body.code === "INVALID_REQUEST_BODY", "错误码应为 INVALID_REQUEST_BODY");
+        client.assert(response.body.message === "该接口不接受请求体", "应明确拒绝请求体");
+        client.assert(response.body.data === null, "错误响应 data 应为 null");
+        const requestId = response.body.requestId;
+        client.assert(typeof requestId === "string" && requestId.length > 0, "requestId 应非空");
+        client.assert(requestId === response.headers.valueOf("X-Request-Id"), "requestId 应与响应头一致");
+    });
+%}

@@ -1,0 +1,127 @@
+Day 11：GET 查询与分页
+项目：Enterprise Knowledge & Agent Platform
+日期：2026-11-24（Asia/Shanghai）
+状态：已验收；下一步 Day 12：PostgreSQL 持久化基础与 Flyway。
+
+一、本日实现与范围
+
+GET /api/v1/knowledge-bases?page=1&pageSize=20
+成功返回 HTTP 200，分页数据位于统一 ApiResponse 的 data 中：
+items、page、pageSize、total、hasNext。
+page 默认 1 且必须 >=1；pageSize 默认 20，允许 1–100。
+
+当前明确为管理员演示范围，排除 DELETED，保留 ACTIVE、DELETING、DELETE_FAILED。
+findPageForAdminDemo 这个名字不代表实现了管理员身份校验。
+认证、角色检查和员工授权过滤都尚未接入。
+
+二、URL 参数绑定与校验
+
+@ModelAttribute 将 URL Query 参数绑定到 KnowledgeBaseListRequest。
+@RequestBody 用于请求体，两者不是同一种输入来源。
+Request record 的 Integer 允许缺省值为 null，紧凑构造器将其换成 1 / 20。
+@Valid 触发 @Min、@Max 校验；方法体与 Service 调用前完成绑定和校验。
+当前 Spring Framework 7 中，已测试的类型转换和约束失败均由
+MethodArgumentNotValidException 处理器转成 422 / VALIDATION_ERROR。
+
+@Valid 不负责拒绝未知参数名。
+Controller 使用 Set.of("page", "pageSize") 列出允许的参数名。
+getParameterMap().keySet() 取得参数名集合；stream().anyMatch(...) 判断
+是否存在一个不在允许集合中的名字。发现后抛 RequestValidationException。
+这段检查位于 list() 方法内、Service 查询之前。
+
+三、可见范围、排序与分页的先后顺序
+
+读取仓库 → 过滤 DELETED → 稳定排序 → 统计 total → 截取本页。
+total 统计整个演示可见范围，不是当前页的条数。
+排序为 createdAt DESC、id ASC：时间越新越靠前，相同时由 ID 决定顺序。
+Comparator.comparing(...).reversed() 只反转创建时间的排序，
+再 thenComparing(kb -> kb.id().toString()) 保持 ID 升序。
+规范 UUID 字符串的顺序与 PostgreSQL UUID 字节排序一致；Java UUID.compareTo
+按有符号 long 比较，不能直接假定它与 PostgreSQL 顺序相同。
+
+offset = (page - 1L) * pageSize
+items = visible.stream().skip(offset).limit(pageSize).toList()
+hasNext = offset + items.size() < total
+
+例：total=3、pageSize=2。
+第 1 页 offset=0，返回 2 条，hasNext=true。
+第 2 页 offset=2，返回 1 条，hasNext=false。
+第 3 页 offset=4，返回空数组，total 仍为 3，hasNext=false，HTTP 仍为 200。
+1L 让计算提前使用 long，避免极大页码在 int 乘法时溢出。
+Service 仍独立检查分页参数，非法内部调用抛 IllegalArgumentException；
+不能因此把所有 IllegalArgumentException 都映射为客户端 422。
+
+四、为什么分开分页结果和 HTTP 响应
+
+KnowledgeBasePage 属于 application，items 中放 Domain 的 KnowledgeBase。
+构造器使用 List.copyOf，避免调用方修改原始列表影响分页结果。
+KnowledgeBasePageResponse 属于 interfaces/rest，items 中放 KnowledgeBaseResponse。
+from() 对每项调用已有的 KnowledgeBaseResponse.from()，保持创建和查询的字段一致。
+这样应用层不依赖 HTTP 响应 DTO，也不直接把领域模型当成对外契约。
+
+五、为什么 GET 还要检查请求体
+
+不写 @RequestBody，并不等于 Spring 自动拒绝请求体。
+API 约定该列表接口不能携带非空 Body，因此在 list() 方法开头读取请求流一个字节。
+read() 返回 -1 表示结束、没有内容；其他结果表示至少存在一个字节。
+只需读一个字节即可拒绝，也不依赖客户端提供 Content-Length。
+JSON、普通文本、空格都是非空 Body，均返回 400 / INVALID_REQUEST_BODY。
+读取流可能抛 IOException，因此 list() 声明 throws IOException。
+
+绑定和 @Valid 仍先于 list() 方法体执行。
+本次分别验收单项错误，没有专门规定多个错误同时存在时的优先级。
+
+六、测试如何分工
+
+DTO 测试：默认值与参数范围。
+Service 测试：固定时间和 ID 的数据验证状态过滤、排序、total、分页和极大页码。
+Controller 测试：真实 MVC 参数绑定、响应映射和异常处理，但 Service 是 mock。
+verifyNoInteractions(service) 证明被拒绝的请求没有调用业务用例。
+.http 验收：真实运行中的 Controller → Service → Domain / 内存仓库。
+手动验收没有构造 DELETED 或相同时间戳的数据，这些由 Service 测试覆盖。
+
+本次收尾由导师运行完整 ./mvnw test：
+ApplicationTests 1，GlobalExceptionHandlerTest 4，KnowledgeBaseTest 9，
+CreateKnowledgeBaseRequestTest 9，KnowledgeBaseListRequestTest 9，
+KnowledgeBaseServiceTest 15，KnowledgeBaseControllerTest 24。
+合计 71 项，0 失败，0 错误，0 跳过，BUILD SUCCESS。
+
+用户确认 day11-pagination.http 的 12 条请求与全部断言成功：
+1 空列表 → 200。
+2–4 创建三条 → 201、201、201。
+5 默认查询与排序 → 200。
+6 第一页两条、hasNext=true → 200。
+7 第二页一条、hasNext=false → 200。
+8 超过最后一页、空 items、保留 total → 200。
+9 pageSize=101 → 422。
+10 page=abc → 422。
+11 未知参数 size → 422。
+12 GET 非空 Body → 400。
+每条请求还验证 requestId 非空且与响应头一致。
+HTTP 验收结果来自用户执行反馈，脚本保存在仓库，没有保存响应导出。
+
+七、Git Bash 与重复验收
+
+cd "/c/Users/ASUS/Desktop/enterprise-knowledge-agent/backend/spring-boot"
+./mvnw test
+
+启动服务可在 IDEA 运行 Application，或单独执行：
+./mvnw spring-boot:run
+
+day11-pagination.http 按 1–12 顺序执行；开始前先重启 Spring Boot 清空内存数据。
+中途不重启、不额外创建记录，否则 total=3 的断言不再成立。
+重新验收应从重启与第 1 条开始，不能只重复创建请求。
+Day 11 尚未提交，部分新文件暂存版本是早期空类，提交前重新 git add 并审阅。
+Day 10 已提交为 6e23448。
+
+八、遗留事项与下一步
+
+当前分页在内存中执行，重启数据丢失；并发查重和保存尚无原子唯一性保障。
+认证和员工权限、空值/重复 Query 的策略、损坏 JSON 与未知 JSON 字段、
+requestId 来源和格式限制、Cache-Control: no-store 等仍见 docs/daily-log.md。
+通过测试与真实请求验收不等于已完成这些能力，也不等于已经能独立实现所有代码。
+
+Day 12 按既有路线核对 PostgreSQL 环境、DB 设计和依赖配置，学习 JDBC / JPA /
+Hibernate / Spring Data JPA 的关系，再建立 Flyway 最小迁移、知识库表和唯一约束。
+Flyway 是唯一 schema migration 工具；Domain record 与 JPA Entity 保持职责分离。
+数据库 Repository adapter 的完整实现留在 Day 13，不提前大范围改写当前代码。

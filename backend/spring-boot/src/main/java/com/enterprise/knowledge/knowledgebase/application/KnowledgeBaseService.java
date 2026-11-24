@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.Comparator;
 
 @Service
 public class KnowledgeBaseService {
@@ -41,5 +42,44 @@ public class KnowledgeBaseService {
 
     public List<KnowledgeBase> findAll() {
         return repository.findAll();
+    }
+    public List<KnowledgeBase> findAllForAdminDemo() {
+        return repository.findAll().stream()
+                .filter(kb ->
+                        kb.lifecycle() != KnowledgeBase.Lifecycle.DELETED
+                )
+                .sorted(
+                        Comparator.comparing(KnowledgeBase::createdAt)
+                                .reversed()
+                                .thenComparing(kb -> kb.id().toString())
+                )
+                .toList();
+    }
+    public KnowledgeBasePage findPageForAdminDemo(
+            int page,
+            int pageSize
+    ) {
+        if (page < 1 || pageSize < 1 || pageSize > 100) {
+            throw new IllegalArgumentException("Invalid pagination arguments");
+        }
+
+        List<KnowledgeBase> visible = findAllForAdminDemo();
+        long total = visible.size();
+        long offset = (page - 1L) * pageSize;
+
+        List<KnowledgeBase> items = visible.stream()
+                .skip(offset)
+                .limit(pageSize)
+                .toList();
+
+        boolean hasNext = offset + items.size() < total;
+
+        return new KnowledgeBasePage(
+                items,
+                page,
+                pageSize,
+                total,
+                hasNext
+        );
     }
 }

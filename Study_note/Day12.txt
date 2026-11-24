@@ -1,0 +1,178 @@
+Day 12：PostgreSQL 持久化基础与 Flyway
+项目：Enterprise Knowledge & Agent Platform
+日期：2026-11-24（Asia/Shanghai）
+状态：已验收；下一步 Day 13：数据库 Repository 实现。
+
+一、当前连接信息，以实际仓库为准
+
+Compose 文件：infrastructure/docker-compose.yml
+服务 postgres；容器 enterprise-postgres；命名卷保留数据库文件。
+数据库 enterprise_knowledge；本地数据库账号 MicroJason。
+Windows 地址 127.0.0.1:5333；容器内部 PostgreSQL 端口仍是 5432。
+JDBC URL：jdbc:postgresql://127.0.0.1:5333/enterprise_knowledge
+实测 PostgreSQL 16.16，pgvector 0.8.7。
+手册快照的 app_user / 5432 和本日最初的 5332 不是当前连接配置。
+
+端口映射 127.0.0.1:5333:5432 的左侧是本机入口，右侧是容器内部端口。
+docker compose exec 在容器内运行 psql，不需要使用 Windows 的 5333 端口。
+Spring 从 Windows 使用 JDBC 连接，必须使用发布的本机端口。
+
+二、JDBC、JPA、Hibernate、Spring Data JPA 与 Flyway
+
+JDBC 是 Java 连接数据库和执行 SQL 的接口；PostgreSQL JDBC 驱动提供实现。
+JPA 是 Java 持久化映射规范；Hibernate 是当前使用的 JPA 实现。
+Spring Data JPA 提供 Repository 支持，减少常用数据访问代码。
+Flyway 按版本执行迁移，独立管理数据库结构变化。
+
+后续链路：业务用例 → 数据库 adapter → Spring Data JPA → Hibernate → JDBC → PostgreSQL。
+本日只准备连接与表结构，尚未建立这条业务存储链路。
+pom.xml 添加 data-jpa starter、flyway starter、flyway-database-postgresql 和 PostgreSQL 驱动。
+依赖版本交给 Spring Boot 4.1.2 的 BOM 管理，不另外指定一套版本。
+
+三、配置的分工
+
+datasource.url / username / password 提供连接信息。
+${DB_URL:默认值} 优先读环境变量，没有则使用默认地址。
+${DB_PASSWORD} 没有明文默认值，必须由进程环境提供。
+
+jpa.open-in-view=false：关闭跨整个 Web 请求保持持久化上下文的默认行为。
+hibernate.ddl-auto=validate：核对已映射 Entity 与数据库结构，不负责改表。
+hibernate.default_schema=core：提供业务 Entity 的默认 schema。
+当前没有 Entity，因此 validate 不证明已经完成业务字段映射。
+
+flyway.default-schema=core：迁移历史位于 core.flyway_schema_history。
+flyway.locations=classpath:db/migration：扫描 resources/db/migration。
+flyway.create-schemas=true：允许创建不存在的 core。
+flyway.clean-disabled=true：禁用 Flyway clean。
+spring.sql.init.mode=never：关闭 schema.sql / data.sql 自动初始化入口。
+Flyway 是项目唯一 schema migration 工具。
+
+四、本日两个迁移
+
+V1__create_users.sql：创建 core.users。
+UUID 主键由应用生成；username_key 是 lower(username COLLATE "C") 的 STORED 生成列。
+UNIQUE(username_key) 保证英文大小写归一后的账号唯一。
+CHECK 约束用户名格式和 ADMIN / EMPLOYEE 角色取值。
+password_hash 列只为后续保存自适应密码哈希准备，未实现登录。
+
+V2__create_knowledge_bases.sql：创建 core.knowledge_bases。
+created_by 外键指向 users.id，ON DELETE RESTRICT 保留创建关联。
+外键只检查用户是否存在，不检查该用户是否 ADMIN；管理员规则由应用执行。
+非 DELETED 知识库必须有合法名称，首尾没有 Java trim 对应的控制字符/空格。
+删除完成必须记录 deleted_at，并清空 name、description 和删除错误明细。
+name 允许 NULL 是为 DELETED 最小标记设计，不能对所有状态简单加 NOT NULL。
+name_key 自动转小写，不由应用直接写入。
+
+部分唯一索引 uq_live_kb_name：
+UNIQUE(name_key) WHERE lifecycle <> 'DELETED'
+ACTIVE、DELETING、DELETE_FAILED 都继续占名，删除完成才退出唯一性范围。
+idx_kb_created_by 是引用方的普通索引，PostgreSQL 不因声明外键自动创建它。
+
+DEFAULT now() 只在插入未提供该列时生效；updated_at 后续仍需应用维护。
+schema 是同一数据库中的命名空间，不等于另一套数据库或天然的安全隔离。
+
+五、迁移记录和重复启动
+
+文件名 V1 后是两个下划线；后续结构变更追加 V2、V3 等版本。
+Flyway 历史中现有一条 SCHEMA 创建记录和两条成功 SQL 记录。
+V1 checksum 为 460812723；V2 为 -949879651。
+用户完成再次运行完整测试，导师核对版本、checksum、installed_on 未重复增加或变化。
+正常启动校验已执行文件，只执行新的待处理版本。
+已执行文件不为排版或改名再修改；否则可能引发校验和不一致。
+
+六、约束验收脚本与事务
+
+文件 backend/spring-boot/day12-constraints.sql 位于迁移目录外，手动执行。
+BEGIN 后插入临时用户和合法知识库，观察显示名称和生成的小写 name_key。
+DO 匿名代码块捕获预期的 unique_violation / foreign_key_violation，
+并用 GET STACKED DIAGNOSTICS 核对 uq_live_kb_name / fk_kb_created_by。
+若非法插入没有被拒绝，脚本主动抛 FAIL；若是其他约束出错，也继续抛出。
+预期输出两条 PASS，末尾 ROLLBACK 撤销测试数据，剩余测试行是 0/0。
+临时 password_hash 标记不是可登录哈希，且未被提交到数据库。
+
+导师已执行脚本成功，用户也执行并反馈 PASS；收尾时两张业务表均为空。
+本脚本尚未逐一验证全部 CHECK、删除后名称复用、Unicode 边界或并发，
+不能把建表成功和两项约束通过描述为全部数据库行为已经验收。
+
+七、Domain record 与 JPA Entity
+
+当前 KnowledgeBase record 在 domain，表达业务数据与规则，不添加 JPA 注解。
+后续 Entity 位于 infrastructure.persistence，映射表、主键、列和数据库类型。
+JPA Entity 使用满足框架要求的普通类，例如提供无参构造器。
+adapter 负责两者转换，应用层不直接依赖 HTTP DTO 或持久化 Entity。
+从数据库还原已有记录时，不能调用 KnowledgeBase.create()，
+否则它会重新生成 UUID 和时间；应保留原记录的 ID、状态和时间。
+本日未编写 Entity、JpaRepository、adapter，也没有替换内存 Repository。
+
+八、连接故障的实际排查
+
+ApplicationContext 加载失败是外层摘要，根因要看 Surefire 报告最底层 Caused by。
+第一次认证失败实际连接到了另一容器 postgres-spring-boot，5332 被它占用，
+该容器日志提示 MicroJason 角色不存在。修正本项目映射和 JDBC 为 5333。
+第二次在正确容器仍认证失败，配置中的密码可通过 TCP 认证；
+使用同一份配置密码传入 Maven 后成功，因此改用配置加载方式避免手动输入差异。
+没有重置密码、清空卷或改动其他项目容器。
+
+V1 曾误放 resources/dp/migration，测试仍通过但没有迁移记录。
+改为 db/migration 后出现 version=1 和 users 表。
+BUILD SUCCESS 证明应用能启动；是否真正迁移，还要核对历史和实际表结构。
+
+九、Git Bash 运行方法
+
+先启动 Docker Desktop，再运行：
+
+cd "/c/Users/ASUS/Desktop/enterprise-knowledge-agent/infrastructure"
+docker compose up -d postgres
+docker compose port postgres 5432
+
+预期端口 127.0.0.1:5333。
+密码文件 infrastructure/.env 被 Git 忽略；它不会自动成为 Spring 的进程环境。
+在同一个 Git Bash 中加载密码与运行 Maven：
+
+cd "/c/Users/ASUS/Desktop/enterprise-knowledge-agent/backend/spring-boot"
+export DB_URL="jdbc:postgresql://127.0.0.1:5333/enterprise_knowledge"
+export DB_USERNAME="MicroJason"
+unset DB_PASSWORD
+
+if DB_PASSWORD="$(docker compose \
+    --env-file ../../infrastructure/.env \
+    -f ../../infrastructure/docker-compose.yml \
+    config --format json |
+    python -c 'import json, sys; value = json.load(sys.stdin)["services"]["postgres"]["environment"]["POSTGRES_PASSWORD"]; assert isinstance(value, str) and value, "Database password is empty"; sys.stdout.write(value)')"; then
+    export DB_PASSWORD
+    ./mvnw test
+else
+    printf '读取数据库配置失败。\n'
+fi
+
+命令不显示密码，也不把密码字面值写入 Bash 历史。
+先 unset 防止旧终端值覆盖 .env。修改 .env 不会更改已初始化卷里的实际账号密码。
+Git Bash 的 export 作用于当前终端的子进程，不自动传给已打开的 IDEA。
+IDEA 直接启动应用，需要在本地 Run Configuration 中提供对应环境变量。
+加载成功后，在同一个终端可运行 ./mvnw spring-boot:run。
+
+执行数据库验收：
+
+cd "/c/Users/ASUS/Desktop/enterprise-knowledge-agent/infrastructure"
+docker compose exec -T postgres psql \
+  -U MicroJason -d enterprise_knowledge -v ON_ERROR_STOP=1 \
+  < ../backend/spring-boot/day12-constraints.sql
+
+十、最终验收、Git 和下一步
+
+用户运行完整 Maven 测试；导师收尾核对七份报告：
+ApplicationTests 1、GlobalExceptionHandlerTest 4、KnowledgeBaseTest 9、
+CreateKnowledgeBaseRequestTest 9、KnowledgeBaseListRequestTest 9、
+KnowledgeBaseServiceTest 15、KnowledgeBaseControllerTest 24。
+总计 71，0 失败，0 错误，0 跳过；SQL 的两个 PASS 单独记录。
+确认 V1/V2 成功、历史未重复、表和约束存在，测试数据回滚后总行数为 0/0。
+
+Day 11 和 Day 12 当前尚未提交，最近提交为 Day 10 的 6e23448。
+部分文件暂存了早期版本，提交前重新 git add 并审阅 git diff --cached。
+已执行迁移文件保留现有内容。
+
+Day 13 实现数据库 adapter、映射、事务和唯一约束冲突转换，再做真实 HTTP 持久化验收。
+users 表当前为空，需要解决固定演示创建人 ID 的数据库初始化前置条件。
+当前 POST/GET 仍基于内存，不能声称已实现重启后保留接口数据。
+认证、员工权限过滤、其余表/权限角色/向量检索和其他 API 技术债仍待后续完成。
+本日已解释的概念尚未单独口述验收，不把测试通过当成独立实现能力证明。

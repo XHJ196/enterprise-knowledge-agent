@@ -27,7 +27,7 @@
 | 前端 | `127.0.0.1:5173` | 管理页、员工页、文件上传、聊天流式展示 | `fetch` 请求 Spring；普通 REST、multipart、SSE 格式流 |
 | Spring Boot | `127.0.0.1:8080` | 唯一浏览器业务入口，业务状态的权威服务 | 对前端 HTTP；对 FastAPI 内部 HTTP；JDBC 访问 PostgreSQL |
 | FastAPI | `127.0.0.1:8000` | 内部 AI 服务、受控文档处理执行器 | 内部 HTTP/JSON、SSE；psycopg 访问 AI 数据；HTTPS 调用模型 |
-| PostgreSQL + pgvector | `127.0.0.1:5432` | 业务数据与向量数据持久化，同一实例分 schema 和数据库角色 | PostgreSQL wire protocol / SQL |
+| PostgreSQL + pgvector | `127.0.0.1:5333`（Day 12 核对的本机映射；容器内仍为 5432） | 业务数据与向量数据持久化，同一实例分 schema 和数据库角色 | PostgreSQL wire protocol / SQL |
 | 文件存储 | 配置项 `STORAGE_ROOT` 指向的本地目录 | 保存原文件和上传临时文件 | 仅 Spring 经文件系统 API 读写；不开放静态目录 |
 | 外部模型服务 | 后端配置供应商地址与模型名 | 回答生成与 Embedding | HTTPS/JSON；生成接口支持流式响应 |
 

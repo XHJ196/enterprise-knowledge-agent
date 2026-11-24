@@ -446,7 +446,8 @@ Accept: application/json
 
 | HTTP | code | 含义 |
 | --- | --- | --- |
-| 422 | `VALIDATION_ERROR` | 分页参数不合法 |
+| 400 | `INVALID_REQUEST_BODY` | 列表接口收到了非空请求体 |
+| 422 | `VALIDATION_ERROR` | 分页参数不合法或包含未知查询参数 |
 
 错误响应示例：HTTP **422**。
 
