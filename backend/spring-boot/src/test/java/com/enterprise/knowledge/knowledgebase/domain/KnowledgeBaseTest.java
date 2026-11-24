@@ -2,9 +2,7 @@
 package com.enterprise.knowledge.knowledgebase.domain;
 
 import org.junit.jupiter.api.Test;
-
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class KnowledgeBaseTest {
@@ -65,6 +63,55 @@ class KnowledgeBaseTest {
         assertThrows(
                 IllegalArgumentException.class,
                 () -> KnowledgeBase.create("Engineering Docs", null, null)
+        );
+    }
+    @Test
+    void shouldAccept50CodePointNameAfterTrim() {
+        String name = "😀".repeat(50);
+
+        KnowledgeBase kb = KnowledgeBase.create(
+                "  " + name + "  ",
+                null,
+                UUID.randomUUID()
+        );
+
+        assertEquals(name, kb.name());
+    }
+
+    @Test
+    void shouldReject51CodePointName() {
+        String name = "😀".repeat(51);
+
+        assertThrows(
+                KnowledgeBaseValidationException.class,
+                () -> KnowledgeBase.create(name, null, UUID.randomUUID())
+        );
+    }
+
+    @Test
+    void shouldAccept500CodePointDescription() {
+        String description = "😀".repeat(500);
+
+        KnowledgeBase kb = KnowledgeBase.create(
+                "Engineering Docs",
+                description,
+                UUID.randomUUID()
+        );
+
+        assertEquals(description, kb.description());
+    }
+
+    @Test
+    void shouldReject501CodePointDescription() {
+        String description = "😀".repeat(501);
+
+        assertThrows(
+                KnowledgeBaseValidationException.class,
+                () -> KnowledgeBase.create(
+                        "Engineering Docs",
+                        description,
+                        UUID.randomUUID()
+                )
         );
     }
 }

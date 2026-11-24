@@ -32,3 +32,11 @@ Content-Type: application/json
   "name": "   ",
   "description": "空白名称测试"
 }
+###
+POST http://localhost:8080/api/v1/knowledge-bases
+Content-Type: application/json
+
+{
+  "name": "   ",
+  "description": "空白名称测试"
+}

@@ -102,19 +102,23 @@ Frontend:
 - [x] PostgreSQL + pgvector setup
 - [x] Day 8: knowledge base creation vertical slice with an in-memory repository
 - [x] Day 9: unified JSON responses, request IDs, and 409/422/500 exception mapping
+- [x] Day 10: request Bean Validation, name normalization, and Unicode code point length boundaries
 
 Day 9 was accepted on 2026-11-23: all 14 Spring Boot tests passed, and the learner confirmed the expected 201/409/422 responses, Location header, and request ID consistency in Postman. The exception-handler tests use a test controller; the real creation path was checked manually.
 
-Next: Day 10, Bean Validation and request boundaries. The creation endpoint currently uses a demo user and in-memory storage. Authentication, authorization, list pagination, Flyway, database persistence, and remaining API contract details are tracked in the learning log. RAG and Agent workflows follow the existing roadmap.
+Day 10 was accepted on 2026-11-24: all 34 Spring Boot tests passed. The learner ran the four requests and response assertions in [day10-validation.http](backend/spring-boot/day10-validation.http) using IntelliJ IDEA HTTP Client and confirmed 422/422/201/409 for overlong names, overlong descriptions, valid limits, and duplicate names. Name normalization, code point limits, Location, and request ID consistency were verified. Controller tests use a mock service; the HTTP file exercises the running application.
+
+Next: Day 11, GET queries and pagination. The creation endpoint currently uses a demo user and in-memory storage. Authentication, authorization, list pagination, Flyway, database persistence, and remaining API contract details are tracked in the learning log. RAG and Agent workflows follow the existing roadmap.
 
 6. Documentation
 
 See the "docs/" directory for product requirements, architecture, database design, and API specifications.
 
-- [Current progress and Day 9 acceptance record](docs/daily-log.md)
+- [Current progress and acceptance records](docs/daily-log.md)
 - [Day 9 learning notes and Git Bash commands](Study_note/Day9.txt)
+- [Day 10 learning notes](Study_note/Day10.txt)
 
-The original handoff manual is a Day 8 snapshot. Read the current progress log and actual code when continuing. Terminal examples use Git Bash on Windows.
+The original handoff manual is a Day 8 snapshot. Read the current progress log and actual code when continuing. Terminal examples use Git Bash on Windows; manual API checks use IntelliJ IDEA HTTP Client files. Restart the in-memory Spring Boot application before rerunning the complete Day 10 HTTP file, and execute requests 1–4 in order without restarting between requests.
 
 7. IntelliJ IDEA module setup
 

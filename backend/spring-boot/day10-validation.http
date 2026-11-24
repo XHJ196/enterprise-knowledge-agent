@@ -1,0 +1,122 @@
+# Day 10：Bean Validation 与 Unicode 码点长度验收。
+# 使用方式：启动最新 Spring Boot，在 IDEA 中从 1 到 4 依次点击绿色运行箭头。
+# 四条请求应在同一次服务运行期间执行，预期依次为 422、422、201、409。
+# 当前为内存仓库。重新验收时先重启 Spring Boot，清空此前的同名测试数据。
+# 请求前脚本自动生成输入；响应脚本在 HTTP Client 的测试结果中显示断言结果。
+
+@baseUrl = http://localhost:8080
+
+### 1. 名称 51 个码点，简介 500 个码点：预期 422
+< {%
+    request.variables.set("day10Name", "  " + "😀".repeat(51) + "  ");
+    request.variables.set("day10Description", "😀".repeat(500));
+%}
+POST {{baseUrl}}/api/v1/knowledge-bases
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "{{day10Name}}",
+  "description": "{{day10Description}}"
+}
+
+> {%
+    client.test("名称超限返回统一 422 响应", function () {
+        client.assert(response.status === 422, "HTTP 状态应为 422");
+        client.assert(response.body.code === "VALIDATION_ERROR", "错误码应为 VALIDATION_ERROR");
+        client.assert(response.body.message === "请求参数校验失败", "应返回请求校验文案");
+        client.assert(response.body.data === null, "错误响应的 data 应为 null");
+    });
+    client.test("requestId 非空且与响应头一致", function () {
+        const requestId = response.body.requestId;
+        client.assert(typeof requestId === "string" && requestId.trim().length > 0, "requestId 应为非空字符串");
+        client.assert(requestId === response.headers.valueOf("X-Request-Id"), "JSON 与响应头的 requestId 应一致");
+    });
+%}
+
+### 2. 名称 50 个码点，简介 501 个码点：预期 422
+< {%
+    request.variables.set("day10Name", "  " + "😀".repeat(50) + "  ");
+    request.variables.set("day10Description", "😀".repeat(501));
+%}
+POST {{baseUrl}}/api/v1/knowledge-bases
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "{{day10Name}}",
+  "description": "{{day10Description}}"
+}
+
+> {%
+    client.test("简介超限返回统一 422 响应", function () {
+        client.assert(response.status === 422, "HTTP 状态应为 422");
+        client.assert(response.body.code === "VALIDATION_ERROR", "错误码应为 VALIDATION_ERROR");
+        client.assert(response.body.message === "请求参数校验失败", "应返回请求校验文案");
+        client.assert(response.body.data === null, "错误响应的 data 应为 null");
+    });
+    client.test("requestId 非空且与响应头一致", function () {
+        const requestId = response.body.requestId;
+        client.assert(typeof requestId === "string" && requestId.trim().length > 0, "requestId 应为非空字符串");
+        client.assert(requestId === response.headers.valueOf("X-Request-Id"), "JSON 与响应头的 requestId 应一致");
+    });
+%}
+
+### 3. 名称 50 个码点，简介 500 个码点：预期 201
+< {%
+    request.variables.set("day10Name", "  " + "😀".repeat(50) + "  ");
+    request.variables.set("day10Description", "😀".repeat(500));
+%}
+POST {{baseUrl}}/api/v1/knowledge-bases
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "{{day10Name}}",
+  "description": "{{day10Description}}"
+}
+
+> {%
+    client.test("合法上限返回 201，保存 trim 后的名称", function () {
+        client.assert(response.status === 201, "HTTP 状态应为 201；若为 409，请重启服务后从第 1 条重新执行");
+        client.assert(response.body.code === "SUCCESS", "成功码应为 SUCCESS");
+        client.assert(response.body.data.name === "😀".repeat(50), "返回名称应去除前后空格，保留 50 个码点");
+        client.assert(response.body.data.description === "😀".repeat(500), "返回简介应保留 500 个码点");
+        client.assert(
+            response.headers.valueOf("Location") === "/api/v1/knowledge-bases/" + response.body.data.id,
+            "Location 应与创建的知识库 ID 对应"
+        );
+    });
+    client.test("requestId 非空且与响应头一致", function () {
+        const requestId = response.body.requestId;
+        client.assert(typeof requestId === "string" && requestId.trim().length > 0, "requestId 应为非空字符串");
+        client.assert(requestId === response.headers.valueOf("X-Request-Id"), "JSON 与响应头的 requestId 应一致");
+    });
+%}
+
+### 4. 在第 3 条成功后再次创建相同名称：预期 409
+< {%
+    request.variables.set("day10Name", "  " + "😀".repeat(50) + "  ");
+    request.variables.set("day10Description", "😀".repeat(500));
+%}
+POST {{baseUrl}}/api/v1/knowledge-bases
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "{{day10Name}}",
+  "description": "{{day10Description}}"
+}
+
+> {%
+    client.test("重复名称返回统一 409 响应", function () {
+        client.assert(response.status === 409, "HTTP 状态应为 409；请先在同一服务进程执行第 3 条");
+        client.assert(response.body.code === "KNOWLEDGE_BASE_NAME_CONFLICT", "错误码应为 KNOWLEDGE_BASE_NAME_CONFLICT");
+        client.assert(response.body.data === null, "错误响应的 data 应为 null");
+    });
+    client.test("requestId 非空且与响应头一致", function () {
+        const requestId = response.body.requestId;
+        client.assert(typeof requestId === "string" && requestId.trim().length > 0, "requestId 应为非空字符串");
+        client.assert(requestId === response.headers.valueOf("X-Request-Id"), "JSON 与响应头的 requestId 应一致");
+    });
+%}

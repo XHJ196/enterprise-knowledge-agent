@@ -10,7 +10,7 @@ import com.enterprise.knowledge.common.filter.RequestIdFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.util.UUID;
-
+import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/api/v1/knowledge-bases")
 public class KnowledgeBaseController {
@@ -22,7 +22,7 @@ public class KnowledgeBaseController {
     }
     @PostMapping
     public ResponseEntity<ApiResponse<KnowledgeBaseResponse>> create(
-            @RequestBody CreateKnowledgeBaseRequest request,
+            @Valid @RequestBody CreateKnowledgeBaseRequest request,
             HttpServletRequest httpRequest
     ) {
         // 临时使用固定演示用户 ID

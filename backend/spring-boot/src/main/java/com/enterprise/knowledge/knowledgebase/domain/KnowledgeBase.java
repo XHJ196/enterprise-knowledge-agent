@@ -27,13 +27,19 @@ public record KnowledgeBase(
     ) {
         String normalizedName = name == null ? "" : name.trim();
 
-        if (normalizedName.isEmpty() || normalizedName.length() > 50) {
+        int nameLength = normalizedName.codePointCount(
+                0,
+                normalizedName.length()
+        );
+
+        if (nameLength < 1 || nameLength > 50) {
             throw new KnowledgeBaseValidationException(
                     "知识库名称必须包含1到50个字符"
             );
         }
 
-        if (description != null && description.length() > 500) {
+        if (description != null
+                && description.codePointCount(0, description.length()) > 500) {
             throw new KnowledgeBaseValidationException(
                     "简介不能超过500个字符"
             );

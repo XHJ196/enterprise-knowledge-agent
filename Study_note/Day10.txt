@@ -1,0 +1,82 @@
+Day 10：Bean Validation 与请求边界
+项目：Enterprise Knowledge & Agent Platform
+日期：2026-11-24
+状态：已验收；下一步 Day 11：GET 查询与分页。
+
+一、DTO 校验与 Domain 规则为什么都要存在
+
+Request DTO 检查 HTTP 输入，在业务用例调用前拒绝不合法的参数。
+Domain 保护核心业务规则，其他业务代码直接调用时也需要保证正确。
+HTTP 校验不能替代 Domain 的规则保护。
+
+请求处理顺序：
+JSON 反序列化 → DTO 构造与名称 trim → Bean Validation → Controller 方法 → Service → Domain。
+DTO 校验失败时，Controller 方法体与 Service 不会执行。
+
+二、本项目的注解和规范化方式
+
+@NotBlank：拒绝 null、空字符串和全空白名称；注解自身不执行 trim。
+@Valid：要求 Spring MVC 校验请求 DTO。
+@Size：标准 Bean Validation 约束；字符串长度按 UTF-16 单元计数。
+@CodePointLength：当前 Hibernate Validator 已提供的扩展，按 Unicode 码点计数。
+
+API 契约要求名称 trim 后 1–50 个码点，简介最多 500 个码点且允许 null。
+因此项目采用 @NotBlank 与 @CodePointLength，而不是直接使用字符串 @Size。
+名称在 record 紧凑构造器中 trim；简介不 trim，保留原文。
+紧凑构造器没有显式参数列表，其代码执行后，Java 自动将参数赋给 record 字段。
+名称为 null 时保持 null，交给 @NotBlank 拒绝。
+@CodePointLength 允许 null，因此简介不需要额外的非空约束。
+
+三、字符数和码点
+
+"😀".length() 为 2，codePointCount(0, length()) 为 1。
+String.length() 返回 UTF-16 单元数；codePointCount 返回指定范围的码点数。
+码点也不等于人眼看到的字符数量：组合符号或复杂 emoji 可能含多个码点。
+本项目明确以 API 契约的 Unicode 码点作为长度标准。
+
+Domain 使用 Java codePointCount；请求层的 @CodePointLength 不进入 Domain。
+这样 Domain 保持对校验框架的独立性，两层遵循同样的长度契约。
+
+四、请求校验异常与统一响应
+
+请求 Bean Validation 失败：MethodArgumentNotValidException。
+领域输入规则失败：KnowledgeBaseValidationException。
+GlobalExceptionHandler 分别处理这两种异常，对外都返回 422 / VALIDATION_ERROR。
+请求校验失败使用固定消息“请求参数校验失败”，data 为 null，并带 requestId。
+不直接返回 Spring 校验异常的 getMessage()，避免泄露被拒绝的输入或框架细节。
+状态写法继续统一使用 HttpStatus.UNPROCESSABLE_CONTENT。
+
+五、如何证明校验发生在业务调用之前
+
+Controller 测试使用真实 Controller、真实校验和异常处理器，但 Service 使用 mock。
+assertInstanceOf 检查解析到的异常确为 MethodArgumentNotValidException。
+verifyNoInteractions(service) 检查非法输入没有调用 Service。
+合法上限测试同时检查 HTTP 201、SUCCESS、Location 和传给 Service 的 trim 后名称。
+该测试不证明实际存储成功；真实服务链路由 .http 验收补充验证。
+
+六、验收结果
+
+完整自动化回归：34 项通过，0 失败，0 错误。
+Domain 9、Application 4、DTO 9、Controller 7、异常处理 4、应用上下文 1。
+
+IDEA 打开 backend/spring-boot/day10-validation.http，从第 1 条到第 4 条依次执行。
+请求前脚本生成码点边界输入，响应脚本检查状态、响应内容和 requestId。
+用户确认四条请求与全部断言成功，状态依次为 422、422、201、409。
+当前是内存仓库，重复验收先重启服务；第 4 条依赖同一进程中第 3 条已成功创建。
+
+七、工具与 Git Bash 命令
+
+Java 使用 IntelliJ IDEA；接口手动验收优先使用 .http；终端指令使用 Git Bash。
+
+cd "/c/Users/ASUS/Desktop/enterprise-knowledge-agent/backend/spring-boot"
+./mvnw test
+./mvnw spring-boot:run
+
+以上是分开执行的测试与启动命令；服务启动后终端保持运行。
+本日代码尚待提交，已有测试文件暂存后又修改过，需重新暂存并审阅最新 diff。
+具体验收证据、技术债与 Git 状态见 docs/daily-log.md。
+
+八、下一步
+
+Day 11：GET /api/v1/knowledge-bases、分页默认值与边界、稳定排序、查询 DTO 和测试。
+按现有 API 契约继续，不提前接数据库，不把演示范围描述成已实现认证与员工授权。

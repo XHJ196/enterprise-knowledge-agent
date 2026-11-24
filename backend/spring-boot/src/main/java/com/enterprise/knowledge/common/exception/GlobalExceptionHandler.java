@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import java.util.UUID;
 
 @RestControllerAdvice
@@ -55,6 +56,20 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(body);
+    }
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiResponse<Void>> handleRequestValidation(
+            MethodArgumentNotValidException exception
+    ) {
+        ApiResponse<Void> body = ApiResponse.error(
+                "VALIDATION_ERROR",
+                "请求参数校验失败",
+                getRequestId()
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.UNPROCESSABLE_CONTENT)
                 .body(body);
     }
     private String getRequestId() {
