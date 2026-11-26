@@ -3,13 +3,11 @@ package com.enterprise.knowledge.knowledgebase.infrastructure.persistence;
 
 import com.enterprise.knowledge.knowledgebase.domain.KnowledgeBase;
 import com.enterprise.knowledge.knowledgebase.domain.KnowledgeBaseRepository;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
-@Repository
 public class InMemoryKnowledgeBaseRepository
         implements KnowledgeBaseRepository {
     private final ConcurrentHashMap<String, KnowledgeBase> storage =

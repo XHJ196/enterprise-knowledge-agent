@@ -1,0 +1,142 @@
+# Day 13：知识库 API 的 PostgreSQL 持久化验收。
+# 前置条件：执行 day13-demo-user.sql，启动连接 127.0.0.1:5333 的最新 Spring Boot。
+# 操作顺序：运行 1、2 → 查询数据库 → 停止并重新启动 Spring Boot → 运行 3、4。
+# 不要使用 Run All；第 2 条与第 3 条之间需要人工重启 Spring Boot。
+# 重启后不要重新执行第 1 条，也不要关闭 IDEA HTTP Client 的当前会话。
+# 验收期间不额外创建/修改知识库，以便比较重启前后的 total 和同一条记录。
+# 第 1 条为每次验收生成新名称；已创建的演示记录保留在数据库中。
+# 当前仍为演示身份，尚未实现认证与员工权限过滤。
+
+@baseUrl = http://localhost:8080
+
+### 1. 创建一条新的知识库：201，保存 ID 和名称供后续使用
+< {%
+    const suffix = Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 10);
+    const name = "Day13 Persistence " + suffix;
+    request.variables.set("day13NewName", name);
+    client.global.set("day13ExpectedName", name);
+    client.global.set("day13KnowledgeBaseId", "");
+    client.global.set("day13DuplicateName", "");
+    client.global.set("day13BeforeRestart", "");
+    client.global.set("day13TotalBeforeRestart", "");
+%}
+POST {{baseUrl}}/api/v1/knowledge-bases
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "  {{day13NewName}}  ",
+  "description": "  Day 13 PostgreSQL 持久化验收  "
+}
+
+> {%
+    client.test("创建成功，响应字段、Location 和 requestId 正确", function () {
+        client.assert(response.status === 201, "应返回 201");
+        client.assert(response.body.code === "SUCCESS", "成功码应为 SUCCESS");
+        const item = response.body.data;
+        client.assert(typeof item.id === "string" && item.id.length > 0, "应返回新知识库 ID");
+        client.assert(item.name === client.global.get("day13ExpectedName"), "应保存 trim 后的名称");
+        client.assert(item.description === "  Day 13 PostgreSQL 持久化验收  ", "简介应保留原文");
+        client.assert(item.lifecycle === "ACTIVE", "新建状态应为 ACTIVE");
+        client.assert(item.createdBy === "10000000-0000-4000-8000-000000000002", "创建人应为本地演示用户");
+        client.assert(typeof item.createdAt === "string" && item.createdAt.endsWith("Z"), "创建时间应为 UTC");
+        client.assert(typeof item.updatedAt === "string" && item.updatedAt.endsWith("Z"), "更新时间应为 UTC");
+        client.assert(response.headers.valueOf("Location") === "/api/v1/knowledge-bases/" + item.id, "Location 应对应创建的 ID");
+        const requestId = response.body.requestId;
+        client.assert(typeof requestId === "string" && requestId.length > 0, "requestId 应非空");
+        client.assert(requestId === response.headers.valueOf("X-Request-Id"), "JSON 与响应头的 requestId 应一致");
+        client.global.set("day13KnowledgeBaseId", item.id);
+        client.global.set("day13DuplicateName", item.name.toLowerCase());
+    });
+%}
+
+### 2. 重启前查询：200，找到第 1 条创建的 ID，并保存读库结果
+GET {{baseUrl}}/api/v1/knowledge-bases?page=1&pageSize=100
+Accept: application/json
+
+> {%
+    client.test("列表包含新记录，保存重启前的字段快照", function () {
+        client.assert(response.status === 200, "应返回 200");
+        client.assert(response.body.code === "SUCCESS", "成功码应为 SUCCESS");
+        const id = client.global.get("day13KnowledgeBaseId");
+        client.assert(typeof id === "string" && id.length > 0, "请先成功执行第 1 条请求");
+        const data = response.body.data;
+        client.assert(data.page === 1 && data.pageSize === 100, "应保留请求的分页参数");
+        client.assert(Array.isArray(data.items), "items 应为数组");
+        const matches = data.items.filter(item => item.id === id);
+        client.assert(matches.length === 1, "第一页应恰好包含一条本次新建的记录");
+        client.assert(data.total >= 1, "total 应至少为 1，不要求数据库原先为空");
+        const item = matches[0];
+        client.assert(item.name === client.global.get("day13ExpectedName"), "应读回原名称");
+        client.assert(item.description === "  Day 13 PostgreSQL 持久化验收  ", "应读回原简介");
+        client.assert(item.lifecycle === "ACTIVE", "应读回 ACTIVE 状态");
+        client.assert(item.createdBy === "10000000-0000-4000-8000-000000000002", "应读回原创建人");
+        client.assert(typeof item.createdAt === "string" && item.createdAt.endsWith("Z"), "应读回创建时间");
+        client.assert(typeof item.updatedAt === "string" && item.updatedAt.endsWith("Z"), "应读回更新时间");
+        const requestId = response.body.requestId;
+        client.assert(typeof requestId === "string" && requestId.length > 0, "requestId 应非空");
+        client.assert(requestId === response.headers.valueOf("X-Request-Id"), "JSON 与响应头的 requestId 应一致");
+        client.global.set("day13BeforeRestart", JSON.stringify({
+            id: item.id,
+            name: item.name,
+            description: item.description,
+            lifecycle: item.lifecycle,
+            createdBy: item.createdBy,
+            createdAt: item.createdAt,
+            updatedAt: item.updatedAt
+        }));
+        client.global.set("day13TotalBeforeRestart", String(data.total));
+    });
+%}
+
+# 到这里暂停：按导师给出的只读 SQL 核对数据库 ID，再重启 Spring Boot。
+# 保持 PostgreSQL 运行；不要重新执行第 1 条创建请求。
+
+### 3. 重启后直接查询：200，同一 ID、业务字段和时间均保留
+GET {{baseUrl}}/api/v1/knowledge-bases?page=1&pageSize=100
+Accept: application/json
+
+> {%
+    client.test("重启 Spring 后仍能查询原记录，全部业务字段保持一致", function () {
+        client.assert(response.status === 200, "应返回 200");
+        client.assert(response.body.code === "SUCCESS", "成功码应为 SUCCESS");
+        const snapshot = client.global.get("day13BeforeRestart");
+        client.assert(typeof snapshot === "string" && snapshot.length > 0, "请先成功执行第 1、2 条，再重启 Spring");
+        const before = JSON.parse(snapshot);
+        const data = response.body.data;
+        client.assert(data.page === 1 && data.pageSize === 100, "应保留请求的分页参数");
+        client.assert(Array.isArray(data.items), "items 应为数组");
+        const matches = data.items.filter(item => item.id === before.id);
+        client.assert(matches.length === 1, "重启后应仍存在相同 ID 的知识库");
+        const after = matches[0];
+        for (const field of Object.keys(before)) {
+            client.assert(after[field] === before[field], "重启后字段应保持一致：" + field);
+        }
+        client.assert(String(data.total) === client.global.get("day13TotalBeforeRestart"), "没有其他变更时，重启前后 total 应一致");
+        const requestId = response.body.requestId;
+        client.assert(typeof requestId === "string" && requestId.length > 0, "requestId 应非空");
+        client.assert(requestId === response.headers.valueOf("X-Request-Id"), "JSON 与响应头的 requestId 应一致");
+    });
+%}
+
+### 4. 重启后创建大小写不同、前后带空格的同名知识库：409
+POST {{baseUrl}}/api/v1/knowledge-bases
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "  {{day13DuplicateName}}  ",
+  "description": "本条应被拒绝，不产生新的知识库"
+}
+
+> {%
+    client.test("重启后仍拒绝同名创建，返回统一 409 响应", function () {
+        client.assert(typeof client.global.get("day13KnowledgeBaseId") === "string" && client.global.get("day13KnowledgeBaseId").length > 0, "请先成功执行第 1 条请求");
+        client.assert(response.status === 409, "应返回 409");
+        client.assert(response.body.code === "KNOWLEDGE_BASE_NAME_CONFLICT", "应返回知识库重名错误码");
+        client.assert(response.body.data === null, "错误响应 data 应为 null");
+        const requestId = response.body.requestId;
+        client.assert(typeof requestId === "string" && requestId.length > 0, "requestId 应非空");
+        client.assert(requestId === response.headers.valueOf("X-Request-Id"), "JSON 与响应头的 requestId 应一致");
+    });
+%}
