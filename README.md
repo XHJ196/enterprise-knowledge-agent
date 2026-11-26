@@ -95,6 +95,19 @@ docker compose exec -T postgres psql \
 
 It checks the generated name key, case-insensitive name uniqueness, and the creator foreign key. Expected output includes two PASS notices and zero remaining test rows after ROLLBACK.
 
+Initialize the current API demo creator from the repository root before the first knowledge base POST:
+
+```bash
+docker compose \
+  --env-file infrastructure/.env \
+  -f infrastructure/docker-compose.yml \
+  exec -T postgres psql \
+  -U MicroJason -d enterprise_knowledge -v ON_ERROR_STOP=1 \
+  < backend/spring-boot/day13-demo-user.sql
+```
+
+This explicitly executed data script creates the fixed demo identity required by the creator foreign key. It can be repeated for the same expected identity and does not modify the schema. Its password marker disables login; it is not a real password hash or an authentication implementation. Flyway remains the only schema migration mechanism.
+
 Health check:
 
 "http://localhost:8080/api/v1/health"
@@ -137,6 +150,9 @@ Frontend:
 - [x] Day 10: request Bean Validation, name normalization, and Unicode code point length boundaries
 - [x] Day 11: knowledge base GET lists, pagination, stable ordering, and query/body boundary checks
 - [x] Day 12: PostgreSQL connection, Flyway V1/V2 migrations, and database constraint acceptance
+- [x] Day 13: PostgreSQL repository adapter, Domain/Entity mapping, transactions, conflict translation, and persistence after Spring restart
+- [x] Day 14: backend stage acceptance, JSON contract checks, response headers, and 100 passing tests
+- [ ] Day 15: frontend structure and React basics in progress
 
 Day 9 was accepted on 2026-11-23: all 14 Spring Boot tests passed, and the learner confirmed the expected 201/409/422 responses, Location header, and request ID consistency in Postman. The exception-handler tests use a test controller; the real creation path was checked manually.
 
@@ -148,7 +164,13 @@ The list endpoint returns items/page/pageSize/total/hasNext, defaults to page=1 
 
 Day 12 was accepted on 2026-11-24: the learner completed the full test run, and the mentor checked the seven current reports totaling 71 tests with zero failures, errors, or skipped tests. PostgreSQL 16.16 and pgvector 0.8.7 were verified. V1 and V2 created core.users and core.knowledge_bases; two successful SQL migration records retain their checksums and installation times after repeated context startup. The mentor ran [day12-constraints.sql](backend/spring-boot/day12-constraints.sql), and the learner also confirmed its two PASS notices. The final database check found zero rows in both business tables. This verifies selected database constraints, not API persistence or the full database design.
 
-Next: Day 13, the PostgreSQL repository adapter, Domain/Entity mapping, transactions, and database uniqueness conflict translation. The application currently uses a demo user and in-memory storage for knowledge base POST/GET, loses API-created records on restart, and performs filtering, sorting, and pagination in memory. JPA entities and the database adapter have not yet been implemented. Remaining API contract work is tracked in the learning log. RAG and Agent workflows follow the existing roadmap.
+Day 13 was accepted on 2026-11-26 and committed as 931cbec. All 85 Spring Boot tests passed, with zero failures, errors, or skipped tests. The learner completed the four requests and assertions in [day13-persistence.http](backend/spring-boot/day13-persistence.http): POST creation, GET before restart, GET after restarting Spring, and case-insensitive duplicate rejection. A direct SQL check confirmed API-created records in PostgreSQL. The mentor also checked that database integration test fixtures had rolled back. The 409 HTTP check was sequential; direct adapter integration tests separately verify translation of the named database unique constraint and preservation of other integrity errors.
+
+Knowledge base POST/GET now use PostgresKnowledgeBaseRepository. InMemoryKnowledgeBaseRepository is retained for manually constructed unit tests and is not a Spring repository bean. Queries load database rows and then filter, sort, and paginate in Java; database pagination has not been implemented. Creation mapping supports new ACTIVE records; lifecycle updates and deletion are outside this adapter's current save contract. The current creator remains a demo identity, and authentication and authorization remain unimplemented. Further API contract gaps are tracked in the learning log and [Day 14 acceptance record](docs/day14-backend-acceptance.md).
+
+Day 14 was accepted on 2026-11-26: the mentor ran the complete Spring Boot suite and checked all eleven reports, totaling 100 tests with zero failures, errors, or skipped tests. The learner completed 17 HTTP requests and assertions across the five Day 14 files. Malformed JSON returns 400 / INVALID_JSON; covered field type errors and unknown JSON fields return 422 / VALIDATION_ERROR. Each current synchronous request receives a new server-generated UUID, used in both X-Request-Id and the JSON envelope, and responses set Cache-Control: no-store. The creation/list/restart demo remains available in day13-persistence.http. Evidence, module responsibilities, and remaining scope are documented in the Day 14 acceptance record.
+
+Next: Day 15, frontend structure and React basics. The existing React + TypeScript + Vite project already has a basic static homepage. Its build (including TypeScript checks) and ESLint passed on 2026-11-26. Continue from that code with pages/components/api/types/hooks responsibilities, followed by small component and interaction exercises. Router and API integration follow the existing roadmap; browser behavior and the first directory exercise still require learner verification.
 
 6. Documentation
 
@@ -159,8 +181,31 @@ See the "docs/" directory for product requirements, architecture, database desig
 - [Day 10 learning notes](Study_note/Day10.txt)
 - [Day 11 learning notes](Study_note/Day11.txt)
 - [Day 12 learning notes and database troubleshooting](Study_note/Day12.txt)
+- [Day 13 persistence implementation and acceptance notes](Study_note/Day13.txt)
+- [Day 14 backend stage acceptance](docs/day14-backend-acceptance.md)
+- [Day 14 closeout notes](Study_note/Day14.txt)
 
-The original handoff manual is a Day 8 snapshot. Read the current progress log and actual code when continuing. Terminal examples use Git Bash on Windows; manual API checks use IntelliJ IDEA HTTP Client files. Restart the in-memory Spring Boot application before each complete HTTP acceptance run. For Day 10, execute requests 1–4 in order; for Day 11, execute requests 1–12 in order. Do not restart between requests or create unrelated records during a run.
+The original handoff manual is a Day 8 snapshot. Read the current progress log and actual code when continuing. Terminal examples use Git Bash on Windows; manual API checks use IntelliJ IDEA HTTP Client files. Understanding reviews are deferred until the whole project is complete, following the learner's 2026-11-26 preference; continue with small implementation and verification steps.
+
+For current persistence acceptance, use day13-persistence.http: run requests 1–2, check the database ID, restart only Spring, then run requests 3–4 without repeating request 1 or closing the HTTP Client session. Keep PostgreSQL running and compare the ID against SQL, for example from infrastructure:
+
+```bash
+docker compose exec -T postgres psql \
+  -U MicroJason -d enterprise_knowledge -v ON_ERROR_STOP=1 \
+  -c "SELECT id, name, created_by, lifecycle FROM core.knowledge_bases WHERE name LIKE 'Day13 Persistence %' ORDER BY created_at DESC, id ASC LIMIT 5;"
+```
+
+The following Day 14 files were all accepted by the learner. Start the latest Spring application, then run each file in order using IDEA HTTP Client. They work with existing demo data; the response-header file uses the first request's ID in its second assertion.
+
+| File | Requests | Expected statuses |
+| --- | --- | --- |
+| [day14-boundaries.http](backend/spring-boot/day14-boundaries.http) | 4 | 422 / 422 / 422 / 400 |
+| [day14-json.http](backend/spring-boot/day14-json.http) | 2 | 400 / 422 |
+| [day14-unknown-fields.http](backend/spring-boot/day14-unknown-fields.http) | 3 | All 422 |
+| [day14-json-types.http](backend/spring-boot/day14-json-types.http) | 6 | All 422 |
+| [day14-response-headers.http](backend/spring-boot/day14-response-headers.http) | 2 | 200 / 422 |
+
+The Day 10/11 files are historical scripts with fixed names; Day 11 additionally assumes an empty knowledge base table. Restarting Spring retains database records and cannot restore those old prerequisites. Query empty/repeated values, authentication/authorization, database pagination, lifecycle updates, and further test isolation remain explicit follow-up work in the acceptance record.
 
 7. IntelliJ IDEA module setup
 

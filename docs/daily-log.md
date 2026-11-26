@@ -1,7 +1,9 @@
 # 项目学习日志
 
-当前进度：Day 12 已验收，下一步为 Day 13：数据库 Repository 实现。
+当前进度：Day 14 已验收（完整后端测试 100 项通过）；Day 15 项目结构和 React 基础进行中。已提交基线仍为 931cbec，本轮实现与收尾更新尚未提交。
 原始交接手册记录的是 Day 8 快照；接续时先核对本日志与实际代码。
+
+协作约定更新（2026-11-26）：用户要求整个项目完成后再集中做理解复盘。当前继续按小步骤实现、核对代码并运行验收；不以口述问答作为进入下一步的前置条件。Java 使用 IDEA，终端使用 Git Bash，手动请求使用 .http。
 
 ## Day 9 — 统一异常处理与 API 错误契约
 
@@ -257,7 +259,7 @@ Service 测试通过固定时间和 UUID 的夹具验证同时间的 ID 排序�
 
 ### Git、学习状态与下一步
 
-最近已提交基线为 6e23448（Day 10）。本次 Day 11 实现、HTTP 验收文件和收尾文档尚未提交。部分新增 Java 文件的暂存内容仍为 IDEA 初建的空类，提交前需要重新 git add 选定文件，并检查 git diff --cached；当前测试针对工作区实际代码，不等于早期暂存版本已通过测试。
+Day 11 收尾时的基线为 6e23448（Day 10）。后续已核对，Day 11–12 实现和收尾文档一起提交在 28ccc77 中。此前 IDEA 暂存早期空类的问题已随完整文件提交消除。
 
 用户按小步完成代码和测试，并确认全部真实请求与断言通过。用户曾询问未知参数检查在 list() 中的具体位置，已定位到 Service 调用前。尚未单独口述验收分页公式、排序和分层职责，不因测试通过就声称能独立实现。
 
@@ -364,8 +366,123 @@ README 与 Day12 笔记保留已验证的加载命令：先 unset DB_PASSWORD，
 
 ### Git 与学习状态
 
-当前最近提交仍为 6e23448（Day 10），Day 11 与 Day 12 的实现、验收文件和收尾文档尚未提交。部分新文件暂存内容仍为早期空类或早期版本，提交前重新 git add 并审阅 git diff --cached；完整回归针对实际工作区文件。已执行 V1/V2 不为排版或重命名去修改内容。
+Day 12 收尾时尚未提交的实现、验收文件和文档，后续已一起提交在 28ccc77 中。其提交消息提到接口持久化，但该提交的实际范围仍是连接与迁移基础；真正的 PostgreSQL adapter 和重启验收在 Day 13 的 931cbec 中完成。已执行 V1/V2 不为排版或重命名去修改内容。
 
 用户逐步完成依赖、连接配置、迁移与验收，曾询问密码的安全查看方式，已讲解本地 .env 与环境变量。JDBC/JPA 分工、外键、部分唯一索引、事务回滚、Flyway 校验和、Domain/Entity 区别均已解释，但未独立口述验收，不根据 PASS 直接认定已能独立实现。
 
 下一步按原路线进入 Day 13：从实际 Entity / Repository 起点核对，先做最小映射与测试，再逐步接入数据库 adapter、事务、冲突转换和真实 HTTP 持久化验收。继续使用 IDEA、Git Bash 和 .http，一次推进一个可验证步骤。
+
+## Day 13 — 数据库 Repository 实现
+
+日期：2026-11-26（Asia/Shanghai）。状态：已验收；实现提交 931cbec。
+
+### 完成的任务
+
+- 新增 KnowledgeBaseEntity，映射 core.knowledge_bases；name_key 为数据库生成的只读列，生命周期按字符串存储，删除元数据保持与既有表结构对应。
+- fromNew() 仅接收 ACTIVE 新建对象；toDomain() 保留已有 UUID、状态和时间，不调用生成新身份的 create()。
+- JpaKnowledgeBaseRepository 使用原生 EXISTS 查询，范围为非 DELETED，名称按数据库 lower(... COLLATE "C") 比较；adapter 对输入名称 trim。
+- PostgresKnowledgeBaseRepository 实现领域 Repository 接口；查询事务只读，save() 为写事务。saveAndFlush() 在 try 内触发数据库检查；只将 SQLState 23505 且索引名 uq_live_kb_name 的错误转换为重名业务异常，其他完整性错误继续抛出。
+- InMemoryKnowledgeBaseRepository 移除 @Repository，仅供手动构造的单元测试使用；Spring 实际业务链路使用 PostgreSQL adapter。
+- day13-demo-user.sql 在迁移目录外显式初始化固定演示创建人；不修改 schema，已有相同期望身份可重复执行。password_hash 使用禁止登录的演示标记，不是有效密码哈希；认证接入时需采用正式初始化方式。
+- 新增 day13-persistence.http；每次生成新名称，保存读库快照，按“创建/查询 → SQL 核对 → 重启 Spring → 查询/重名”执行。
+
+### 文件与模块
+
+- infrastructure.persistence：KnowledgeBaseEntity.java、JpaKnowledgeBaseRepository.java、PostgresKnowledgeBaseRepository.java；调整 InMemoryKnowledgeBaseRepository.java。
+- 同包新增 KnowledgeBaseEntityTest.java、JpaKnowledgeBaseRepositoryTest.java、PostgresKnowledgeBaseRepositoryTest.java。
+- backend/spring-boot/day13-demo-user.sql、backend/spring-boot/day13-persistence.http。
+- 收尾文档：README.md、docs/database-design.md、本日志、Study_note/Day13.txt；更正 Day 10/11 历史脚本的运行前提和 Day 11/12 的实际提交状态。
+
+### 测试与真实接口证据
+
+导师于 2026-11-26 通过 Git Bash 执行 ./mvnw test：BUILD SUCCESS，85 tests，0 failures，0 errors，0 skipped。核对十份 Surefire XML 报告，数量一致。后续只更新文档和手动验收文件，没有改动 Java、依赖或迁移；Day 14 入口沿用此基线。
+
+| 测试类 | 数量 | 主要证据 |
+| --- | --- | --- |
+| ApplicationTests | 1 | 应用上下文、真实数据库连接与迁移校验 |
+| GlobalExceptionHandlerTest | 4 | 已有异常映射与通用内部错误 |
+| KnowledgeBaseTest | 9 | 领域规则与 Unicode 码点长度 |
+| CreateKnowledgeBaseRequestTest | 9 | 创建请求边界 |
+| KnowledgeBaseListRequestTest | 9 | 查询 DTO 默认值与边界 |
+| KnowledgeBaseServiceTest | 15 | 创建、状态过滤、稳定排序与内存分页 |
+| KnowledgeBaseControllerTest | 24 | HTTP 绑定与响应；Service 为 mock |
+| KnowledgeBaseEntityTest | 5 | 新建映射、还原字段、拒绝非 ACTIVE 新建 |
+| JpaKnowledgeBaseRepositoryTest | 6 | flush/clear 后读库、生成列、四种生命周期查重范围 |
+| PostgresKnowledgeBaseRepositoryTest | 3 | 领域接口写入/读取、数据库重名转换、外键失败保留 |
+| 合计 | 85 | 全部通过 |
+
+用户执行 day13-persistence.http 的四条请求，确认断言全部通过：
+
+| 请求 | 结果 |
+| --- | --- |
+| 创建 | 201 / SUCCESS；规范化名称、原简介、演示创建人、Location 与 requestId 正确 |
+| 重启前 GET | 200；按新 ID 找到记录，保存七个业务字段和 total |
+| 仅重启 Spring 后 GET | 200；相同 ID、字段和时间均与此前读库结果相同 |
+| 重启后大小写不同且带首尾空格的同名创建 | 409 / KNOWLEDGE_BASE_NAME_CONFLICT，data=null |
+
+真实 HTTP 结果来自用户反馈，未保存响应导出。导师直接查询 PostgreSQL，确认两条本轮演示记录持久存在；V1/V2 迁移成功。完整测试后，随机测试用户与测试知识库均为零，原有演示记录保留。
+
+上述 HTTP 重名是顺序请求；真实数据库约束转换由绕过 Service 查重的 adapter 集成测试补充，不据此声称完成并发压力测试。事务型集成测试最终回滚，持久提交与 Spring 重启证据来自实际 HTTP 和 SQL 验收。
+
+### 问题与边界
+
+- 已有 Instant 可带纳秒，PostgreSQL 时间精度为微秒。集成测试使用可精确往返的微秒夹具；HTTP 比较重启前后两次 GET 的读库快照，避免将 POST 内存时间与数据库时间的精度差当作重启丢失。
+- 数据库 adapter 已生效，但 findAll() 仍读出全部记录，由 Java 过滤、排序与分页；数据库分页待后续评估。
+- fromNew()/save() 目前用于新建；更新、删除及删除元数据维护尚未实现，不复用新建映射覆盖这些状态。
+- Service 的预查重与保存不是一个原子操作；最终唯一性由数据库索引保证。异常转换精确匹配已知唯一索引，外键失败不会伪装为 409。
+- 仍使用固定演示身份；认证、ADMIN 角色校验、员工授权过滤、数据库最小权限账号尚未接入。
+- 未知 JSON 字段、损坏 JSON/类型错误、空值/重复 Query、requestId 来源限制、Cache-Control 等既有契约差异进入 Day 14 验收记录，不把已通过的路径扩大为完整 API 合规。
+- 旧 Day 10/11 脚本使用固定名称，Day 11 还要求空知识库表；Spring 重启现在不会恢复这些条件。当前使用 Day 13/14 的验收文件。
+
+### Git、学习状态与下一步
+
+已核对用户提交 931cbec（Day13 完成数据库持久化接口验收），包含九个实现/测试/验收文件。Day 13 收尾与 Day 14 入口文档在该提交之后补充，等待后续文档提交。
+
+理解复盘按用户要求推迟到整个项目完成后；当前不要求口述，不阻断项目推进，也不声称已独立掌握全部实现。
+
+下一步直接进入 Day 14：核对分层、异常、校验、迁移、持久化、测试和 README，交付演示、测试记录、技术债与模块说明。
+
+## Day 14 — 后端阶段验收（已验收）
+
+日期：2026-11-26（Asia/Shanghai）。入口实现基线：931cbec。
+
+已完成实际生产代码的分层与 Repository 装配核对；已建立 [后端阶段验收记录](day14-backend-acceptance.md)，列明模块职责、85 项测试基线、既有证据和待处理差异。本次未增加业务框架或调整既定路线。
+
+用户已执行 backend/spring-boot/day14-boundaries.http 四条请求，确认空白名称、分页越界、未知查询参数和非空 GET Body 均按 422 / 422 / 422 / 400 返回，错误信封及 requestId 断言全部通过。证据来自用户反馈，没有保存响应导出。
+
+导师此前在运行中的 Spring 上复现截断 JSON、name 为对象时都错误返回 500 / INTERNAL_ERROR。用户已在全局异常处理器中区分 JSON 格式损坏的 400 / INVALID_JSON 与字段结构不匹配的 422 / VALIDATION_ERROR，并添加两项 Controller 解析回归测试。核对实际代码及最新 Surefire 报告：KnowledgeBaseControllerTest 26 项、GlobalExceptionHandlerTest 4 项，定向回归合计 30 项，0 failures / errors / skipped，验证解析失败不调用 Service。
+
+用户已执行 backend/spring-boot/day14-json.http，确认截断 JSON 返回 400 / INVALID_JSON、name 为对象返回 422 / VALIDATION_ERROR；固定文案、data=null、requestId 一致性断言全部通过。真实请求结果来自用户反馈，没有保存响应导出。当时以 85 项旧基线与定向回归记录该小步；本阶段最终完整回归为下文的 100 项。
+
+拒绝未知 JSON 字段：导师此前使用现有名称加 role 字段 POST，观察到 409 / KNOWLEDGE_BASE_NAME_CONFLICT，确认字段被忽略后进入业务查重，未创建新记录。用户已启用 spring.jackson.deserialization.fail-on-unknown-properties，并新增加载真实应用配置的 KnowledgeBaseJsonIntegrationTest。导师核对 YAML、Java 和最新 Surefire 报告：role、createdBy、lifecycle 三项测试通过，0 failures / errors / skipped，验证 422、指定解析异常及不调用 Service。已有 standalone Controller 测试的装配方式保持原样。
+
+用户已执行 backend/spring-boot/day14-unknown-fields.http 三条真实请求，确认 role、createdBy、lifecycle 均返回 422 / VALIDATION_ERROR，固定文案、data=null 与 requestId 一致性断言全部通过。结果来自用户反馈，没有保存响应导出。
+
+严格检查 JSON 字符串字段的类型：导师此前用现有名称和数字 description 向当前服务 POST，观察到 409，确认数字被转成字符串后进入业务查重，未新增记录。用户已新增 JacksonConfiguration，通过 JsonMapperBuilderCustomizer 对 LogicalType.Textual 的 Integer、Float、Boolean 输入显式设置 CoercionAction.Fail；现有应用集成测试新增六项边界。导师核对实际代码和最新 Surefire 报告：该类九项测试全部通过，0 failures / errors / skipped，包含三项未知字段与六项字符串类型边界，验证解析失败不调用 Service。
+
+用户已执行 backend/spring-boot/day14-json-types.http 六条真实请求，确认 name/description 接收整数、小数、布尔值均返回 422 / VALIDATION_ERROR，固定文案、data=null 与 requestId 一致性断言全部通过。结果来自用户反馈，没有保存响应导出；本阶段最终完整回归结果见下文收尾记录。
+
+对齐响应头契约：导师此前以自定义 X-Request-Id 请求知识库列表的 200/422 分支，均发现 Cache-Control 缺失且客户端 ID 被沿用。用户已在 RequestIdFilter 中每次生成 UUID、写入响应头和 request attribute、设置 Cache-Control: no-store，并保留后续处理链；在已有 GlobalExceptionHandlerTest 中对 200/409/422/500 四个分支增加响应测试。导师核对实际代码和最新 Surefire 报告：该类八项测试通过，0 failures / errors / skipped。
+
+用户已执行 backend/spring-boot/day14-response-headers.http 两条真实 GET 请求，确认 200/422 的 no-store、服务端 UUID、响应头/JSON 一致性全部通过；相同客户端 ID 的两次请求得到不同的服务端 ID。结果来自用户反馈，没有保存响应导出。
+
+### 最终收尾（2026-11-26）
+
+- 导师通过 Git Bash 执行 ./mvnw test：BUILD SUCCESS，100 tests，0 failures，0 errors，0 skipped；核对十一份 Surefire XML，数量一致。
+- 相比 Day 13 的 85 项，新增 Controller JSON 解析 2 项、JSON 应用配置集成 9 项、响应头 4 项。最终统计见 [阶段验收记录](day14-backend-acceptance.md)，不将各次定向回归重复计数。
+- 用户本阶段完成五个 .http 文件共 17 条请求及断言：4 条请求边界、2 条 JSON 格式/结构、3 条未知字段、6 条类型错误、2 条响应头。
+- 导师再次 GET 核对当前服务的正常/非法分页响应均设置 no-store、生成服务端 ID，且 JSON/头一致；V1/V2 校验和保持原样，业务库保留两条 Day 13 演示记录，测试用户/知识库残留为零。
+- 创建/查询/重启演示继续沿用已验收的 day13-persistence.http，并已在 README 说明执行顺序；未在本轮虚构新的 POST 或人工重启验收。
+- 已交付模块职责、分层核对、测试与手动验收证据、启动/演示说明和技术债清单。Query 空值/重复值、认证授权、数据库分页、更新删除、隔离测试环境等保留明确边界，不宣称全部 API 或完整数据库设计已实现。
+- 最近已提交基线仍为 931cbec；Day 13 补充文档、Day 14 实现/测试/验收文件待用户后续提交。部分新增 Java 的暂存内容仍是 IDEA 初建版本，最终提交前重新 git add 并审阅 git diff --cached。
+- 按用户要求，理解复盘留到整个项目完成后，直接进入 Day 15。
+
+## Day 15 — 项目结构和 React 基础（进行中）
+
+日期：2026-11-26（Asia/Shanghai）。
+
+已核对现有 frontend：React + TypeScript + Vite，main.tsx 渲染 App.tsx，已有基础首页和 CSS；不是空项目，不重新运行脚手架或安装已存在依赖。页面中的端口文字为静态介绍，Get Started 按钮尚无业务交互；尚无路由、API Client 或知识库业务 UI。
+
+导师运行 npm run build（包含 tsc -b）和 npm run lint，均通过，作为前端接续基线；未改动前端源代码或依赖。此结果不等于浏览器端交互或真实业务联调已完成。
+
+当前第一小步：由用户在 frontend/src 中建立 pages、components、api、types、hooks 目录，并为暂时空目录添加 .gitkeep；随后运行现有 Vite 首页，确认结构准备未影响页面。目录与浏览器验证待用户反馈，后续再逐步实践组件、props、state、事件和 JSX。前端负责展示和交互，权限由后端执行；保持既定 Day 16 路由、Day 17 API Client 等安排。

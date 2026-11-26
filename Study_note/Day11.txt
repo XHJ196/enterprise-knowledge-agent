@@ -108,10 +108,11 @@ cd "/c/Users/ASUS/Desktop/enterprise-knowledge-agent/backend/spring-boot"
 启动服务可在 IDEA 运行 Application，或单独执行：
 ./mvnw spring-boot:run
 
-day11-pagination.http 按 1–12 顺序执行；开始前先重启 Spring Boot 清空内存数据。
-中途不重启、不额外创建记录，否则 total=3 的断言不再成立。
-重新验收应从重启与第 1 条开始，不能只重复创建请求。
-Day 11 尚未提交，部分新文件暂存版本是早期空类，提交前重新 git add 并审阅。
+以下是 Day 11 内存版本的历史验收前提：重启清空内存后，按 1–12 顺序执行。
+中途不额外创建记录，否则 total=3 的断言不再成立。
+Day 13 已切换 PostgreSQL；重启不会清空数据库。该历史脚本要求单独准备的空知识库验收数据库。
+当前持久化和阶段验收使用 day13-persistence.http / day14-boundaries.http；启动配置见 README。
+后续核对：Day 11–12 实现及文档已一起提交为 28ccc77，不再处于早期空类暂存状态。
 Day 10 已提交为 6e23448。
 
 八、遗留事项与下一步

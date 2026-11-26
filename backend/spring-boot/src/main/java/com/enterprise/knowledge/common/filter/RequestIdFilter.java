@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.http.HttpHeaders;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -23,14 +24,11 @@ public class RequestIdFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
 
-        String requestId = request.getHeader(HEADER_NAME);
+        String requestId = UUID.randomUUID().toString();
 
-        if (requestId == null || requestId.isBlank()) {
-            requestId = UUID.randomUUID().toString();
-        }
-
-        response.setHeader(HEADER_NAME, requestId);
         request.setAttribute(HEADER_NAME, requestId);
+        response.setHeader(HEADER_NAME, requestId);
+        response.setHeader(HttpHeaders.CACHE_CONTROL, "no-store");
 
         filterChain.doFilter(request, response);
     }

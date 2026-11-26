@@ -1,0 +1,48 @@
+# Day 14：响应头与 requestId 来源的真实 HTTP 验收。
+# 前置条件：保存 RequestIdFilter 并启动最新 Spring Boot。
+# IDEA HTTP Client 中依次运行 1、2，也可对本文件使用 Run All。
+# 两条请求携带同一个客户端 UUID；服务端应分别生成不同的新 UUID。
+# 不依赖空数据库；请求 1 保存响应 ID，供请求 2 比较。
+
+@baseUrl = http://localhost:8080
+
+### 1. 正常列表：200，服务端生成 requestId 并禁止缓存
+GET {{baseUrl}}/api/v1/knowledge-bases?page=1&pageSize=1
+Accept: application/json
+X-Request-Id: 10000000-0000-4000-8000-000000000099
+
+> {%
+    client.test("200 响应具有 no-store 和服务端生成的 requestId", function () {
+        client.assert(response.status === 200, "HTTP 应为 200");
+        client.assert(response.body.code === "SUCCESS", "code 应为 SUCCESS");
+        client.assert(response.headers.valueOf("Cache-Control") === "no-store", "应禁止缓存响应");
+        const requestId = response.body.requestId;
+        const uuidV4 = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
+        client.assert(typeof requestId === "string" && uuidV4.test(requestId), "requestId 应为服务端生成的标准 UUID v4");
+        client.assert(requestId !== "10000000-0000-4000-8000-000000000099", "不能沿用客户端传入的 ID");
+        client.assert(requestId === response.headers.valueOf("X-Request-Id"), "JSON 与响应头的 requestId 应一致");
+        client.global.set("day14HeaderSuccessRequestId", requestId);
+    });
+%}
+
+### 2. 分页越界：422，错误响应同样禁止缓存，并生成另一 requestId
+GET {{baseUrl}}/api/v1/knowledge-bases?pageSize=101
+Accept: application/json
+X-Request-Id: 10000000-0000-4000-8000-000000000099
+
+> {%
+    client.test("422 响应沿用统一响应头规则，每个请求拥有不同 ID", function () {
+        client.assert(response.status === 422, "HTTP 应为 422");
+        client.assert(response.body.code === "VALIDATION_ERROR", "code 应为 VALIDATION_ERROR");
+        client.assert(response.body.data === null, "错误响应 data 应为 null");
+        client.assert(response.headers.valueOf("Cache-Control") === "no-store", "错误响应也应禁止缓存");
+        const requestId = response.body.requestId;
+        const uuidV4 = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
+        client.assert(typeof requestId === "string" && uuidV4.test(requestId), "requestId 应为服务端生成的标准 UUID v4");
+        client.assert(requestId !== "10000000-0000-4000-8000-000000000099", "不能沿用客户端传入的 ID");
+        client.assert(requestId === response.headers.valueOf("X-Request-Id"), "JSON 与响应头的 requestId 应一致");
+        const before = client.global.get("day14HeaderSuccessRequestId");
+        client.assert(typeof before === "string" && before.length > 0, "请先成功执行第 1 条请求");
+        client.assert(requestId !== before, "相同客户端头的两次请求应获得不同的服务端 ID");
+    });
+%}

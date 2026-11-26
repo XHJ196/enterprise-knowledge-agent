@@ -1,8 +1,9 @@
 # Day 11：知识库 GET 列表与分页手动验收。
-# 在 IDEA 中先停止并重新启动最新 Spring Boot，清空当前内存仓库。
+# 历史脚本要求单独准备的空知识库验收数据库，并初始化 Controller 对应的演示创建人。
+# Day 13 起使用 PostgreSQL，重启 Spring 不会清空数据库；当前验收使用 day13-persistence.http / day14-boundaries.http。
 # 从 1 到 12 依次运行；所有请求须在同一次服务运行期间完成。
 # 不要在中途执行其他创建请求，否则 total=3 的断言会失败。
-# 重新验收时重启服务并从第 1 条开始，不要仅重复执行创建请求。
+# 重新验收需满足空知识库表和固定名称尚不存在的前提，再从第 1 条开始。
 # 当前为管理员演示范围，尚未实现认证与员工权限过滤。
 # 响应脚本会显示测试结果；不要只看 HTTP 状态码。
 
@@ -17,7 +18,7 @@ Accept: application/json
         client.assert(response.status === 200, "应返回 200");
         client.assert(response.body.code === "SUCCESS", "成功码应为 SUCCESS");
         const data = response.body.data;
-        client.assert(Array.isArray(data.items) && data.items.length === 0, "应为空列表；请先重启服务清空内存数据");
+        client.assert(Array.isArray(data.items) && data.items.length === 0, "此历史脚本要求知识库表初始为空；重启 Spring 不会清空数据库");
         client.assert(data.page === 1 && data.pageSize === 20, "默认分页应为 1/20");
         client.assert(data.total === 0 && data.hasNext === false, "空列表应无下一页");
         const requestId = response.body.requestId;
@@ -42,7 +43,7 @@ Accept: application/json
 
 > {%
     client.test("创建第一条知识库并保存 ID", function () {
-        client.assert(response.status === 201, "应返回 201；重复执行前请重启服务");
+        client.assert(response.status === 201, "应返回 201；此历史脚本要求固定名称尚未存在");
         client.assert(response.body.code === "SUCCESS", "成功码应为 SUCCESS");
         client.assert(response.body.data.name === "Day11 HR Policy", "名称应正确");
         client.assert(typeof response.body.data.id === "string" && response.body.data.id.length > 0, "应返回 ID");
@@ -66,7 +67,7 @@ Accept: application/json
 
 > {%
     client.test("创建第二条知识库并保存 ID", function () {
-        client.assert(response.status === 201, "应返回 201；重复执行前请重启服务");
+        client.assert(response.status === 201, "应返回 201；此历史脚本要求固定名称尚未存在");
         client.assert(response.body.code === "SUCCESS", "成功码应为 SUCCESS");
         client.assert(response.body.data.name === "Day11 Engineering Guide", "名称应正确");
         client.assert(typeof response.body.data.id === "string" && response.body.data.id.length > 0, "应返回 ID");
@@ -90,7 +91,7 @@ Accept: application/json
 
 > {%
     client.test("创建第三条知识库并保存 ID", function () {
-        client.assert(response.status === 201, "应返回 201；重复执行前请重启服务");
+        client.assert(response.status === 201, "应返回 201；此历史脚本要求固定名称尚未存在");
         client.assert(response.body.code === "SUCCESS", "成功码应为 SUCCESS");
         client.assert(response.body.data.name === "Day11 Onboarding", "名称应正确");
         client.assert(typeof response.body.data.id === "string" && response.body.data.id.length > 0, "应返回 ID");

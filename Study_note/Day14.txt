@@ -1,0 +1,85 @@
+Day 14：后端阶段验收
+项目：Enterprise Knowledge & Agent Platform
+日期：2026-11-26（Asia/Shanghai）
+状态：已验收；下一步 Day 15：项目结构和 React 基础。
+
+一、阶段交付
+
+docs/day14-backend-acceptance.md：实际模块职责、分层核对、测试证据和技术债。
+README：数据库和 Spring 启动、环境变量、演示创建人、完整回归及 HTTP 演示顺序。
+知识库创建/查询/重启持久化演示沿用 day13-persistence.http；不重复设计接口或更换技术栈。
+
+二、本阶段实现
+
+GlobalExceptionHandler 增加 HttpMessageNotReadableException 处理。
+JSON 损坏或缺失返回 400 / INVALID_JSON；覆盖的字段映射错误返回 422 / VALIDATION_ERROR。
+错误文案固定，不回传解析器、SQL 或堆栈详情。
+
+application.yaml 启用 fail-on-unknown-properties。
+创建请求只接收 name、description，role/createdBy/lifecycle 等未知字段在进入 Service 前拒绝。
+JacksonConfiguration 使用 JsonMapperBuilderCustomizer 配置 Textual 类型转换。
+数字（整数/小数）和布尔值不能自动转换为 String，请求返回 422。
+配置通过 Spring Boot 的自动配置扩展，不手动替换整套 ObjectMapper。
+
+RequestIdFilter 每次生成新 UUID，写入 request attribute 与 X-Request-Id。
+成功和错误响应都设置 Cache-Control: no-store，JSON requestId 与响应头相同。
+客户端传入合法 UUID 也不会作为本次服务端 ID；保留 filterChain.doFilter。
+未来内部调用、异步流和错误分派的追踪仍需在对应阶段验证。
+
+三、最终测试
+
+导师通过 Git Bash 运行 ./mvnw test：
+100 tests，0 failures，0 errors，0 skipped，BUILD SUCCESS。
+十一份 Surefire 报告核对一致。
+
+ApplicationTests 1；GlobalExceptionHandlerTest 8；KnowledgeBaseServiceTest 15；
+KnowledgeBaseTest 9；JpaKnowledgeBaseRepositoryTest 6；KnowledgeBaseEntityTest 5；
+PostgresKnowledgeBaseRepositoryTest 3；CreateKnowledgeBaseRequestTest 9；
+KnowledgeBaseControllerTest 26；KnowledgeBaseJsonIntegrationTest 9；KnowledgeBaseListRequestTest 9。
+
+相比 Day 13 的 85 项增加 15 项：Controller 解析 2、JSON 配置集成 9、响应头 4。
+不将多次定向回归的数量重复累计。
+
+Controller standalone 测试验证 HTTP 绑定/异常与 mock Service 边界。
+JSON 应用集成测试加载真实 application.yaml 和 Jackson 配置，Service 仍使用 mock。
+数据库集成测试访问真实 PostgreSQL 并回滚，不等于自动化 HTTP 到数据库整链路测试。
+真实存储提交和重启证据见 Day 13；本阶段没有新增虚构的人工重启记录。
+
+四、真实接口验收
+
+用户在 IDEA HTTP Client 完成五个 Day 14 文件，共 17 条请求和断言：
+day14-boundaries.http：4 条，422/422/422/400。
+day14-json.http：2 条，400/422。
+day14-unknown-fields.http：3 条，均为 422。
+day14-json-types.http：6 条，均为 422。
+day14-response-headers.http：2 条，200/422，含 no-store 与不同的服务端 UUID。
+结果来自用户执行反馈，没有保存响应导出。
+导师另外 GET 核对当前 200/422 的响应头，均符合新规则。
+
+数据库查询：V1/V2 成功，checksum 保持 460812723 / -949879651。
+随机测试用户和知识库残留为零；两条 Day 13 演示知识库继续保留。
+
+五、保留范围与技术债
+
+Query 空字符串/重复字段策略尚未补齐，不宣称所有请求组合都严格校验。
+认证、管理员角色校验、员工知识库授权还未实现；仍使用固定演示身份。
+数据库分页、更新删除生命周期、正式密码初始化、最小权限账号、测试隔离等继续保留。
+当前 JPA findAll 后在 Java 过滤、排序和分页；不是数据库分页。
+POST 内存时间可能有纳秒，数据库按微秒保存；重启验收比较两次 GET。
+完整清单见阶段验收记录，不为 Day 14 无限扩展范围或提前加入框架。
+
+六、Git 与学习约定
+
+最近已提交基线为 931cbec；Day 13 补充文档与本阶段修改尚未提交。
+部分新 Java 文件在 IDEA 初建时已暂存，工作区有后续内容，提交前重新 git add 并检查 git diff --cached。
+Java 使用 IDEA，终端用 Git Bash，接口验收用 .http。
+按用户要求，整个项目完成后再集中做理解复盘，不以口述问答阻断当前进度。
+
+七、Day 15 入口
+
+现有 frontend 已是 React + TypeScript + Vite 项目，main.tsx 渲染 App.tsx。
+已有静态首页；端口说明不是实时健康检查，Get Started 尚无业务交互。
+导师运行 npm run build（含 TypeScript 编译检查）和 npm run lint，均通过。
+不重新初始化、重复安装依赖或立即接入路由/API。
+第一小步建立 pages/components/api/types/hooks 目录和空目录占位，再验证现有页面运行。
+之后按小步练习组件、props、state、事件和 JSX；前端仅负责展示与交互，后端执行最终授权。

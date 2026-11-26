@@ -1,0 +1,47 @@
+# Day 14：JSON 读取异常的真实 HTTP 验收。
+# 前置条件：保存代码并重启最新 Spring Boot，连接当前 PostgreSQL。
+# 在 IDEA HTTP Client 中依次运行 1、2，也可对本文件使用 Run All。
+# 第 1 条故意使用截断 JSON，请保持请求体为 {"name":，不要补全。
+# 请求不依赖空表或此前保存的全局变量，可重复运行。
+
+@baseUrl = http://localhost:8080
+
+### 1. JSON 格式损坏：400 / INVALID_JSON
+POST {{baseUrl}}/api/v1/knowledge-bases
+Content-Type: application/json
+Accept: application/json
+
+{"name":
+
+> {%
+    client.test("损坏 JSON 返回统一 400 响应", function () {
+        client.assert(response.status === 400, "HTTP 应为 400");
+        client.assert(response.body.code === "INVALID_JSON", "code 应为 INVALID_JSON");
+        client.assert(response.body.message === "请求体缺失或 JSON 格式不正确", "应返回固定格式错误文案");
+        client.assert(response.body.data === null, "错误响应 data 应为 null");
+        const requestId = response.body.requestId;
+        client.assert(typeof requestId === "string" && requestId.trim().length > 0, "requestId 应非空");
+        client.assert(requestId === response.headers.valueOf("X-Request-Id"), "JSON 与响应头的 requestId 应一致");
+    });
+%}
+
+### 2. name 是对象，无法映射到 String 字段：422 / VALIDATION_ERROR
+POST {{baseUrl}}/api/v1/knowledge-bases
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": {}
+}
+
+> {%
+    client.test("字段结构错误返回统一 422 响应", function () {
+        client.assert(response.status === 422, "HTTP 应为 422");
+        client.assert(response.body.code === "VALIDATION_ERROR", "code 应为 VALIDATION_ERROR");
+        client.assert(response.body.message === "请求参数校验失败", "应返回固定字段错误文案");
+        client.assert(response.body.data === null, "错误响应 data 应为 null");
+        const requestId = response.body.requestId;
+        client.assert(typeof requestId === "string" && requestId.trim().length > 0, "requestId 应非空");
+        client.assert(requestId === response.headers.valueOf("X-Request-Id"), "JSON 与响应头的 requestId 应一致");
+    });
+%}

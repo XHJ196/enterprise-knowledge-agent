@@ -1,7 +1,8 @@
 # Day 10：Bean Validation 与 Unicode 码点长度验收。
 # 使用方式：启动最新 Spring Boot，在 IDEA 中从 1 到 4 依次点击绿色运行箭头。
 # 四条请求应在同一次服务运行期间执行，预期依次为 422、422、201、409。
-# 当前为内存仓库。重新验收时先重启 Spring Boot，清空此前的同名测试数据。
+# 历史脚本使用固定的 50 码点名称；第 3 条要求该名称尚未存在。
+# Day 13 起使用 PostgreSQL，重启 Spring 不会清空记录；当前验收使用 day13-persistence.http / day14-boundaries.http。
 # 请求前脚本自动生成输入；响应脚本在 HTTP Client 的测试结果中显示断言结果。
 
 @baseUrl = http://localhost:8080
@@ -78,7 +79,7 @@ Accept: application/json
 
 > {%
     client.test("合法上限返回 201，保存 trim 后的名称", function () {
-        client.assert(response.status === 201, "HTTP 状态应为 201；若为 409，请重启服务后从第 1 条重新执行");
+        client.assert(response.status === 201, "HTTP 状态应为 201；此历史脚本要求固定名称尚未存在，重启 Spring 不会清空数据库");
         client.assert(response.body.code === "SUCCESS", "成功码应为 SUCCESS");
         client.assert(response.body.data.name === "😀".repeat(50), "返回名称应去除前后空格，保留 50 个码点");
         client.assert(response.body.data.description === "😀".repeat(500), "返回简介应保留 500 个码点");

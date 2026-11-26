@@ -1,0 +1,82 @@
+# Day 14 第一步：在 PostgreSQL 版本上验收真实 HTTP 错误响应与请求边界。
+# 前置条件：按 README 启动连接 127.0.0.1:5333 的最新 Spring Boot。
+# IDEA HTTP Client 中依次执行 1–4；也可对本文件使用 Run All。
+# 不要求知识库表为空，不使用此前请求保存的全局变量；可重复执行。
+# 四条请求均检查状态码、业务错误码、统一错误信封及 requestId。
+
+@baseUrl = http://localhost:8080
+
+### 1. POST 名称只有空格：422 / VALIDATION_ERROR
+POST {{baseUrl}}/api/v1/knowledge-bases
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "   ",
+  "description": "Day 14 请求边界验收"
+}
+
+> {%
+    client.test("空白名称返回统一 422 响应", function () {
+        client.assert(response.status === 422, "HTTP 应为 422");
+        client.assert(response.body.code === "VALIDATION_ERROR", "code 应为 VALIDATION_ERROR");
+        client.assert(typeof response.body.message === "string" && response.body.message.trim().length > 0, "message 应非空");
+        client.assert(response.body.data === null, "错误响应 data 应为 null");
+        const requestId = response.body.requestId;
+        client.assert(typeof requestId === "string" && requestId.trim().length > 0, "requestId 应非空");
+        client.assert(requestId === response.headers.valueOf("X-Request-Id"), "JSON 与响应头的 requestId 应一致");
+    });
+%}
+
+### 2. GET pageSize 超过上限：422 / VALIDATION_ERROR
+GET {{baseUrl}}/api/v1/knowledge-bases?page=1&pageSize=101
+Accept: application/json
+
+> {%
+    client.test("分页越界返回统一 422 响应", function () {
+        client.assert(response.status === 422, "HTTP 应为 422");
+        client.assert(response.body.code === "VALIDATION_ERROR", "code 应为 VALIDATION_ERROR");
+        client.assert(typeof response.body.message === "string" && response.body.message.trim().length > 0, "message 应非空");
+        client.assert(response.body.data === null, "错误响应 data 应为 null");
+        const requestId = response.body.requestId;
+        client.assert(typeof requestId === "string" && requestId.trim().length > 0, "requestId 应非空");
+        client.assert(requestId === response.headers.valueOf("X-Request-Id"), "JSON 与响应头的 requestId 应一致");
+    });
+%}
+
+### 3. GET 包含未知查询参数 size：422 / VALIDATION_ERROR
+GET {{baseUrl}}/api/v1/knowledge-bases?page=1&pageSize=20&size=2
+Accept: application/json
+
+> {%
+    client.test("未知查询参数返回统一 422 响应", function () {
+        client.assert(response.status === 422, "HTTP 应为 422");
+        client.assert(response.body.code === "VALIDATION_ERROR", "code 应为 VALIDATION_ERROR");
+        client.assert(typeof response.body.message === "string" && response.body.message.trim().length > 0, "message 应非空");
+        client.assert(response.body.data === null, "错误响应 data 应为 null");
+        const requestId = response.body.requestId;
+        client.assert(typeof requestId === "string" && requestId.trim().length > 0, "requestId 应非空");
+        client.assert(requestId === response.headers.valueOf("X-Request-Id"), "JSON 与响应头的 requestId 应一致");
+    });
+%}
+
+### 4. GET 携带非空 JSON 请求体：400 / INVALID_REQUEST_BODY
+GET {{baseUrl}}/api/v1/knowledge-bases?page=1&pageSize=20
+Content-Type: application/json
+Accept: application/json
+
+{
+  "probe": "day14"
+}
+
+> {%
+    client.test("非空 GET Body 返回统一 400 响应", function () {
+        client.assert(response.status === 400, "HTTP 应为 400");
+        client.assert(response.body.code === "INVALID_REQUEST_BODY", "code 应为 INVALID_REQUEST_BODY");
+        client.assert(typeof response.body.message === "string" && response.body.message.trim().length > 0, "message 应非空");
+        client.assert(response.body.data === null, "错误响应 data 应为 null");
+        const requestId = response.body.requestId;
+        client.assert(typeof requestId === "string" && requestId.trim().length > 0, "requestId 应非空");
+        client.assert(requestId === response.headers.valueOf("X-Request-Id"), "JSON 与响应头的 requestId 应一致");
+    });
+%}

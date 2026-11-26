@@ -1,0 +1,136 @@
+# Day 14：JSON 字符串字段的真实 HTTP 类型验收。
+# 前置条件：保存 JacksonConfiguration 并启动最新 Spring Boot。
+# 在 IDEA HTTP Client 中依次运行 1–6，也可对本文件使用 Run All。
+# 每条请求都故意将数字或布尔值用于 String 字段，预期 422 / VALIDATION_ERROR。
+# 字段值保持原样；123、1.5、true、false 均为 JSON 原生值。
+
+@baseUrl = http://localhost:8080
+
+### 1. name 为整数：422 / VALIDATION_ERROR
+POST {{baseUrl}}/api/v1/knowledge-bases
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": 123
+}
+
+> {%
+    client.test("name 为整数返回统一 422 响应", function () {
+        client.assert(response.status === 422, "HTTP 应为 422");
+        client.assert(response.body.code === "VALIDATION_ERROR", "code 应为 VALIDATION_ERROR");
+        client.assert(response.body.message === "请求参数校验失败", "应返回固定校验错误文案");
+        client.assert(response.body.data === null, "错误响应 data 应为 null");
+        const requestId = response.body.requestId;
+        client.assert(typeof requestId === "string" && requestId.trim().length > 0, "requestId 应非空");
+        client.assert(requestId === response.headers.valueOf("X-Request-Id"), "JSON 与响应头的 requestId 应一致");
+    });
+%}
+
+### 2. name 为小数：422 / VALIDATION_ERROR
+POST {{baseUrl}}/api/v1/knowledge-bases
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": 1.5
+}
+
+> {%
+    client.test("name 为小数返回统一 422 响应", function () {
+        client.assert(response.status === 422, "HTTP 应为 422");
+        client.assert(response.body.code === "VALIDATION_ERROR", "code 应为 VALIDATION_ERROR");
+        client.assert(response.body.message === "请求参数校验失败", "应返回固定校验错误文案");
+        client.assert(response.body.data === null, "错误响应 data 应为 null");
+        const requestId = response.body.requestId;
+        client.assert(typeof requestId === "string" && requestId.trim().length > 0, "requestId 应非空");
+        client.assert(requestId === response.headers.valueOf("X-Request-Id"), "JSON 与响应头的 requestId 应一致");
+    });
+%}
+
+### 3. name 为布尔值：422 / VALIDATION_ERROR
+POST {{baseUrl}}/api/v1/knowledge-bases
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": true
+}
+
+> {%
+    client.test("name 为布尔值返回统一 422 响应", function () {
+        client.assert(response.status === 422, "HTTP 应为 422");
+        client.assert(response.body.code === "VALIDATION_ERROR", "code 应为 VALIDATION_ERROR");
+        client.assert(response.body.message === "请求参数校验失败", "应返回固定校验错误文案");
+        client.assert(response.body.data === null, "错误响应 data 应为 null");
+        const requestId = response.body.requestId;
+        client.assert(typeof requestId === "string" && requestId.trim().length > 0, "requestId 应非空");
+        client.assert(requestId === response.headers.valueOf("X-Request-Id"), "JSON 与响应头的 requestId 应一致");
+    });
+%}
+
+### 4. description 为整数：422 / VALIDATION_ERROR
+POST {{baseUrl}}/api/v1/knowledge-bases
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "Day14 Strict JSON",
+  "description": 123
+}
+
+> {%
+    client.test("description 为整数返回统一 422 响应", function () {
+        client.assert(response.status === 422, "HTTP 应为 422");
+        client.assert(response.body.code === "VALIDATION_ERROR", "code 应为 VALIDATION_ERROR");
+        client.assert(response.body.message === "请求参数校验失败", "应返回固定校验错误文案");
+        client.assert(response.body.data === null, "错误响应 data 应为 null");
+        const requestId = response.body.requestId;
+        client.assert(typeof requestId === "string" && requestId.trim().length > 0, "requestId 应非空");
+        client.assert(requestId === response.headers.valueOf("X-Request-Id"), "JSON 与响应头的 requestId 应一致");
+    });
+%}
+
+### 5. description 为小数：422 / VALIDATION_ERROR
+POST {{baseUrl}}/api/v1/knowledge-bases
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "Day14 Strict JSON",
+  "description": 1.5
+}
+
+> {%
+    client.test("description 为小数返回统一 422 响应", function () {
+        client.assert(response.status === 422, "HTTP 应为 422");
+        client.assert(response.body.code === "VALIDATION_ERROR", "code 应为 VALIDATION_ERROR");
+        client.assert(response.body.message === "请求参数校验失败", "应返回固定校验错误文案");
+        client.assert(response.body.data === null, "错误响应 data 应为 null");
+        const requestId = response.body.requestId;
+        client.assert(typeof requestId === "string" && requestId.trim().length > 0, "requestId 应非空");
+        client.assert(requestId === response.headers.valueOf("X-Request-Id"), "JSON 与响应头的 requestId 应一致");
+    });
+%}
+
+### 6. description 为布尔值：422 / VALIDATION_ERROR
+POST {{baseUrl}}/api/v1/knowledge-bases
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "Day14 Strict JSON",
+  "description": false
+}
+
+> {%
+    client.test("description 为布尔值返回统一 422 响应", function () {
+        client.assert(response.status === 422, "HTTP 应为 422");
+        client.assert(response.body.code === "VALIDATION_ERROR", "code 应为 VALIDATION_ERROR");
+        client.assert(response.body.message === "请求参数校验失败", "应返回固定校验错误文案");
+        client.assert(response.body.data === null, "错误响应 data 应为 null");
+        const requestId = response.body.requestId;
+        client.assert(typeof requestId === "string" && requestId.trim().length > 0, "requestId 应非空");
+        client.assert(requestId === response.headers.valueOf("X-Request-Id"), "JSON 与响应头的 requestId 应一致");
+    });
+%}

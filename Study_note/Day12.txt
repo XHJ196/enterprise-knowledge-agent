@@ -167,8 +167,8 @@ KnowledgeBaseServiceTest 15、KnowledgeBaseControllerTest 24。
 总计 71，0 失败，0 错误，0 跳过；SQL 的两个 PASS 单独记录。
 确认 V1/V2 成功、历史未重复、表和约束存在，测试数据回滚后总行数为 0/0。
 
-Day 11 和 Day 12 当前尚未提交，最近提交为 Day 10 的 6e23448。
-部分文件暂存了早期版本，提交前重新 git add 并审阅 git diff --cached。
+后续核对：Day 11 和 Day 12 已一起提交为 28ccc77，早期暂存版本已由完整实现替换。
+该提交消息提到接口持久化，实际数据库 adapter 与重启验收在 Day 13 的 931cbec 才完成。
 已执行迁移文件保留现有内容。
 
 Day 13 实现数据库 adapter、映射、事务和唯一约束冲突转换，再做真实 HTTP 持久化验收。

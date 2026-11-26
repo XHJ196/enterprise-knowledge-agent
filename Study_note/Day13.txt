@@ -1,0 +1,61 @@
+Day 13：数据库 Repository 实现
+项目：Enterprise Knowledge & Agent Platform
+日期：2026-11-26（Asia/Shanghai）
+状态：功能验收通过；实现提交 931cbec；直接进入 Day 14。
+
+一、交付物
+
+KnowledgeBaseEntity 映射 core.knowledge_bases，领域 record 保持独立。
+fromNew() 用于 ACTIVE 新建对象，toDomain() 保留原 ID、状态和时间。
+name_key 由 PostgreSQL 生成，JPA 不主动写入。
+JpaKnowledgeBaseRepository 用原生 EXISTS 查询非 DELETED 范围，大小写规则与生成列一致。
+PostgresKnowledgeBaseRepository 实现领域 Repository，成为实际 Spring 数据访问实现。
+内存 Repository 保留给手动构造的单元测试，移除 @Repository。
+
+二、事务和异常的当前实现记录
+
+adapter 类的查询事务 readOnly=true；save() 单独声明写事务。
+saveAndFlush() 在 try 内将变更发送到数据库，flush 不等于提交。
+只将 SQLState=23505 且约束名=uq_live_kb_name 转为 KnowledgeBaseNameConflictException。
+外键等其他完整性错误仍抛出 DataIntegrityViolationException，不误报重名。
+Service 预查重改善普通失败路径；数据库索引负责最终唯一性。
+
+三、演示身份和启动前提
+
+数据库与端口沿用 Day 12：enterprise_knowledge，MicroJason，127.0.0.1:5333。
+Spring 使用 DB_PASSWORD 环境变量，加载命令见 README / Day12 笔记。
+day13-demo-user.sql 手动初始化固定创建人 10000000-0000-4000-8000-000000000002。
+脚本在迁移目录外，只初始化数据，不改变 Flyway 结构管理。
+day13_demo_admin 的密码标记禁止登录，不是实际密码哈希；认证尚未实现。
+
+四、测试记录
+
+通过 Git Bash 执行 ./mvnw test：BUILD SUCCESS。
+85 tests，0 failures，0 errors，0 skipped；导师核对十份 Surefire 报告。
+新增 Entity 5 项、JPA 集成 6 项、adapter 集成 3 项；其余原有 71 项全部保留并通过。
+数据库集成测试在事务中运行，测试后回滚；导师查询未发现临时测试数据残留。
+
+用户在 IDEA 执行 day13-persistence.http：
+1. POST 创建返回 201，保存 ID。
+2. GET 返回 200，保存读库快照。
+3. 按 SQL 查到相同 ID；仅重启 Spring，再 GET，原 ID、字段和时间保持一致。
+4. 大小写不同且首尾带空格的同名 POST 返回 409 / KNOWLEDGE_BASE_NAME_CONFLICT。
+四条请求断言全通过。真实 HTTP 结果来自用户反馈，没有保存响应导出。
+直接 SQL 查到两条本轮演示知识库；保留在数据库中。
+
+五、实际范围和后续事项
+
+数据现在存于 PostgreSQL；Spring 重启不再清空知识库。
+查询仍是读出全部记录后在 Java 过滤、排序和分页，没有数据库分页。
+新建映射还不能用于生命周期更新或删除，避免覆盖删除元数据。
+Java Instant 可带纳秒，PostgreSQL 精度为微秒；重启验收比较两次 GET 的读库值。
+顺序 HTTP 重名与 adapter 约束转换测试不等于完成并发压力测试。
+固定演示身份、认证授权、JSON 协议差异、requestId 与响应缓存规则等见 Day 14 验收记录。
+历史 Day 10/11 脚本有固定名称/空表前提，重启不能恢复这些前提；当前使用 Day 13/14 文件。
+
+六、学习约定和下一步
+
+按用户 2026-11-26 的要求，整个项目完成后再集中复盘理解，当前不以口述问答阻断推进。
+不把测试通过直接等同于已经独立掌握全部实现。
+Java 继续由用户在 IDEA 小步实现；命令使用 Git Bash；手动 API 验收使用 .http。
+Day 14 按既定路线做后端阶段验收，整理模块职责、测试证据、演示流程、技术债和 README。

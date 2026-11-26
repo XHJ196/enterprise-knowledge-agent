@@ -10,6 +10,15 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.enterprise.knowledge.common.filter.RequestIdFilter;
+import com.enterprise.knowledge.common.api.ApiResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
@@ -90,10 +99,48 @@ class GlobalExceptionHandlerTest {
                     "知识库名称必须包含1到50个字符"
             );
         }
+        @GetMapping("/test/success")
+        public ApiResponse<String> success(HttpServletRequest request) {
+            return ApiResponse.success(
+                    "ok",
+                    (String) request.getAttribute(RequestIdFilter.HEADER_NAME)
+            );
+        }
 
         @GetMapping("/test/internal-argument")
         public void internalArgument() {
             throw new IllegalArgumentException("Internal configuration error");
         }
+    }
+    @ParameterizedTest
+    @CsvSource({
+            "/test/success,200",
+            "/test/conflict,409",
+            "/test/validation,422",
+            "/test/error,500"
+    })
+    void shouldGenerateHeadersForSuccessAndErrorResponses(
+            String path,
+            int expectedStatus
+    ) throws Exception {
+        String clientRequestId =
+                "10000000-0000-4000-8000-000000000099";
+
+        var result = mockMvc.perform(get(path)
+                        .header(RequestIdFilter.HEADER_NAME, clientRequestId))
+                .andExpect(status().is(expectedStatus))
+                .andExpect(header().string("Cache-Control", "no-store"))
+                .andExpect(jsonPath("$.requestId").value(not(clientRequestId)))
+                .andReturn();
+
+        String serverRequestId = result.getResponse()
+                .getHeader(RequestIdFilter.HEADER_NAME);
+
+        assertEquals(
+                UUID.fromString(serverRequestId).toString(),
+                serverRequestId
+        );
+
+        jsonPath("$.requestId").value(serverRequestId).match(result);
     }
 }

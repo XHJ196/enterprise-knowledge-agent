@@ -270,4 +270,26 @@ class KnowledgeBaseControllerTest {
 
         verifyNoInteractions(service);
     }
+    @ParameterizedTest
+    @CsvSource(value = {
+            "400|INVALID_JSON|{\"name\":",
+            "422|VALIDATION_ERROR|{\"name\":{}}"
+    }, delimiter = '|')
+    void shouldRejectUnreadableRequestBodyBeforeCallingService(
+            int expectedStatus,
+            String expectedCode,
+            String json
+    ) throws Exception {
+        mockMvc.perform(post("/api/v1/knowledge-bases")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().is(expectedStatus))
+                .andExpect(jsonPath("$.code").value(expectedCode))
+                .andExpect(jsonPath("$.message").isNotEmpty())
+                .andExpect(jsonPath("$.data").value(nullValue()))
+                .andExpect(jsonPath("$.requestId").isNotEmpty())
+                .andExpect(header().exists("X-Request-Id"));
+
+        verifyNoInteractions(service);
+    }
 }

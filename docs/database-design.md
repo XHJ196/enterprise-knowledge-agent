@@ -3,7 +3,7 @@
 **版本：** v1.0（Day 4 设计稿）  
 **日期：** 2026-11-18  
 **依据：** [PRD](PRD.md)、[ARD](ARD.md)。适用个人作品集、本地运行、Spring Boot + FastAPI + PostgreSQL/pgvector。  
-**状态：** Day 4 设计稿；Day 12 已通过 Flyway V1/V2 在 PostgreSQL 16.16 中创建 core.users、core.knowledge_bases 及对应约束，重名与创建人外键已有真实数据库验收。其余业务表、View、触发器、数据库角色权限和框架 Session 表仍待逐步迁移；下列 SQL 是完整设计的重点契约片段，不能作为全部已实施的证明。已执行结构以 backend/spring-boot/src/main/resources/db/migration 和 [学习日志](daily-log.md) 为准。
+**状态：** Day 4 设计稿；Day 12 已通过 Flyway V1/V2 在 PostgreSQL 16.16 中创建 core.users、core.knowledge_bases 及对应约束，重名与创建人外键已有真实数据库验收。Day 13 已接入知识库 JPA Entity 和 PostgreSQL adapter，验证 API 写库、Spring 重启后读取、指定唯一索引冲突转换和事务回滚；过滤、排序、分页仍在 Java 中执行。其余业务表、View、触发器、数据库角色权限和框架 Session 表仍待逐步迁移；下列 SQL 是完整设计的重点契约片段，不能作为全部已实施的证明。已执行结构以 backend/spring-boot/src/main/resources/db/migration 和 [学习日志](daily-log.md) 为准。
 
 - [HTML ER 图](diagrams/er-diagram.html)：完整字段、键及主要关系，可缩放查看。
 - [Mermaid ER 源文件](diagrams/er-diagram.mmd)：保留可编辑关系图。

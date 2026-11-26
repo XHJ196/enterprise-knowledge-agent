@@ -1,5 +1,6 @@
 package com.enterprise.knowledge.common.exception;
-
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import tools.jackson.databind.exc.MismatchedInputException;
 import com.enterprise.knowledge.knowledgebase.domain.KnowledgeBaseValidationException;
 import com.enterprise.knowledge.common.api.ApiResponse;
 import com.enterprise.knowledge.knowledgebase.application.KnowledgeBaseNameConflictException;
@@ -70,6 +71,27 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity
                 .status(HttpStatus.UNPROCESSABLE_CONTENT)
+                .body(body);
+    }
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiResponse<Void>> handleUnreadableRequestBody(
+            HttpMessageNotReadableException exception
+    ) {
+        boolean fieldMismatch =
+                exception.getCause() instanceof MismatchedInputException;
+
+        ApiResponse<Void> body = ApiResponse.error(
+                fieldMismatch ? "VALIDATION_ERROR" : "INVALID_JSON",
+                fieldMismatch
+                        ? "请求参数校验失败"
+                        : "请求体缺失或 JSON 格式不正确",
+                getRequestId()
+        );
+
+        return ResponseEntity
+                .status(fieldMismatch
+                        ? HttpStatus.UNPROCESSABLE_CONTENT
+                        : HttpStatus.BAD_REQUEST)
                 .body(body);
     }
     private String getRequestId() {
